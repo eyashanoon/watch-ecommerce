@@ -10,9 +10,8 @@ public class Cart {
     @GeneratedValue
     private String id;
 
-    @OneToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
+    @OneToOne(mappedBy = "cart", cascade = CascadeType.ALL)
+     private Customer customer;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<ProductItem> items;
