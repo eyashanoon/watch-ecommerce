@@ -1,0 +1,9 @@
+<div class="sidebar">
+  <button (click)="toggleMenu()" class="menu-toggle">☰</button>
+  <div class="sidebar-content" *ngIf="isMenuOpen">
+    <button>Product Management</button>
+    <button>Order Management</button>
+    <button>Reports</button>
+    <button>History</button>
+  </div>
+</div>
