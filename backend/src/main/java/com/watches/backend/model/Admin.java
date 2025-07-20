@@ -2,7 +2,6 @@ package com.watches.backend.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "admins")
 public class Admin extends User{
     private final String  role = "ADMIN";
 

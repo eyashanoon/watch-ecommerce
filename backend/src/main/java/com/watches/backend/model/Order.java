@@ -25,7 +25,7 @@ public class Order {
     private OrderStatus  status;
 
     @ManyToOne
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "id", nullable = false, insertable = false, updatable = false)
     private Customer customer;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)

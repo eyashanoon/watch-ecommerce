@@ -12,7 +12,7 @@ public class SystemLog {
 
     private String action;
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "id", nullable = false, insertable = false, updatable = false)
     private User performedBy;
     private LocalDateTime performedAt;
 
@@ -22,9 +22,7 @@ public class SystemLog {
         this.performedAt = performedAt;
     }
 
-    public SystemLog() {
-
-    }
+    public SystemLog() {}
 
     public LocalDateTime getPerformedAt() {
         return performedAt;

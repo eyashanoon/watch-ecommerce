@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "customers")
 public class Customer extends User {
     private final String  role = "CUSTOMER";
     @OneToOne
