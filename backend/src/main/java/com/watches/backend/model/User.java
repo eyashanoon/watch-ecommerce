@@ -1,7 +1,8 @@
 package com.watches.backend.model;
 import jakarta.persistence.*;
 
-@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,5 +52,14 @@ public abstract class User {
         this.phone=phone;
     }
 
-
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", userName='" + userName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", phone='" + phone + '\'' +
+                '}';
+    }
 }

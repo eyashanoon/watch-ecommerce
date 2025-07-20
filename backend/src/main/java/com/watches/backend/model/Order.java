@@ -17,13 +17,17 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private LocalDateTime placedAt;
     private LocalDateTime updatedAt;
+
+    @Enumerated(EnumType.STRING)
     private OrderStatus  status;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
+    @JoinColumn(name = "id", nullable = false)
     private Customer customer;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 

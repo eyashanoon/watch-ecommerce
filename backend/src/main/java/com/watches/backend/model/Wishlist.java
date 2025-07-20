@@ -59,4 +59,13 @@ public class Wishlist {
     public void setProducts(List<Product> products) {
         this.products = products;
     }
+
+    @Override
+    public String toString() {
+        return "Wishlist{" +
+                "id=" + id +
+                ", customer=" + customer +
+                ", products=" + products +
+                '}';
+    }
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "order_items")
 public class OrderItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,8 +18,10 @@ public class OrderItem {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    private int quantity;
-    private double priceAtPurchase;
+
+    private Integer quantity;
+
+    private Double priceAtPurchase;
 
     public OrderItem(Product product, Order order, int quantity) {
         this.product = product;

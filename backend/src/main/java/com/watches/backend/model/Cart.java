@@ -7,8 +7,8 @@ import java.util.List;
 @Entity
 public class Cart {
     @Id
-    @GeneratedValue
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @OneToOne(mappedBy = "cart", cascade = CascadeType.ALL)
      private Customer customer;
@@ -17,11 +17,11 @@ public class Cart {
     private List<ProductItem> items;
 
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
@@ -33,4 +33,13 @@ public class Cart {
     }
     public List<ProductItem> getItems() {return items;}
     public void addItem(ProductItem item){this.items.add(item);}
+
+    @Override
+    public String toString() {
+        return "Cart{" +
+                "id=" + id +
+                ", customer=" + customer +
+                ", items=" + items +
+                '}';
+    }
 }
