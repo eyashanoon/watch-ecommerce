@@ -16,8 +16,11 @@ public class Customer extends User {
     private List<Order> orders = new ArrayList<>();
 
     @OneToOne
-    @JoinColumn(name = "wish_list_id", referencedColumnName = "id")
+    @JoinColumn(name = "wishlist_id", referencedColumnName = "id")
     private Wishlist wishlist;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SavedCard> savedCards = new ArrayList<>();
 
 
     public Customer(String userName,String email, String password, String phone ,List<Order> orders, Cart cart,Wishlist wishlist) {
@@ -35,6 +38,7 @@ public class Customer extends User {
 
     public void setCart(Cart cart) {
         this.cart = cart;
+
     }
     public void addOrder(Order order){
         this.orders.add(order);
@@ -47,5 +51,23 @@ public class Customer extends User {
     public void setWishlist(Wishlist wishlist) {
         this.wishlist = wishlist;
 
+    }
+
+    public List<SavedCard> getSavedCards() {
+        return savedCards;
+    }
+
+    public void setSavedCards(List<SavedCard> savedCards) {
+        this.savedCards = savedCards;
+    }
+
+    public void addSavedCard(SavedCard card) {
+        card.setCustomer(this); // maintain consistency
+        this.savedCards.add(card);
+    }
+
+    public void removeSavedCard(SavedCard card) {
+        card.setCustomer(null);
+        this.savedCards.remove(card);
     }
 }

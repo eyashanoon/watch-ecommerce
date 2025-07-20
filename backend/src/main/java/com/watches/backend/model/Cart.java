@@ -24,4 +24,13 @@ public class Cart {
     public String getId() {
         return id;
     }
+
+    public void setCustomer(Customer customer) {this.customer = customer;}
+    public Customer getCustomer() {return customer;}
+
+    public void setItems(List<ProductItem> items) {
+        this.items = items;
+    }
+    public List<ProductItem> getItems() {return items;}
+    public void addItem(ProductItem item){this.items.add(item);}
 }
