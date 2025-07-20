@@ -1,6 +1,7 @@
 package com.watches.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.PositiveOrZero;
 
 @Embeddable
 public class ProductItem {
@@ -9,7 +10,9 @@ public class ProductItem {
     @JoinColumn(name = "id")
     private Product product;
 
+    @PositiveOrZero
     private Integer quantity;
+
     private Double price;
 
     public ProductItem() {

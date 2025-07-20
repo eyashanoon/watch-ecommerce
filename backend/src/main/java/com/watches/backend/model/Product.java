@@ -1,38 +1,47 @@
 package com.watches.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.watches.backend.enums.Gender;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.PositiveOrZero;
+
+import java.util.Objects;
 
 @Entity
 public class Product {
     private @Id
-    @GeneratedValue
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+    @Column(nullable = false)
     private String name;
     private String brand;
     private String description;
     private String type;
-    private String gender;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
     private String size;
+
+    @PositiveOrZero
     private Double price;
+
+    @PositiveOrZero
     private Integer quantity;
     private Double discount;
 
     public Product() {}
 
-    public Product(String id,
+    public Product(
                    String name,
                    String brand,
                    String description,
                    String type,
-                   String gender,
+                   Gender gender,
                    String size,
                    Double price,
                    Integer quantity,
                    Double discount
     ) {
-        this.id = id;
         this.name = name;
         this.brand = brand;
         this.description = description;
@@ -44,11 +53,11 @@ public class Product {
         this.discount = discount;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -69,10 +78,10 @@ public class Product {
     }
 
     public String getGender() {
-        return gender;
+        return gender.toString();
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 
@@ -122,5 +131,21 @@ public class Product {
 
     public void setDiscount(Double discount) {
         this.discount = discount;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", brand='" + brand + '\'' +
+                ", description='" + description + '\'' +
+                ", type='" + type + '\'' +
+                ", gender='" + gender + '\'' +
+                ", size='" + size + '\'' +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                ", discount=" + discount +
+                '}';
     }
 }
