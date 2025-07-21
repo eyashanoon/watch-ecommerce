@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
- public class Customer extends User {
+ 
+  public class Customer extends User {
 
     @OneToOne
     @JoinColumn(name = "cart_id", referencedColumnName = "id")

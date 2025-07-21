@@ -2,8 +2,8 @@ package com.watches.backend.model;
 
 import jakarta.persistence.*;
 
-@Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+ @Entity
+ @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
  public abstract class User {
 
     @Id
