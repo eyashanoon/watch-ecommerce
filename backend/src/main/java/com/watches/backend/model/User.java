@@ -2,10 +2,9 @@ package com.watches.backend.model;
 
 import jakarta.persistence.*;
 
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING)
-public abstract class User {
+ @Entity
+ @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+ public abstract class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

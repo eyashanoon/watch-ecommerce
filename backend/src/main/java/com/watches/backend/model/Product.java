@@ -77,8 +77,8 @@ public class Product {
         this.name = name;
     }
 
-    public String getGender() {
-        return gender.toString();
+    public Gender getGender() {
+        return gender;
     }
 
     public void setGender(Gender gender) {
