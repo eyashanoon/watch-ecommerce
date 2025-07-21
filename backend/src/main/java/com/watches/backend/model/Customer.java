@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
- 
-  public class Customer extends User {
+public class Customer extends User {
 
     @OneToOne
     @JoinColumn(name = "cart_id", referencedColumnName = "id")
@@ -28,13 +27,13 @@ import java.util.List;
         this.cart = cart;
         this.wishlist = wishlist;
         this.orders = new ArrayList<>();
-         if (orders != null) {
+        if (orders != null) {
             orders.forEach(this::addOrder);
         }
     }
 
     public Customer() {
-     }
+    }
 
     @Override
     public String getRole() {
