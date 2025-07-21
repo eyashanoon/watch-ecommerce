@@ -2,7 +2,6 @@ package com.watches.backend.controller;
 
 import com.watches.backend.Dto.CartDto.CartDto;
 import com.watches.backend.Dto.CartDto.CreateCartDto;
-import com.watches.backend.Dto.ProductDto.ProductDto;
 import com.watches.backend.Repositories.CartRepository;
 import com.watches.backend.exceptions.CartNotFoundException;
 import com.watches.backend.mappers.CartMapper;

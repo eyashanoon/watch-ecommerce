@@ -134,6 +134,18 @@ public class Product {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Objects.equals(name, product.name) && Objects.equals(brand, product.brand) && Objects.equals(description, product.description) && Objects.equals(type, product.type) && gender == product.gender && Objects.equals(size, product.size);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, brand, description, type, gender, size, price, quantity, discount);
+    }
+
+    @Override
     public String toString() {
         return "Product{" +
                 "id=" + id +

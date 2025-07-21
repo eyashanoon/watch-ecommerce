@@ -1,17 +1,19 @@
 package com.watches.backend.advices;
 
-import com.watches.backend.exceptions.SystemLogNotFoundException;
+import com.watches.backend.exceptions.WishlistNotFoundException;
 import org.springframework.http.HttpStatus;
+
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class SystemLogNotFoundAdvice {
+public class WishlistNotFoundAdvice {
 
-    @ExceptionHandler(SystemLogNotFoundException.class)
+    @ExceptionHandler(WishlistNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String handleNotFoundException(SystemLogNotFoundException ex){
+    public String handleException(WishlistNotFoundException ex){
         return ex.getMessage();
     }
+
 }

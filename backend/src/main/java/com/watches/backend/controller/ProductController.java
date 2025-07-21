@@ -11,8 +11,6 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 public class ProductController {
@@ -25,7 +23,6 @@ public class ProductController {
 
     @GetMapping("/products")
     List<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
-        System.out.println(repository.findAll());
         return repository.findAll().stream()
             .filter(p -> query.getProductName() == null || p.getName().contains(query.getProductName()))
             .filter(p -> query.getProductDescription() == null || p.getDescription().contains(query.getProductDescription()))
@@ -47,7 +44,7 @@ public class ProductController {
 
     @PostMapping("/products")
     Product Create(@Valid @RequestBody CreateProductDto productDto){
-        return repository.save(ProductMapper.toEntity(productDto));
+        return repository.save(ProductMapper.CreateToProduct(productDto));
     }
 
     @PutMapping("/products/{id}")
@@ -65,9 +62,7 @@ public class ProductController {
                     product.setQuantity(productDto.getQuantity());
                     return repository.save(product);
                 })
-                .orElseGet(() -> {
-                    return repository.save(ProductMapper.toEntity(productDto));
-                });
+                .orElseGet(() -> repository.save(ProductMapper.CreateToProduct(productDto)));
     }
 
     @DeleteMapping("/products/{id}")
