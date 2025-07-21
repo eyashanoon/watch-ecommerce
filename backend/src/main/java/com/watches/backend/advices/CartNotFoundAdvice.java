@@ -1,5 +1,6 @@
 package com.watches.backend.advices;
 
+import com.watches.backend.exceptions.CartNotFoundException;
 import com.watches.backend.exceptions.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -7,11 +8,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class ProductNotFoundAdvice {
+public class CartNotFoundAdvice {
 
-    @ExceptionHandler(ProductNotFoundException.class)
+    @ExceptionHandler(CartNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String productNotFound(ProductNotFoundException ex){
+    public String cartNotFoundException(CartNotFoundException ex){
         return ex.getMessage();
     }
+
 }

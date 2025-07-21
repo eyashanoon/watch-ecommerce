@@ -16,6 +16,13 @@ public class Cart {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<ProductItem> items;
 
+    public Cart() {
+    }
+
+    public Cart(Customer customer, List<ProductItem> items) {
+        this.customer = customer;
+        this.items = items;
+    }
 
     public void setId(Long id) {
         this.id = id;
