@@ -1,12 +1,13 @@
 package com.watches.backend.model;
-import jakarta.persistence.*;
 
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Customer extends User {
-    private final String  role = "CUSTOMER";
+ 
+  public class Customer extends User {
+
     @OneToOne
     @JoinColumn(name = "cart_id", referencedColumnName = "id")
     private Cart cart;
@@ -21,15 +22,26 @@ public class Customer extends User {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SavedCard> savedCards = new ArrayList<>();
 
-
-    public Customer(String userName,String email, String password, String phone ,List<Order> orders, Cart cart,Wishlist wishlist) {
-        super(userName,email, password, phone);
-        this.cart=cart;
-        this.wishlist=wishlist;
-        orders.forEach(this:: addOrder);
-
+    public Customer(String userName, String email, String password, String phone,
+                    List<Order> orders, Cart cart, Wishlist wishlist) {
+        super(userName, email, password, phone);
+        this.cart = cart;
+        this.wishlist = wishlist;
+        this.orders = new ArrayList<>();
+         if (orders != null) {
+            orders.forEach(this::addOrder);
+        }
     }
-    public Customer() {}
+
+    public Customer() {
+     }
+
+    @Override
+    public String getRole() {
+        return "CUSTOMER";
+    }
+
+
 
     public Cart getCart() {
         return cart;
@@ -37,19 +49,21 @@ public class Customer extends User {
 
     public void setCart(Cart cart) {
         this.cart = cart;
-
+        if (cart != null) cart.setCustomer(this);
     }
-    public void addOrder(Order order){
+
+    public void addOrder(Order order) {
         this.orders.add(order);
         order.setCustomer(this);
     }
-    public Wishlist getWishlist(){
+
+    public Wishlist getWishlist() {
         return wishlist;
     }
 
     public void setWishlist(Wishlist wishlist) {
         this.wishlist = wishlist;
-
+        if (wishlist != null) wishlist.setCustomer(this);
     }
 
     public List<SavedCard> getSavedCards() {
@@ -61,12 +75,16 @@ public class Customer extends User {
     }
 
     public void addSavedCard(SavedCard card) {
-        card.setCustomer(this); // maintain consistency
+        card.setCustomer(this);
         this.savedCards.add(card);
     }
 
     public void removeSavedCard(SavedCard card) {
         card.setCustomer(null);
         this.savedCards.remove(card);
+    }
+
+    public List<Order> getOrders() {
+        return orders;
     }
 }

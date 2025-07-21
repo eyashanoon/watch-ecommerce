@@ -7,7 +7,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 public class ProductItem {
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "product_id")
     private Product product;
 
     @PositiveOrZero

@@ -1,22 +1,31 @@
 package com.watches.backend.model;
+
 import jakarta.persistence.*;
 
-@Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class User {
+ @Entity
+ @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+ public abstract class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String userName;
     private String email;
     private String password;
     private String phone;
-    public User(String userName,String email, String password, String phone){
-        this.userName=userName;
-        this.phone=phone;
-        this.email=email;
+
+
+
+    public User() {
     }
-    public User(){}
+
+    public User(String userName, String email, String password, String phone) {
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+    }
 
     public Long getId() {
         return id;
@@ -45,12 +54,17 @@ public abstract class User {
     public void setPassword(String password) {
         this.password = password;
     }
-    public String getPhone(){
+
+    public String getPhone() {
         return phone;
     }
-    public void setPhone(String phone){
-        this.phone=phone;
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
+
+    // Abstract method that must be implemented by subclasses like Customer or Admin
+    public abstract String getRole();
 
     @Override
     public String toString() {

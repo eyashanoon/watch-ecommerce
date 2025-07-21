@@ -8,12 +8,13 @@ import java.time.LocalDateTime;
 public class SystemLog {
     @Id
     @GeneratedValue
-    private String id;
+    private Long id;
 
     private String action;
     @ManyToOne
-    @JoinColumn(name = "id", nullable = false, insertable = false, updatable = false)
-    private User performedBy;
+ 
+    @JoinColumn(name = "user_id")
+     private User performedBy;
     private LocalDateTime performedAt;
 
     public SystemLog(String action, User performedBy, LocalDateTime performedAt) {
@@ -36,11 +37,11 @@ public class SystemLog {
         return action;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 }
