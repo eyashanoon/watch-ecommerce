@@ -1,14 +1,26 @@
 package com.watches.backend.model;
-import jakarta.persistence.*;
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 
 @Entity
-@Table(name = "admins")
-public class Admin extends User{
-    private final String  role = "ADMIN";
+@DiscriminatorValue("ADMIN")
+public class Admin extends User {
 
-    public Admin(String userName,String email, String password, String phone ) {
-        super(userName,email, password, phone);
+    public Admin() {
+        super();
     }
-    public Admin() { }
 
+    public Admin(String userName, String email, String password, String phone) {
+        super(userName, email, password, phone);
+    }
+
+    @Override
+    public String getRole() {
+        return "ADMIN";
+    }
+
+
+
+    // Optional: you could add admin-specific logic here
 }
