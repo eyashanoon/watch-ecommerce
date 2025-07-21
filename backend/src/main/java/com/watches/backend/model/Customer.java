@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@DiscriminatorValue("CUSTOMER") // Double-check if this is intended. You might want "CUSTOMER" instead?
-public class Customer extends User {
+ public class Customer extends User {
 
     @OneToOne
     @JoinColumn(name = "cart_id", referencedColumnName = "id")
