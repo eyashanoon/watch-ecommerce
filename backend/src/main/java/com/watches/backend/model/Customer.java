@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@DiscriminatorValue("CUSTOMER") // Double-check if this is intended. You might want "CUSTOMER" instead?
+ 
 public class Customer extends User {
 
     @OneToOne
@@ -28,13 +28,13 @@ public class Customer extends User {
         this.cart = cart;
         this.wishlist = wishlist;
         this.orders = new ArrayList<>();
-         if (orders != null) {
+        if (orders != null) {
             orders.forEach(this::addOrder);
         }
     }
 
     public Customer() {
-     }
+    }
 
     @Override
     public String getRole() {

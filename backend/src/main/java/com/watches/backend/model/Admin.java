@@ -4,7 +4,7 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 
 @Entity
-@DiscriminatorValue("ADMIN")
+ 
 public class Admin extends User {
 
     public Admin() {
@@ -24,3 +24,6 @@ public class Admin extends User {
 
     // Optional: you could add admin-specific logic here
 }
+
+
+
