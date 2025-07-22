@@ -8,8 +8,6 @@ public class ProductDto {
     private String brand;
     private String description;
     private String type;
-    private Gender gender;
-    private String size;
     private Double price;
     private Integer quantity;
     private Double discount;
@@ -19,8 +17,6 @@ public class ProductDto {
             String brand,
             String description,
             String type,
-            Gender gender,
-            String size,
             Double price,
             Integer quantity,
             Double discount) {
@@ -28,8 +24,6 @@ public class ProductDto {
         this.brand = brand;
         this.description = description;
         this.type = type;
-        this.gender = gender;
-        this.size = size;
         this.price = price;
         this.quantity = quantity;
         this.discount = discount;
@@ -49,14 +43,6 @@ public class ProductDto {
 
     public String getType() {
         return type;
-    }
-
-    public Gender getGender() {
-        return gender;
-    }
-
-    public String getSize() {
-        return size;
     }
 
     public Double getPrice() {

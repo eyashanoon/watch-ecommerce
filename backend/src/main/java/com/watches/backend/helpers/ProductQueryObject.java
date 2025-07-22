@@ -1,13 +1,11 @@
-package com.watches.backend.Helpers;
+package com.watches.backend.helpers;
 
 import com.watches.backend.enums.Gender;
-import jakarta.validation.constraints.PositiveOrZero;
 
 public class ProductQueryObject {
     private String productName = null;
     private String productDescription = null;
     private String brand = null;
-    private Gender gender = null;
     private Integer Maxprice = Integer.MAX_VALUE;
     private Integer Minprice = -1;
     private Integer page = 1;
@@ -24,7 +22,6 @@ public class ProductQueryObject {
         this.productName = productName;
         this.productDescription = productDescription;
         this.brand = brand;
-        this.gender = gender;
         this.Maxprice = MaxPrice;
         this.Minprice = MinPrice;
     }
@@ -32,7 +29,6 @@ public class ProductQueryObject {
     public ProductQueryObject(String productName,
                               String productDescription,
                               String brand,
-                              Gender gender,
                               Integer MaxPrice,
                               Integer MinPrice,
                               Integer page,
@@ -40,7 +36,6 @@ public class ProductQueryObject {
         this.productName = productName;
         this.productDescription = productDescription;
         this.brand = brand;
-        this.gender = gender;
         this.Maxprice = MaxPrice;
         this.Minprice = MinPrice;
         this.page = page;
@@ -69,14 +64,6 @@ public class ProductQueryObject {
 
     public void setBrand(String brand) {
         this.brand = brand;
-    }
-
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
     }
 
     public Integer getMaxprice() {

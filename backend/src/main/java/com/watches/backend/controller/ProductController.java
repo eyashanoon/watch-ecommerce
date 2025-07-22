@@ -2,72 +2,60 @@ package com.watches.backend.controller;
 
 import com.watches.backend.Dto.ProductDto.CreateProductDto;
 import com.watches.backend.Dto.ProductDto.ProductDto;
-import com.watches.backend.Helpers.ProductQueryObject;
-import com.watches.backend.exceptions.ProductNotFoundException;
-import com.watches.backend.Repositories.ProductRepository;
+import com.watches.backend.helpers.ProductQueryObject;
 import com.watches.backend.mappers.ProductMapper;
 import com.watches.backend.model.Product;
+import com.watches.backend.service.ProductService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
 public class ProductController {
 
-    private final ProductRepository repository;
+    private final ProductService service;
 
-    public ProductController(ProductRepository repository) {
-        this.repository = repository;
+    public ProductController(ProductService service) {
+        this.service = service;
     }
 
+
     @GetMapping("/products")
-    List<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
-        return repository.findAll().stream()
-            .filter(p -> query.getProductName() == null || p.getName().contains(query.getProductName()))
-            .filter(p -> query.getProductDescription() == null || p.getDescription().contains(query.getProductDescription()))
-            .filter(p -> query.getBrand() == null || p.getBrand().contains(query.getBrand()))
-            .filter(p -> query.getGender() == null || p.getBrand().contains(query.getBrand()))
-            .filter(p -> query.getMaxprice() == Integer.MAX_VALUE || p.getPrice() <= query.getMaxprice())
-            .filter((p -> query.getMinprice() <= -1 || p.getPrice() >= query.getMinprice()))
-            .skip((long) (query.getPage() - 1) * query.getPageSize())
-            .limit(query.getPageSize())
-                .map(ProductMapper::toDto)
-            .toList();
+    ResponseEntity<List<ProductDto>> getAll(@Valid @ModelAttribute ProductQueryObject query){
+        List<Product> products = service.findAll(query);
+        List<ProductDto> productDTO = products.stream()
+                                            .map(ProductMapper::toDto)
+                                            .toList();
+        return ResponseEntity.ok(productDTO);
     }
 
     @GetMapping("/products/{id}")
-    Product GetById(@PathVariable Long id){
-        return repository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
+    ResponseEntity<ProductDto> GetById(@PathVariable Long id){
+        Product product = service.findById(id);
+        return ResponseEntity.ok(ProductMapper.toDto(product));
     }
 
     @PostMapping("/products")
-    Product Create(@Valid @RequestBody CreateProductDto productDto){
-        return repository.save(ProductMapper.CreateToProduct(productDto));
+    ResponseEntity<Product> Create(@Valid @RequestBody CreateProductDto productDto){
+        Product product = ProductMapper.createToProduct(productDto);
+        URI location = service.create(product);
+        return ResponseEntity.created(location).body(product);
     }
 
     @PutMapping("/products/{id}")
-    Product update(@Valid @RequestBody CreateProductDto productDto, @PathVariable Long id){
-        return repository.findById(id)
-                .map(product -> {
-                    product.setName(productDto.getName());
-                    product.setBrand(productDto.getBrand());
-                    product.setDescription(productDto.getDescription());
-                    product.setDiscount(productDto.getDiscount());
-                    product.setPrice(productDto.getPrice());
-                    product.setGender(productDto.getGender());
-                    product.setSize(productDto.getSize());
-                    product.setType(productDto.getType());
-                    product.setQuantity(productDto.getQuantity());
-                    return repository.save(product);
-                })
-                .orElseGet(() -> repository.save(ProductMapper.CreateToProduct(productDto)));
+    ResponseEntity<ProductDto> update(@Valid @RequestBody CreateProductDto productDto,
+                   @Valid @PathVariable Long id){
+        Product product = service.update(productDto, id);
+        return ResponseEntity.ok().body(ProductMapper.toDto(product));
     }
 
     @DeleteMapping("/products/{id}")
-    void delete(@PathVariable Long id){
-        repository.deleteById(id);
+    ResponseEntity<Product> delete(@Valid @PathVariable Long id){
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 

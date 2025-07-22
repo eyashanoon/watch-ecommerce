@@ -3,6 +3,6 @@ package com.watches.backend.exceptions;
 public class ProductNotFoundException extends RuntimeException{
 
     public ProductNotFoundException(Long id) {
-        super("Could not find product with id: " + id);
+        super("Product with ID " + id + " not found");
     }
 }
