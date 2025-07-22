@@ -1,17 +1,19 @@
 package com.watches.backend.advices;
 
-import com.watches.backend.exceptions.ProductNotFoundException;
+import com.watches.backend.exceptions.WishlistNotFoundException;
 import org.springframework.http.HttpStatus;
+
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class ProductNotFoundAdvice {
+public class WishlistNotFoundAdvice {
 
-    @ExceptionHandler(ProductNotFoundException.class)
+    @ExceptionHandler(WishlistNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String productNotFound(ProductNotFoundException ex){
+    public String handleException(WishlistNotFoundException ex){
         return ex.getMessage();
     }
+
 }

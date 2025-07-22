@@ -1,7 +1,8 @@
 package com.watches.backend.controller;
 
-import com.watches.backend.Dto.CreateProductDto;
-import com.watches.backend.Dto.ProductDto;
+import com.watches.backend.Dto.ProductDto.CreateProductDto;
+import com.watches.backend.Dto.ProductDto.ProductDto;
+import com.watches.backend.Helpers.ProductQueryObject;
 import com.watches.backend.exceptions.ProductNotFoundException;
 import com.watches.backend.Repositories.ProductRepository;
 import com.watches.backend.mappers.ProductMapper;
@@ -10,7 +11,6 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class ProductController {
@@ -22,11 +22,18 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    List<ProductDto> getAll(){
-        return repository.findAll()
-                .stream()
+    List<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
+        return repository.findAll().stream()
+            .filter(p -> query.getProductName() == null || p.getName().contains(query.getProductName()))
+            .filter(p -> query.getProductDescription() == null || p.getDescription().contains(query.getProductDescription()))
+            .filter(p -> query.getBrand() == null || p.getBrand().contains(query.getBrand()))
+            .filter(p -> query.getGender() == null || p.getBrand().contains(query.getBrand()))
+            .filter(p -> query.getMaxprice() == Integer.MAX_VALUE || p.getPrice() <= query.getMaxprice())
+            .filter((p -> query.getMinprice() <= -1 || p.getPrice() >= query.getMinprice()))
+            .skip((long) (query.getPage() - 1) * query.getPageSize())
+            .limit(query.getPageSize())
                 .map(ProductMapper::toDto)
-                .collect(Collectors.toList());
+            .toList();
     }
 
     @GetMapping("/products/{id}")
@@ -37,7 +44,7 @@ public class ProductController {
 
     @PostMapping("/products")
     Product Create(@Valid @RequestBody CreateProductDto productDto){
-        return repository.save(ProductMapper.toEntity(productDto));
+        return repository.save(ProductMapper.CreateToProduct(productDto));
     }
 
     @PutMapping("/products/{id}")
@@ -55,9 +62,7 @@ public class ProductController {
                     product.setQuantity(productDto.getQuantity());
                     return repository.save(product);
                 })
-                .orElseGet(() -> {
-                    return repository.save(ProductMapper.toEntity(productDto));
-                });
+                .orElseGet(() -> repository.save(ProductMapper.CreateToProduct(productDto)));
     }
 
     @DeleteMapping("/products/{id}")

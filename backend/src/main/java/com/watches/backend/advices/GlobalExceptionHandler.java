@@ -9,14 +9,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
-public class GlobalExcpetionHandler {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
         Map<String,String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error)->{
-            errors.put(error.getCode(),error.getDefaultMessage());
-        });
+        ex.getBindingResult().getAllErrors().forEach((error)-> errors.put(error.getCode(),error.getDefaultMessage()));
         return ResponseEntity.badRequest().body(errors);
     }
 

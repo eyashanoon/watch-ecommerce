@@ -3,8 +3,9 @@ package com.watches.backend.model;
 import jakarta.persistence.*;
 
 @Entity
+ 
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class User {
+ public abstract class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
