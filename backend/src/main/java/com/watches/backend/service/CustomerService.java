@@ -21,30 +21,26 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    // ✅ Create a new customer
-    public CustomerDTO createCustomer(CreateCustomerDTO createCustomerDTO) {
+     public CustomerDTO createCustomer(CreateCustomerDTO createCustomerDTO) {
         Customer customer = CustomerMapper.fromCreateDTO(createCustomerDTO);
         Customer saved = customerRepository.save(customer);
         return CustomerMapper.toDTO(saved);
     }
 
-    // ✅ Get customer by ID
-    public CustomerDTO getCustomerById(Long id) {
+     public CustomerDTO getCustomerById(Long id) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found with id " + id));
         return CustomerMapper.toDTO(customer);
     }
 
-    // ✅ Get all customers
-    public List<CustomerDTO> getAllCustomers() {
+     public List<CustomerDTO> getAllCustomers() {
         return customerRepository.findAll()
                 .stream()
                 .map(CustomerMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
-    // ✅ Update customer
-    public CustomerDTO updateCustomer(Long id, UpdateCustomerDTO updateCustomerDTO) {
+     public CustomerDTO updateCustomer(Long id, UpdateCustomerDTO updateCustomerDTO) {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Customer not found with id " + id));
 
@@ -53,8 +49,7 @@ public class CustomerService {
         return CustomerMapper.toDTO(updated);
     }
 
-    // ✅ Delete customer
-    public void deleteCustomer(Long id) {
+     public void deleteCustomer(Long id) {
         if (!customerRepository.existsById(id)) {
             throw new EntityNotFoundException("Customer not found with id " + id);
         }

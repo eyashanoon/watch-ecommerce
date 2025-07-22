@@ -38,6 +38,6 @@ public class AdminMapper {
         admin.setUsername(dto.getUsername());
         admin.setEmail(dto.getEmail());
         admin.setPhone(dto.getPhone());
-        // Note: No password update here — handle it separately if needed
-    }
+     }
+
 }
