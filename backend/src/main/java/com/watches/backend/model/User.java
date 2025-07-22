@@ -1,6 +1,7 @@
 package com.watches.backend.model;
 
 import jakarta.persistence.*;
+import com.watches.backend.enums.*;
 
 @Entity
  
@@ -15,6 +16,9 @@ import jakarta.persistence.*;
     private String email;
     private String password;
     private String phone;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
 
 
 
@@ -69,7 +73,9 @@ import jakarta.persistence.*;
     }
 
     // Abstract method that must be implemented by subclasses like Customer or Admin
-    public abstract String getRole();
+    public  Role getRole(){
+        return role;
+    };
 
     @Override
     public String toString() {

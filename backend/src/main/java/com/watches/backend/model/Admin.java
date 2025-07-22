@@ -15,10 +15,6 @@ public class Admin extends User {
         super(userName, email, password, phone);
     }
 
-    @Override
-    public String getRole() {
-        return "ADMIN";
-    }
 
 
 
