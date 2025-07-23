@@ -7,6 +7,7 @@ import com.watches.backend.mappers.AdminMapper;
 import com.watches.backend.model.Admin;
 import com.watches.backend.Repositories.AdminRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,39 +15,51 @@ import java.util.stream.Collectors;
 
 @Service
 public class AdminService {
-    private AdminRepository adminRepository;
+    private final AdminRepository adminRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AdminService(AdminRepository adminRepository) {
+    public AdminService(AdminRepository adminRepository, PasswordEncoder passwordEncoder) {
         this.adminRepository = adminRepository;
+        this.passwordEncoder = passwordEncoder;
     }
+
     public AdminDTO createAdmin(CreateAdminDTO createAdminDTO) {
         Admin admin = AdminMapper.fromCreateDTO(createAdminDTO);
+
+        // ✅ Encode password before saving
+        admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+
         Admin saved = adminRepository.save(admin);
         return AdminMapper.toDTO(saved);
     }
+
     public AdminDTO getAdminById(Long id) {
-        Admin admin = adminRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Admin not found with id:"+id));
+        Admin admin = adminRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
         return AdminMapper.toDTO(admin);
     }
+
     public List<AdminDTO> getAllAdmins() {
-        return adminRepository.findAll().stream().map(AdminMapper::toDTO).collect(Collectors.toList());
-     }
-     public AdminDTO updateAdmin(Long id,UpdateAdminDTO updateAdminDTO) {
-        Admin admin=adminRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Admin not found with id:"+id));
-        AdminMapper.updateAdminFromDTO(updateAdminDTO,admin);
-        Admin updated=adminRepository.save(admin);
+        return adminRepository.findAll()
+                .stream()
+                .map(AdminMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public AdminDTO updateAdmin(Long id, UpdateAdminDTO updateAdminDTO) {
+        Admin admin = adminRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
+
+        AdminMapper.updateAdminFromDTO(updateAdminDTO, admin);
+        Admin updated = adminRepository.save(admin);
         return AdminMapper.toDTO(updated);
-     }
-     public void deleteAdmin(Long id) {
-        if(adminRepository.existsById(id)) {
+    }
+
+    public void deleteAdmin(Long id) {
+        if (adminRepository.existsById(id)) {
             adminRepository.deleteById(id);
-            return;
+        } else {
+            throw new EntityNotFoundException("Admin not found with id: " + id);
         }
-        else throw new EntityNotFoundException("Admin not found with id:"+id);
-
-     }
-
-
-
-
+    }
 }

@@ -1,5 +1,6 @@
 package com.watches.backend.model;
 
+import com.watches.backend.enums.Role;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class Customer extends User {
         if (orders != null) {
             orders.forEach(this::addOrder);
         }
+        this.setRole(Role.CUSTOMER);
     }
 
     public Customer() {
