@@ -6,17 +6,15 @@ import com.watches.backend.Repositories.ProductRepository;
 import com.watches.backend.exceptions.ProductNotFoundException;
 import com.watches.backend.helpers.factories.ProductFilterFactory;
 import com.watches.backend.helpers.productOptions.IProductFilter;
-import com.watches.backend.interfaces.IProductService;
+import com.watches.backend.mappers.ProductMapper;
 import com.watches.backend.model.Product;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Stream;
 
 @Service
-public class ProductService implements IProductService {
+public class ProductService {
 
     private final ProductRepository repository;
     public ProductService(ProductRepository repository) {
@@ -24,17 +22,14 @@ public class ProductService implements IProductService {
     }
 
 
-    @Override
-    public URI create(Product product) {
-        repository.save(product);
 
-        return ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(product.getId())
-                .toUri();
+    public Product create(CreateProductDto productDto) {
+        Product product = ProductMapper.createToProduct(productDto);
+        repository.save(product);
+        return product;
     }
 
-    @Override
+
     public Product update(CreateProductDto createProductDto, Long id) {
         Product product = this.findById(id); // throws ProductNotFoundException if not found
 
@@ -49,20 +44,19 @@ public class ProductService implements IProductService {
         return repository.save(product);
     }
 
-    @Override
-    public Product delete(Long id) {
+
+    public void delete(Long id) {
         Product product = this.findById(id); // throws ProductNotFoundException if not found
-        repository.deleteById(id);
-        return product;
+        repository.delete(product);
     }
 
-    @Override
+
     public Product findById(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
-    @Override
+
     public List<Product> findAll(ProductQueryObject queryObject) {
         // Filters factory
         // it takes the product query and generate filters depending on filters user applied

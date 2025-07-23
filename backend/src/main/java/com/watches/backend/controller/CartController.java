@@ -2,58 +2,57 @@ package com.watches.backend.controller;
 
 import com.watches.backend.Dto.CartDto.CartDto;
 import com.watches.backend.Dto.CartDto.CreateCartDto;
-import com.watches.backend.Repositories.CartRepository;
-import com.watches.backend.exceptions.CartNotFoundException;
 import com.watches.backend.mappers.CartMapper;
 import com.watches.backend.model.Cart;
 import com.watches.backend.model.ProductItem;
+import com.watches.backend.service.CartService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
+@RequestMapping("/api/carts")
 public class CartController {
 
-    private final CartRepository repository;
+    private final CartService service;
 
-    public CartController(CartRepository repository) {
-        this.repository = repository;
+    public CartController(CartService service) {
+        this.service = service;
     }
 
-    @GetMapping("/carts/{id}")
-    CartDto GetCartById(@PathVariable Long id){
-        return repository.findById(id)
-                .map(CartMapper::toCartDto)
-                .orElseThrow(() -> new CartNotFoundException(id));
+    @GetMapping("/{id}")
+    ResponseEntity<CartDto> GetCartById(@PathVariable Long id){
+        Cart cart = service.findById(id);
+        CartDto cartDto =  CartMapper.toCartDto(cart);
+        return ResponseEntity.ok().body(cartDto);
     }
 
-    @PostMapping("/carts")
-    Cart CreateCart(@Valid @RequestBody CreateCartDto cartDto){
-        return repository.save(CartMapper.createToCart(cartDto));
+    @PostMapping
+    ResponseEntity<Cart> CreateCart(@Valid @RequestBody CreateCartDto cartDto){
+        Cart cart = service.create(cartDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(cart);
     }
 
-    @PutMapping("/carts/addItem/{id}")
-    void UpdateCart(@PathVariable Long id, @RequestBody List<ProductItem> itemslist){
-        repository.findById(id)
-                .map(c -> {
-                    c.getItems().addAll(itemslist);
-                    return repository.save(c);
-                });
+    @PutMapping("/addItem/{id}")
+    ResponseEntity<CartDto> UpdateCart(@Valid @PathVariable Long id, @Valid @RequestBody ProductItem item){
+        Cart cart = service.addItem(id, item);
+        CartDto cartDto =  CartMapper.toCartDto(cart);
+        return ResponseEntity.ok().body(cartDto);
     }
 
-    @PutMapping("/carts/deleteItem/{id}")
-    void deleteItem(@PathVariable Long id){
-        repository.findById(id)
-                .map(c -> {
-                    c.getItems().removeAll(c.getItems());
-                    return repository.save(c);
-                });
+    @PutMapping("/deleteItem/{id}")
+    ResponseEntity<CartDto> deleteItem(@PathVariable Long id, @Valid @RequestBody ProductItem item){
+        Cart cart = service.removeItem(id, item);
+        CartDto cartDto =  CartMapper.toCartDto(cart);
+        return ResponseEntity.ok().body(cartDto);
     }
 
-    @DeleteMapping("/carts/{id}")
-    void DeleteCart(@PathVariable Long id){
-        repository.deleteById(id);
+    @DeleteMapping("/{id}")
+    ResponseEntity<Cart> DeleteCart(@Valid @PathVariable Long id){
+        service.deleteById(id);
+        return ResponseEntity.notFound().build();
     }
 
 }

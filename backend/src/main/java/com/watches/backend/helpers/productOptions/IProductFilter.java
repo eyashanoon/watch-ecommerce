@@ -6,5 +6,5 @@ import com.watches.backend.model.Product;
 import java.util.stream.Stream;
 
 public interface IProductFilter {
-    public Stream<Product> applyFilter(Stream<Product> products, ProductQueryObject queryObject);
+    Stream<Product> applyFilter(Stream<Product> products, ProductQueryObject queryObject);
 }

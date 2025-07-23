@@ -3,6 +3,8 @@ package com.watches.backend.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
 
+import java.util.Objects;
+
 @Embeddable
 public class ProductItem {
 
@@ -44,5 +46,17 @@ public class ProductItem {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductItem that = (ProductItem) o;
+        return Objects.equals(getProduct(), that.getProduct());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getProduct(), getQuantity(), getPrice());
     }
 }

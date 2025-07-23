@@ -21,7 +21,7 @@ public class ProductFilterFactory {
         if(!StringUtils.isNullOrWhiteSpace(queryObject.getBrand())){
             filters.add(new ProductBrandFilter());
         }
-        if(queryObject.getMaxprice() < Integer.MAX_VALUE || queryObject.getMinprice() > -1){
+        if(queryObject.getMaxPrice() < Integer.MAX_VALUE || queryObject.getMinPrice() > -1){
             filters.add(new ProductPriceFilter());
         }
 

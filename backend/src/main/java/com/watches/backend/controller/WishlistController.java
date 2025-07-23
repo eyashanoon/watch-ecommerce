@@ -3,59 +3,115 @@ package com.watches.backend.controller;
 import com.watches.backend.Dto.ProductDto.ProductDto;
 import com.watches.backend.Dto.WishlistDto.CreateWishlistDto;
 import com.watches.backend.Dto.WishlistDto.WishlistDto;
-import com.watches.backend.Repositories.WishlistRepository;
-import com.watches.backend.exceptions.WishlistNotFoundException;
-import com.watches.backend.mappers.ProductMapper;
 import com.watches.backend.mappers.WishlistMapper;
 import com.watches.backend.model.Wishlist;
+import com.watches.backend.service.WishlistService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
-import java.util.Optional;
 
 @RestController
+@RequestMapping("/api/wishlist")
 public class WishlistController {
 
-    private final WishlistRepository repository;
+    private final WishlistService service;
 
-    public WishlistController(WishlistRepository repository) {
-        this.repository = repository;
+    public WishlistController(WishlistService service) {
+        this.service = service;
     }
 
-    @GetMapping("/wishlist/{id}")
-    WishlistDto GetWishlist(@PathVariable Long id){
-        return repository.findById(id).map(WishlistMapper::wishlistToDto)
-                .orElseThrow(() -> new WishlistNotFoundException(id));
+    @GetMapping("/{id}")
+    @Async
+    CompletableFuture<ResponseEntity<WishlistDto>> getWishlist(@Valid @PathVariable Long id)
+            throws ExecutionException, InterruptedException {
+
+        CompletableFuture<Wishlist> wishlist = service.findById(id);
+        WishlistDto wishlistDto = WishlistMapper.wishlistToDto(wishlist);
+        return CompletableFuture.completedFuture(ResponseEntity.ok()
+                .body(wishlistDto));
     }
 
-    @PostMapping("/wishlist")
-    Wishlist AddWishlist(@RequestBody CreateWishlistDto wishlistDto){
-        return repository.save(WishlistMapper.createToWishlist(wishlistDto));
+    @GetMapping("/customer/{customerID}")
+    @Async
+    CompletableFuture<ResponseEntity<WishlistDto>> getWishlistByCustomerId(@Valid @PathVariable Long customerID)
+            throws ExecutionException, InterruptedException {
+        CompletableFuture<Wishlist> wishlist = service.findByCustomerId(customerID);
+        WishlistDto wishlistDto = WishlistMapper.wishlistToDto(wishlist);
+        return CompletableFuture.completedFuture(ResponseEntity.ok()
+                .body(wishlistDto));
     }
 
-    @PutMapping("/wishlist/add/{id}")
-    void addProduct(@PathVariable Long id, @RequestBody ProductDto product){
-        Optional<Wishlist> wishlistOpt = repository.findById(id);
-        if(wishlistOpt.isPresent()){
-            Wishlist wishlist = wishlistOpt.get();
-            wishlist.getProducts().add(ProductMapper.DtoToProduct(product));
-            repository.save(wishlist);
-        }
+    @PostMapping
+    @Async
+    CompletableFuture<ResponseEntity<Wishlist>> createWishlist(@Valid @RequestBody CreateWishlistDto wishlistDto)
+            throws ExecutionException, InterruptedException {
+
+        CompletableFuture<Wishlist> wishlist = service.create(wishlistDto);
+        return CompletableFuture.completedFuture(
+                ResponseEntity.status(HttpStatus.CREATED)
+                        .body(wishlist.get()));
     }
 
-    @PutMapping("/wishlist/remove/{id}")
-    void removeProduct(@PathVariable Long id, @RequestBody ProductDto product){
-        Optional<Wishlist> wishlistOpt = repository.findById(id);
-        if(wishlistOpt.isPresent()){
-            Wishlist wishlist = wishlistOpt.get();
-            wishlist.getProducts().remove(ProductMapper.DtoToProduct(product));
-            repository.save(wishlist);
-        }
+    @PutMapping("/add/{id}")
+    @Async
+    CompletableFuture<ResponseEntity<WishlistDto>> addProduct(@Valid @PathVariable Long id,
+                                                              @Valid @RequestBody ProductDto product)
+            throws ExecutionException, InterruptedException {
+
+        CompletableFuture<Wishlist> wishlist = service.addProduct(id, product);
+        WishlistDto wishlistDto = WishlistMapper.wishlistToDto(wishlist);
+        return CompletableFuture.completedFuture(ResponseEntity.ok()
+                .body(wishlistDto));
     }
 
-    @DeleteMapping("/wishlist/{id}")
-    void deleteWishlist(@PathVariable Long id){
-        repository.deleteById(id);
+    @PutMapping("/add/customer/{customerID}")
+    @Async
+    CompletableFuture<ResponseEntity<WishlistDto>> addProductByCustomerId(@Valid @PathVariable Long customerID,
+                                                                          @Valid @RequestBody ProductDto product)
+            throws ExecutionException, InterruptedException {
+        CompletableFuture<Wishlist> wishlist = service.addProductByCustomerId(customerID, product);
+        WishlistDto wishlistDto = WishlistMapper.wishlistToDto(wishlist);
+        return CompletableFuture.completedFuture(ResponseEntity.ok()
+                .body(wishlistDto));
+    }
+
+    @PutMapping("/remove/{id}")
+    @Async
+    CompletableFuture<ResponseEntity<WishlistDto>> removeProduct(@Valid @PathVariable Long id,
+                                                                 @Valid @RequestBody ProductDto product)
+            throws ExecutionException, InterruptedException {
+        CompletableFuture<Wishlist> wishlist = service.removeProduct(id, product);
+        WishlistDto wishlistDto = WishlistMapper.wishlistToDto(wishlist);
+        return CompletableFuture.completedFuture(ResponseEntity.ok()
+                .body(wishlistDto));
+    }
+
+    @PutMapping("/remove/customer/{customerID}")
+    @Async
+    CompletableFuture<ResponseEntity<WishlistDto>> removeProductByCustomerId(@Valid @PathVariable Long customerID,
+                                                                             @Valid @RequestBody ProductDto product)
+            throws ExecutionException, InterruptedException {
+
+        CompletableFuture<Wishlist> wishlist = service.removeProductByCustomerId(customerID, product);
+        WishlistDto wishlistDto = WishlistMapper.wishlistToDto(wishlist);
+        return CompletableFuture.completedFuture(ResponseEntity.ok()
+                .body(wishlistDto));
+    }
+
+    @DeleteMapping("/{id}")
+    @Async
+    CompletableFuture<ResponseEntity<Wishlist>> deleteWishlist(@PathVariable Long id)
+            throws ExecutionException, InterruptedException {
+
+        service.deleteById(id);
+        return CompletableFuture.completedFuture(ResponseEntity.noContent()
+                .build());
     }
 
 }

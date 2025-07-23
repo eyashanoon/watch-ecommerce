@@ -9,6 +9,6 @@ public class ProductPriceFilter implements IProductFilter {
 
     @Override
     public Stream<Product> applyFilter(Stream<Product> products, ProductQueryObject queryObject) {
-        return products.filter(p -> p.getPrice() <= queryObject.getMaxprice() &&  p.getPrice() >= queryObject.getMinprice());
+        return products.filter(p -> p.getPrice() <= queryObject.getMaxPrice() &&  p.getPrice() >= queryObject.getMinPrice());
     }
 }

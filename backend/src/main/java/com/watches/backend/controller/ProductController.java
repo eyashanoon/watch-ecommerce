@@ -7,13 +7,14 @@ import com.watches.backend.mappers.ProductMapper;
 import com.watches.backend.model.Product;
 import com.watches.backend.service.ProductService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/products")
 public class ProductController {
 
     private final ProductService service;
@@ -23,7 +24,7 @@ public class ProductController {
     }
 
 
-    @GetMapping("/products")
+    @GetMapping
     ResponseEntity<List<ProductDto>> getAll(@Valid @ModelAttribute ProductQueryObject query){
         List<Product> products = service.findAll(query);
         List<ProductDto> productDTO = products.stream()
@@ -32,27 +33,27 @@ public class ProductController {
         return ResponseEntity.ok(productDTO);
     }
 
-    @GetMapping("/products/{id}")
+    @GetMapping("/{id}")
     ResponseEntity<ProductDto> GetById(@PathVariable Long id){
         Product product = service.findById(id);
-        return ResponseEntity.ok(ProductMapper.toDto(product));
+        ProductDto productDto = ProductMapper.toDto(product);
+        return ResponseEntity.ok(productDto);
     }
 
-    @PostMapping("/products")
+    @PostMapping
     ResponseEntity<Product> Create(@Valid @RequestBody CreateProductDto productDto){
-        Product product = ProductMapper.createToProduct(productDto);
-        URI location = service.create(product);
-        return ResponseEntity.created(location).body(product);
+        Product product = service.create(productDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 
-    @PutMapping("/products/{id}")
+    @PutMapping("/{id}")
     ResponseEntity<ProductDto> update(@Valid @RequestBody CreateProductDto productDto,
                    @Valid @PathVariable Long id){
         Product product = service.update(productDto, id);
         return ResponseEntity.ok().body(ProductMapper.toDto(product));
     }
 
-    @DeleteMapping("/products/{id}")
+    @DeleteMapping("/{id}")
     ResponseEntity<Product> delete(@Valid @PathVariable Long id){
         service.delete(id);
         return ResponseEntity.noContent().build();
