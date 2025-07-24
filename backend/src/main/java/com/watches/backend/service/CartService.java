@@ -6,9 +6,13 @@ import com.watches.backend.exceptions.CartNotFoundException;
 import com.watches.backend.mappers.CartMapper;
 import com.watches.backend.model.Cart;
 import com.watches.backend.model.ProductItem;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.CompletableFuture;
+
 @Service
+@Async
 public class CartService {
 
     private final CartRepository repository;
@@ -16,38 +20,49 @@ public class CartService {
         this.repository = repository;
     }
 
-    public Cart create(CreateCartDto cartDto){
+    public CompletableFuture<Cart> createAsync(CreateCartDto cartDto){
         Cart cart = CartMapper.createToCart(cartDto);
         repository.save(cart);
-        return cart;
+        return CompletableFuture.completedFuture(cart);
     }
 
-    public Cart findById(Long id){
-        return repository.findById(id)
-                .orElseThrow(() -> new CartNotFoundException(id));
+    public CompletableFuture<Cart> findByIdAsync(Long id){
+        return CompletableFuture.completedFuture(repository.findById(id)
+                .orElseThrow(() ->
+                        new CartNotFoundException(id)
+                )
+        );
     }
 
-    public void delete(Cart cart){
-        repository.delete(cart);
+    public void deleteByIdAsync(Long id){
+        CompletableFuture<Cart> cart =  findByIdAsync(id);
+
+        cart.thenAccept(
+                repository::delete
+        );
+
     }
 
-    public void deleteById(Long id){
-        Cart cart =  findById(id);
-        this.delete(cart);
+    public CompletableFuture<Cart> addItemAsync(Long id, ProductItem item){
+        CompletableFuture<Cart> cart = findByIdAsync(id);
+
+        cart.thenAccept(c -> {
+            c.addItem(item);
+            repository.save(c);
+        });
+
+        return cart.thenApply(c -> c);
     }
 
-    public Cart addItem(Long id, ProductItem item){
-        Cart cart = findById(id);
-        cart.addItem(item);
-        repository.save(cart);
-        return cart;
-    }
+    public CompletableFuture<Cart> removeItemAsync(Long id, ProductItem item){
+        CompletableFuture<Cart> cart = findByIdAsync(id);
 
-    public Cart removeItem(Long id, ProductItem item){
-        Cart cart = findById(id);
-        cart.removeItem(item);
-        repository.save(cart);
-        return cart;
+        cart.thenAccept(c -> {
+            c.removeItem(item);
+            repository.save(c);
+        });
+
+        return cart.thenApply(c -> c);
     }
 
 

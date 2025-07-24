@@ -5,11 +5,14 @@ import com.watches.backend.Repositories.SystemLogRepository;
 import com.watches.backend.exceptions.SystemLogNotFoundException;
 import com.watches.backend.mappers.SystemLogMapper;
 import com.watches.backend.model.SystemLog;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
+@Async
 public class SystemLogService {
 
     private final SystemLogRepository repository;
@@ -18,25 +21,31 @@ public class SystemLogService {
         this.repository = repository;
     }
 
-    public SystemLog create(CreateSystemLogDto createSystemLogDto){
+    public CompletableFuture<SystemLog> createAsync(CreateSystemLogDto createSystemLogDto){
         SystemLog systemLog = SystemLogMapper.createToSystemLog(createSystemLogDto);
         repository.save(systemLog);
-        return systemLog;
+        return CompletableFuture.completedFuture(systemLog);
     }
 
-    public List<SystemLog> getAll(){
-        return repository.findAll();
+    public CompletableFuture<List<SystemLog>> getAllAsync(){
+        return CompletableFuture.completedFuture(repository.findAll());
     }
 
-    public SystemLog getById(Long id){
-        return repository.findById(id)
-                .orElseThrow(() -> new SystemLogNotFoundException(id));
+    public CompletableFuture<SystemLog> findByIdAsync(Long id){
+        return CompletableFuture.completedFuture(
+                repository.findById(id)
+                .orElseThrow(() ->
+                        new SystemLogNotFoundException(id)
+                )
+        );
     }
 
-    public SystemLog deleteById(Long id){
-        SystemLog systemlog = this.getById(id);
-        repository.delete(systemlog);
-        return systemlog;
+    public void deleteByIdAsync(Long id){
+        CompletableFuture<SystemLog> systemLog = this.findByIdAsync(id);
+
+        systemLog.thenAccept(
+                repository::delete
+        );
     }
 
 }

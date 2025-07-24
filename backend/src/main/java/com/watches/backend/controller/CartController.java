@@ -9,11 +9,15 @@ import com.watches.backend.service.CartService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.CompletableFuture;
 
 
 @RestController
 @RequestMapping("/api/carts")
+@Async
 public class CartController {
 
     private final CartService service;
@@ -23,36 +27,74 @@ public class CartController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<CartDto> GetCartById(@PathVariable Long id){
-        Cart cart = service.findById(id);
-        CartDto cartDto =  CartMapper.toCartDto(cart);
-        return ResponseEntity.ok().body(cartDto);
+    CompletableFuture<ResponseEntity<CartDto>> GetCartById(@PathVariable Long id){
+
+        CompletableFuture<Cart> cart = service.findByIdAsync(id);
+
+        CompletableFuture<CartDto> cartDto =  cart.thenApply(
+                CartMapper::toCartDto
+        );
+
+        return cartDto.thenApply(dto ->
+                ResponseEntity.ok()
+                        .body(dto)
+        );
     }
 
     @PostMapping
-    ResponseEntity<Cart> CreateCart(@Valid @RequestBody CreateCartDto cartDto){
-        Cart cart = service.create(cartDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(cart);
+    CompletableFuture<ResponseEntity<Cart>> CreateCart(@Valid @RequestBody CreateCartDto cartDto){
+
+        CompletableFuture<Cart> cart = service.createAsync(cartDto);
+
+        return cart.thenApply(c ->
+                ResponseEntity.status(HttpStatus.CREATED)
+                        .body(c)
+        );
+
     }
 
     @PutMapping("/addItem/{id}")
-    ResponseEntity<CartDto> UpdateCart(@Valid @PathVariable Long id, @Valid @RequestBody ProductItem item){
-        Cart cart = service.addItem(id, item);
-        CartDto cartDto =  CartMapper.toCartDto(cart);
-        return ResponseEntity.ok().body(cartDto);
+    CompletableFuture<ResponseEntity<CartDto>> UpdateCart(@Valid @PathVariable Long id,
+                                                          @Valid @RequestBody ProductItem item){
+
+        CompletableFuture<Cart> cart = service.addItemAsync(id, item);
+
+        CompletableFuture<CartDto> cartDto =  cart.thenApply(
+                CartMapper::toCartDto
+        );
+
+        return cartDto.thenApply(dto ->
+                ResponseEntity.ok()
+                        .body(dto)
+        );
+
     }
 
     @PutMapping("/deleteItem/{id}")
-    ResponseEntity<CartDto> deleteItem(@PathVariable Long id, @Valid @RequestBody ProductItem item){
-        Cart cart = service.removeItem(id, item);
-        CartDto cartDto =  CartMapper.toCartDto(cart);
-        return ResponseEntity.ok().body(cartDto);
+    CompletableFuture<ResponseEntity<CartDto>> deleteItem(@PathVariable Long id,
+                                                          @Valid @RequestBody ProductItem item){
+
+        CompletableFuture<Cart> cart = service.removeItemAsync(id, item);
+
+        CompletableFuture<CartDto> cartDto =  cart.thenApply(
+                CartMapper::toCartDto
+        );
+
+        return cartDto.thenApply(dto ->
+                ResponseEntity.ok()
+                        .body(dto)
+        );
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<Cart> DeleteCart(@Valid @PathVariable Long id){
-        service.deleteById(id);
-        return ResponseEntity.notFound().build();
+    CompletableFuture<ResponseEntity<Cart>> DeleteCart(@Valid @PathVariable Long id){
+
+        service.deleteByIdAsync(id);
+
+        return CompletableFuture.completedFuture(
+                ResponseEntity.notFound()
+                        .build()
+        );
     }
 
 }

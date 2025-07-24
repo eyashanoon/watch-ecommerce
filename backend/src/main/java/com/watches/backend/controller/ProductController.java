@@ -7,14 +7,16 @@ import com.watches.backend.mappers.ProductMapper;
 import com.watches.backend.model.Product;
 import com.watches.backend.service.ProductService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/products")
+@Async
 public class ProductController {
 
     private final ProductService service;
@@ -25,38 +27,70 @@ public class ProductController {
 
 
     @GetMapping
-    ResponseEntity<List<ProductDto>> getAll(@Valid @ModelAttribute ProductQueryObject query){
-        List<Product> products = service.findAll(query);
-        List<ProductDto> productDTO = products.stream()
-                                            .map(ProductMapper::toDto)
-                                            .toList();
-        return ResponseEntity.ok(productDTO);
+    CompletableFuture<ResponseEntity<List<ProductDto>>> getAll(@Valid @ModelAttribute ProductQueryObject query){
+
+        CompletableFuture<List<Product>> products = service.findAllAsync(query);
+
+        CompletableFuture<List<ProductDto>> productDTO = products.thenApply(l ->
+                l.stream()
+                .map(ProductMapper::toDto)
+                .toList()
+        );
+
+        return productDTO.thenApply(l ->
+                ResponseEntity.ok()
+                        .body(l)
+        );
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<ProductDto> GetById(@PathVariable Long id){
-        Product product = service.findById(id);
-        ProductDto productDto = ProductMapper.toDto(product);
-        return ResponseEntity.ok(productDto);
+    CompletableFuture<ResponseEntity<ProductDto>> GetById(@PathVariable Long id){
+        CompletableFuture<Product> product = service.findByIdAsync(id);
+
+        CompletableFuture<ProductDto> productDto = product.thenApply(
+                ProductMapper::toDto
+        );
+
+        return productDto.thenApply(dto ->
+                ResponseEntity.ok()
+                        .body(dto)
+        );
     }
 
     @PostMapping
-    ResponseEntity<Product> Create(@Valid @RequestBody CreateProductDto productDto){
-        Product product = service.create(productDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(product);
+    CompletableFuture<ResponseEntity<Product>> Create(@Valid @RequestBody CreateProductDto productDto){
+        CompletableFuture<Product> product = service.createAsync(productDto);
+        return product.thenApply(p ->
+                ResponseEntity.ok()
+                        .body(p)
+        );
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<ProductDto> update(@Valid @RequestBody CreateProductDto productDto,
-                   @Valid @PathVariable Long id){
-        Product product = service.update(productDto, id);
-        return ResponseEntity.ok().body(ProductMapper.toDto(product));
+    CompletableFuture<ResponseEntity<ProductDto>> update(@Valid @RequestBody CreateProductDto productDto,
+                                                         @Valid @PathVariable Long id){
+
+        CompletableFuture<Product> product = service.updateAsync(productDto, id);
+
+        CompletableFuture<ProductDto> productDTO = product.thenApply(
+                ProductMapper::toDto
+        );
+
+        return productDTO.thenApply(dto ->
+                ResponseEntity.ok()
+                        .body(dto)
+        );
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<Product> delete(@Valid @PathVariable Long id){
-        service.delete(id);
-        return ResponseEntity.noContent().build();
+    CompletableFuture<ResponseEntity<Product>> delete(@Valid @PathVariable Long id){
+
+        service.deleteByIdAsync(id);
+
+        return CompletableFuture.completedFuture(
+                ResponseEntity.noContent()
+                        .build()
+        );
     }
 
 
