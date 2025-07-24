@@ -1,21 +1,23 @@
 package com.watches.backend.Dto;
 
+import java.util.List;
+
 public class UserDTO {
     private Long id;
     private String username;
     private String email;
     private String phone;
-    private String role;
+    private List<String> roles;
 
     public UserDTO() {
     }
 
-    public UserDTO(Long id, String username, String email, String phone, String role) {
+    public UserDTO(Long id, String username, String email, String phone, List<String> roles) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.phone = phone;
-        this.role = role;
+        this.roles = roles;
     }
 
     // Getters and Setters
@@ -51,11 +53,11 @@ public class UserDTO {
         this.phone = phone;
     }
 
-    public String getRole() {
-        return role;
+    public List<String> getRoles() {
+        return roles;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 }

@@ -4,6 +4,8 @@ import com.watches.backend.enums.Role;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 
+import java.util.List;
+
 @Entity
  
 public class Admin extends User {
@@ -14,7 +16,7 @@ public class Admin extends User {
 
     public Admin(String userName, String email, String password, String phone) {
         super(userName, email, password, phone);
-        this.setRole(Role.ADMIN);
+        this.setRoles(List.of(Role.ADMIN));
     }
 
 

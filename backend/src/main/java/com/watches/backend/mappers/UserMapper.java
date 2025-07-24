@@ -2,6 +2,7 @@ package com.watches.backend.mappers;
 
 import com.watches.backend.model.User;
 import com.watches.backend.Dto.UserDTO;
+import com.watches.backend.enums.*;
 
 public class UserMapper {
 
@@ -14,7 +15,7 @@ public class UserMapper {
                 user.getUsername(),
                 user.getEmail(),
                 user.getPhone(),
-                user.getRole().name()
+                user.getRoles().stream().map(role -> role.name()).toList()
         );
     }
 

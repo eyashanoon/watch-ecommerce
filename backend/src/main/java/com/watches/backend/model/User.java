@@ -3,6 +3,9 @@ package com.watches.backend.model;
 import jakarta.persistence.*;
 import com.watches.backend.enums.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
  
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -16,8 +19,9 @@ import com.watches.backend.enums.*;
     private String email;
     private String password;
     private String phone;
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private List<Role> roles = new ArrayList<>();
 
 
 
@@ -74,10 +78,13 @@ import com.watches.backend.enums.*;
     }
 
     // Abstract method that must be implemented by subclasses like Customer or Admin
-    public  Role getRole(){
-        return role;
-    };
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
 
+    public List<Role> getRoles() {
+        return roles;
+    }
     @Override
     public String toString() {
         return "User{" +
@@ -89,7 +96,4 @@ import com.watches.backend.enums.*;
                 '}';
     }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtUtil {
@@ -13,9 +14,10 @@ public class JwtUtil {
 
     private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
-    public String generateToken(String username) {
+    public String generateToken(String username, List<String> roles) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("roles", roles)  // Add roles claim
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -44,5 +46,14 @@ public class JwtUtil {
                 .getBody()
                 .getExpiration();
         return expiration.before(new Date());
+    }
+    public List<String> extractRoles(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.get("roles", List.class);
     }
 }

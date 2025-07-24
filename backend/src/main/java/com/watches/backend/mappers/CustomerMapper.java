@@ -28,7 +28,8 @@ public class CustomerMapper {
                 customer.getCart() == null ? null : customer.getCart().getId(),
                 customer.getWishlist() == null ? null : customer.getWishlist().getId(),
                 orderIDs,
-                savedCardIDs
+                savedCardIDs,
+                customer.getRoles().stream().map(role -> role.name()).toList()
         );
     }
 

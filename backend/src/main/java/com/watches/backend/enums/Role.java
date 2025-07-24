@@ -2,5 +2,6 @@ package com.watches.backend.enums;
 
 public enum Role {
     ADMIN,
-    CUSTOMER
+    CUSTOMER,
+    ADD_ADMINS,
 }

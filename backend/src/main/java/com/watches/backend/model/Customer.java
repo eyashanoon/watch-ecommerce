@@ -32,8 +32,7 @@ public class Customer extends User {
         if (orders != null) {
             orders.forEach(this::addOrder);
         }
-        this.setRole(Role.CUSTOMER);
-    }
+        this.setRoles(List.of(Role.CUSTOMER));    }
 
     public Customer() {
     }

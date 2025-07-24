@@ -13,6 +13,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -39,7 +43,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try {
                 username = jwtUtil.extractUsername(jwt);
             } catch (Exception e) {
-                // optionally log or handle token parsing exceptions here
+                // Invalid token
             }
         }
 
@@ -47,13 +51,22 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
             if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
+                List<String> roles = jwtUtil.extractRoles(jwt); // Extract roles from token
+                List<SimpleGrantedAuthority> authorities = roles.stream()
+                        .map(role -> "ROLE_" + role)
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities()
+                        userDetails, null, authorities
                 );
+
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+
         chain.doFilter(request, response);
     }
 }
