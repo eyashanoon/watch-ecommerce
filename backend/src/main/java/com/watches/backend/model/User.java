@@ -1,11 +1,12 @@
 package com.watches.backend.model;
 
 import jakarta.persistence.*;
+import com.watches.backend.enums.*;
 
 @Entity
  
 @Inheritance(strategy = InheritanceType.JOINED)
- public abstract class User {
+ public   class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,6 +16,10 @@ import jakarta.persistence.*;
     private String email;
     private String password;
     private String phone;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+
 
 
 
@@ -69,7 +74,9 @@ import jakarta.persistence.*;
     }
 
     // Abstract method that must be implemented by subclasses like Customer or Admin
-    public abstract String getRole();
+    public  Role getRole(){
+        return role;
+    };
 
     @Override
     public String toString() {
@@ -80,5 +87,9 @@ import jakarta.persistence.*;
                 ", password='" + password + '\'' +
                 ", phone='" + phone + '\'' +
                 '}';
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
