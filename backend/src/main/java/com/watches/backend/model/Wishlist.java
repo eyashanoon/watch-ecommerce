@@ -33,7 +33,13 @@ public class Wishlist {
     }
 
     public void addItem(Product product) {
-        this.products.add(product);
+        if (!this.products.contains(product)) {
+            this.products.add(product);
+        }
+    }
+
+    public void removeItem(Product product) {
+        this.products.remove(product);
     }
 
     public Long getId() {
@@ -68,4 +74,6 @@ public class Wishlist {
                 ", products=" + products +
                 '}';
     }
+
+
 }
