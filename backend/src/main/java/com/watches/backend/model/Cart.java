@@ -21,6 +21,7 @@ public class Cart {
 
     public Cart(Customer customer, List<ProductItem> items) {
         this.customer = customer;
+        customer.setCart(this);
         this.items = items;
     }
 

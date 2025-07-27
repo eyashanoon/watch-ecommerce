@@ -8,11 +8,13 @@ import com.watches.backend.Repositories.ProductRepository;
 import com.watches.backend.mappers.ProductMapper;
 import com.watches.backend.model.Product;
 import jakarta.validation.Valid;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Async
 public class ProductController {
 
     private final ProductRepository repository;

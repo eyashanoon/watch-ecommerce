@@ -17,6 +17,8 @@ import java.util.List;
 
     private String userName;
     private String email;
+
+
     private String password;
     private String phone;
     @ElementCollection(fetch = FetchType.EAGER)

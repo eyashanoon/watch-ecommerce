@@ -24,8 +24,7 @@ public class SavedCard {
 
     private boolean isDefault = false;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
+    @OneToOne(mappedBy = "SavedCard", cascade = CascadeType.ALL, orphanRemoval = true)
     private Customer customer;
 
     // Constructors

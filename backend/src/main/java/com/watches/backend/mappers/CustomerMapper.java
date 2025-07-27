@@ -3,6 +3,7 @@ package com.watches.backend.mappers;
 import com.watches.backend.Dto.CreateCustomerDTO;
 import com.watches.backend.Dto.CustomerDTO;
 import com.watches.backend.Dto.UpdateCustomerDTO;
+import com.watches.backend.enums.Role;
 import com.watches.backend.model.Customer;
 import com.watches.backend.model.Order;
 import com.watches.backend.model.SavedCard;
@@ -41,6 +42,7 @@ public class CustomerMapper {
         customer.setEmail(dto.getEmail());
         customer.setPhone(dto.getPhone());
         customer.setPassword(dto.getPassword());
+        customer.setRoles(List.of(Role.CUSTOMER));
 
         return customer;
     }
