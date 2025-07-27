@@ -25,8 +25,8 @@ public class Product {
     private Integer quantity;
     private Double discount;
 
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    private Map<String, String> tags;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Map<String, Object> tags;
 
     public Product() {}
 
@@ -72,6 +72,13 @@ public class Product {
         this.name = name;
     }
 
+    public Map<String, Object> getTags() {
+        return tags;
+    }
+
+    public void setTags(Map<String, Object> tags) {
+        this.tags = tags;
+    }
 
     public String getDescription() {
         return description;

@@ -3,6 +3,7 @@ package com.watches.backend.controller;
 import com.watches.backend.Dto.ProductDto.ProductDto;
 import com.watches.backend.Dto.WishlistDto.CreateWishlistDto;
 import com.watches.backend.Dto.WishlistDto.WishlistDto;
+import com.watches.backend.helpers.ProductQueryObject;
 import com.watches.backend.mappers.WishlistMapper;
 import com.watches.backend.model.Wishlist;
 import com.watches.backend.service.WishlistService;
@@ -27,9 +28,9 @@ public class WishlistController {
     }
 
     @GetMapping("/{id}")
-    CompletableFuture<ResponseEntity<WishlistDto>> getWishlist(@Valid @PathVariable Long id){
+    CompletableFuture<ResponseEntity<WishlistDto>> getWishlist(@Valid @PathVariable Long id, @ModelAttribute ProductQueryObject queryObject) {
 
-        CompletableFuture<Wishlist> wishlist = service.findByIdAsync(id);
+        CompletableFuture<Wishlist> wishlist = service.findByIdAsync(id, queryObject);
 
         CompletableFuture<WishlistDto> wishlistDto = wishlist.thenApply(
                 WishlistMapper::wishlistToDto

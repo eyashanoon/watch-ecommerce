@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,9 +28,9 @@ public class DiscountController {
     public CompletableFuture<ResponseEntity<List<Discount>>> getAll(){
         CompletableFuture<List<Discount>> discounts = service.findAllAsync();
 
-        return discounts.thenApply(discount ->
+        return discounts.thenApply(d ->
                 ResponseEntity.ok()
-                        .body(discount)
+                        .body(d)
         );
     }
 
@@ -37,18 +38,39 @@ public class DiscountController {
     public CompletableFuture<ResponseEntity<Discount>> getById(@Valid @PathVariable Long id){
         CompletableFuture<Discount> discount = service.findByIdAsync(id);
         return discount.thenApply(d ->
-                ResponseEntity.ok().body(d)
+                ResponseEntity.ok()
+                        .body(d)
+        );
+    }
+
+    @GetMapping("/product/{id}")
+    public CompletableFuture<ResponseEntity<Discount>> getByProductId(@PathVariable Long id){
+        CompletableFuture<Discount> discount = service.findByProductIdAsync(id);
+        return discount.thenApply(d ->
+                ResponseEntity.ok()
+                        .body(d)
         );
     }
 
     @PostMapping
     public CompletableFuture<ResponseEntity<Discount>> create(@Valid @RequestBody CreateDiscountDto discountDto){
-        CompletableFuture<Discount> discount = service.create(discountDto);
+        CompletableFuture<Discount> discount = service.createAsync(discountDto);
         return discount.thenApply(d ->
                 ResponseEntity.status(HttpStatus.CREATED)
                         .body(d)
         );
     }
 
+    @DeleteMapping("/{id}")
+    public CompletableFuture<ResponseEntity<Discount>> deleteById(@Valid @PathVariable Long id){
+        service.deleteByIdAsync(id);
+        return CompletableFuture.completedFuture(ResponseEntity.noContent().build());
+    }
+
+    @DeleteMapping("/product/{id}")
+    public CompletableFuture<ResponseEntity<Discount>> deleteByProductId(@PathVariable Long id){
+        service.deleteByProductIdAsync(id);
+        return CompletableFuture.completedFuture(ResponseEntity.noContent().build());
+    }
 
 }
