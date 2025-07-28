@@ -44,10 +44,19 @@ public class SavedCardService {
         SavedCard card = savedCardRepository.findByCustomer(customer);
         return SavedCardMapper.toDTO(card);
     }
+    public   List<SavedCardDTO> getAllCards() {
+        return savedCardRepository.findAll().stream().map(SavedCardMapper::toDTO).collect(Collectors.toList());
 
-    public SavedCardDTO updateCard(UpdateSavedCardDTO dto) {
-        SavedCard card = savedCardRepository.findById(dto.getId())
-                .orElseThrow(() -> new SavedCardNotFoundException( dto.getId()));
+    }
+    public    SavedCardDTO getCardByID(Long customerId) {
+        SavedCard savedCard= savedCardRepository.findById(customerId).orElseThrow(() -> new SavedCardNotFoundException(customerId));
+        return SavedCardMapper.toDTO(savedCard);
+    }
+
+
+    public SavedCardDTO updateCard(Long cardID,UpdateSavedCardDTO dto) {
+        SavedCard card = savedCardRepository.findById(cardID)
+                .orElseThrow(() -> new SavedCardNotFoundException( cardID));
 
         SavedCardMapper.updateEntityFromDTO(dto,card);
         SavedCard updated = savedCardRepository.save(card);
