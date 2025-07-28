@@ -24,7 +24,7 @@ public class SavedCard {
 
     private boolean isDefault = false;
 
-    @OneToOne(mappedBy = "SavedCard", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "savedCard", cascade = CascadeType.ALL, orphanRemoval = true)
     private Customer customer;
 
     // Constructors

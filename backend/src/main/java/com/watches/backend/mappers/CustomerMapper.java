@@ -18,8 +18,8 @@ public class CustomerMapper {
         List<Long> orderIDs = customer.getOrders() == null ? null :
                 customer.getOrders().stream().map(Order::getId).toList();
 
-        List<Long> savedCardIDs = customer.getSavedCards() == null ? null :
-                customer.getSavedCards().stream().map(SavedCard::getId).toList();
+         Long savedCardID = customer.getSavedCard() == null ? null :
+                customer.getSavedCard().getId();
 
         return new CustomerDTO(
                 customer.getId(),
@@ -29,7 +29,7 @@ public class CustomerMapper {
                 customer.getCart() == null ? null : customer.getCart().getId(),
                 customer.getWishlist() == null ? null : customer.getWishlist().getId(),
                 orderIDs,
-                savedCardIDs,
+                savedCardID,
                 customer.getRoles().stream().map(role -> role.name()).toList()
         );
     }

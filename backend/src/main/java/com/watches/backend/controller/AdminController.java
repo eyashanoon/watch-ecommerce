@@ -20,6 +20,7 @@ public class AdminController {
     public AdminController(AdminService adminService){
         this.adminService=adminService;
     }
+
     @PostMapping
     public ResponseEntity<AdminDTO> CreateAdmin(@RequestBody CreateAdminDTO  createAdminDTO){
         return ResponseEntity.status(HttpStatus.CREATED).body(adminService.createAdmin(createAdminDTO) );

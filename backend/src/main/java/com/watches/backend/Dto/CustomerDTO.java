@@ -13,13 +13,13 @@ public class CustomerDTO {
     private Long cartId;
     private Long wishlistId;
     private List<Long> orderIds;
-    private List<Long> savedCardIds;
+    private Long savedCardId;
 
     public CustomerDTO() {
     }
 
     public CustomerDTO(Long id, String username, String email, String phone,
-                       Long cartId, Long wishlistId, List<Long> orderIds, List<Long> savedCardIds, List<String> roles) {
+                       Long cartId, Long wishlistId, List<Long> orderIds, Long savedCardId, List<String> roles) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -28,7 +28,7 @@ public class CustomerDTO {
         this.cartId = cartId;
         this.wishlistId = wishlistId;
         this.orderIds = orderIds;
-        this.savedCardIds = savedCardIds;
+        this.savedCardId = savedCardId;
     }
 
     // Getters and Setters
@@ -97,11 +97,11 @@ public class CustomerDTO {
         this.orderIds = orderIds;
     }
 
-    public List<Long> getSavedCardIds() {
-        return savedCardIds;
+    public  Long getSavedCardId() {
+        return savedCardId;
     }
 
-    public void setSavedCardIds(List<Long> savedCardIds) {
-        this.savedCardIds = savedCardIds;
+    public void setSavedCardId( Long savedCardId) {
+        this.savedCardId = savedCardId;
     }
 }
