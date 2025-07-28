@@ -12,8 +12,6 @@ public class ProductMapper {
                 product.getBrand(),
                 product.getDescription(),
                 product.getType(),
-                product.getGender(),
-                product.getSize(),
                 product.getPrice(),
                 product.getQuantity(),
                 product.getDiscount()
@@ -26,22 +24,18 @@ public class ProductMapper {
                 productDto.getBrand(),
                 productDto.getDescription(),
                 productDto.getType(),
-                productDto.getGender(),
-                productDto.getSize(),
                 productDto.getPrice(),
                 productDto.getQuantity(),
                 productDto.getDiscount()
         );
     }
 
-    public static Product CreateToProduct(CreateProductDto dto){
+    public static Product createToProduct(CreateProductDto dto){
         return new Product(
                 dto.getName(),
                 dto.getBrand(),
                 dto.getDescription(),
                 dto.getType(),
-                dto.getGender(),
-                dto.getSize(),
                 dto.getPrice(),
                 dto.getQuantity(),
                 dto.getDiscount()

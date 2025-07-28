@@ -1,9 +1,10 @@
 package com.watches.backend.model;
 
-import com.watches.backend.enums.Gender;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Entity
@@ -17,17 +18,15 @@ public class Product {
     private String description;
     private String type;
 
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
-
-    private String size;
-
     @PositiveOrZero
     private Double price;
 
     @PositiveOrZero
     private Integer quantity;
     private Double discount;
+
+//    @ElementCollection(fetch = FetchType.EAGER)
+//    private Map<String, String> tags;
 
     public Product() {}
 
@@ -36,8 +35,6 @@ public class Product {
                    String brand,
                    String description,
                    String type,
-                   Gender gender,
-                   String size,
                    Double price,
                    Integer quantity,
                    Double discount
@@ -46,8 +43,6 @@ public class Product {
         this.brand = brand;
         this.description = description;
         this.type = type;
-        this.gender = gender;
-        this.size = size;
         this.price = price;
         this.quantity = quantity;
         this.discount = discount;
@@ -77,13 +72,6 @@ public class Product {
         this.name = name;
     }
 
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
 
     public String getDescription() {
         return description;
@@ -101,13 +89,6 @@ public class Product {
         this.type = type;
     }
 
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
 
     public Double getPrice() {
         return price;
@@ -137,12 +118,12 @@ public class Product {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Objects.equals(name, product.name) && Objects.equals(brand, product.brand) && Objects.equals(description, product.description) && Objects.equals(type, product.type) && gender == product.gender && Objects.equals(size, product.size);
+        return Objects.equals(name, product.name) && Objects.equals(brand, product.brand) && Objects.equals(description, product.description) && Objects.equals(type, product.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, brand, description, type, gender, size, price, quantity, discount);
+        return Objects.hash(id, name, brand, description, type, price, quantity, discount);
     }
 
     @Override
@@ -153,8 +134,6 @@ public class Product {
                 ", brand='" + brand + '\'' +
                 ", description='" + description + '\'' +
                 ", type='" + type + '\'' +
-                ", gender='" + gender + '\'' +
-                ", size='" + size + '\'' +
                 ", price=" + price +
                 ", quantity=" + quantity +
                 ", discount=" + discount +

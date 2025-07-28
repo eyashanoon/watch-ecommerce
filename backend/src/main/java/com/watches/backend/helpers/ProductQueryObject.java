@@ -1,15 +1,12 @@
-package com.watches.backend.Helpers;
+package com.watches.backend.helpers;
 
-import com.watches.backend.enums.Gender;
-import jakarta.validation.constraints.PositiveOrZero;
 
 public class ProductQueryObject {
     private String productName = null;
     private String productDescription = null;
     private String brand = null;
-    private Gender gender = null;
-    private Integer Maxprice = Integer.MAX_VALUE;
-    private Integer Minprice = -1;
+    private Integer maxPrice = Integer.MAX_VALUE;
+    private Integer minPrice = -1;
     private Integer page = 1;
     private Integer pageSize = 20;
 
@@ -18,21 +15,18 @@ public class ProductQueryObject {
     public ProductQueryObject(String productName,
                               String productDescription,
                               String brand,
-                              Gender gender,
                               Integer MaxPrice,
                               Integer MinPrice) {
         this.productName = productName;
         this.productDescription = productDescription;
         this.brand = brand;
-        this.gender = gender;
-        this.Maxprice = MaxPrice;
-        this.Minprice = MinPrice;
+        this.maxPrice = MaxPrice;
+        this.minPrice = MinPrice;
     }
 
     public ProductQueryObject(String productName,
                               String productDescription,
                               String brand,
-                              Gender gender,
                               Integer MaxPrice,
                               Integer MinPrice,
                               Integer page,
@@ -40,9 +34,8 @@ public class ProductQueryObject {
         this.productName = productName;
         this.productDescription = productDescription;
         this.brand = brand;
-        this.gender = gender;
-        this.Maxprice = MaxPrice;
-        this.Minprice = MinPrice;
+        this.maxPrice = MaxPrice;
+        this.minPrice = MinPrice;
         this.page = page;
         this.pageSize = pageSize;
     }
@@ -71,28 +64,20 @@ public class ProductQueryObject {
         this.brand = brand;
     }
 
-    public Gender getGender() {
-        return gender;
+    public Integer getMaxPrice() {
+        return maxPrice;
     }
 
-    public void setGender(Gender gender) {
-        this.gender = gender;
+    public void setMaxPrice(Integer maxPrice) {
+        this.maxPrice = maxPrice;
     }
 
-    public Integer getMaxprice() {
-        return Maxprice;
+    public Integer getMinPrice() {
+        return minPrice;
     }
 
-    public void setMaxprice(Integer maxprice) {
-        Maxprice = maxprice;
-    }
-
-    public Integer getMinprice() {
-        return Minprice;
-    }
-
-    public void setMinprice(Integer minprice) {
-        Minprice = minprice;
+    public void setMinPrice(Integer minPrice) {
+        this.minPrice = minPrice;
     }
 
     public Integer getPage() {

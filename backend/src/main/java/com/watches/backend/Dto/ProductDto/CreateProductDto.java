@@ -14,11 +14,6 @@ public class CreateProductDto {
     private String description;
     private String type;
 
-    @NotBlank(message = "Product gender is required")
-    private Gender gender = Gender.ALL;
-
-    private String size;
-
     @NotBlank(message = "Product price is required")
     @PositiveOrZero(message = "Product price must be zero or positive")
     private Double price = 0.0;
@@ -33,8 +28,6 @@ public class CreateProductDto {
             String brand,
             String description,
             String type,
-            Gender gender,
-            String size,
             Double price,
             Integer quantity,
             Double discount) {
@@ -42,8 +35,6 @@ public class CreateProductDto {
         this.brand = brand;
         this.description = description;
         this.type = type;
-        this.gender = gender;
-        this.size = size;
         this.price = price;
         this.quantity = quantity;
         this.discount = discount;
@@ -79,22 +70,6 @@ public class CreateProductDto {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
     }
 
     public Double getPrice() {

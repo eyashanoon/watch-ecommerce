@@ -2,74 +2,109 @@ package com.watches.backend.controller;
 
 import com.watches.backend.Dto.CartDto.CartDto;
 import com.watches.backend.Dto.CartDto.CreateCartDto;
-import com.watches.backend.Repositories.*;
+ import com.watches.backend.Repositories.*;
 import com.watches.backend.exceptions.CartNotFoundException;
 import com.watches.backend.exceptions.CustomerNotFoundException;
 import com.watches.backend.exceptions.ProductNotFoundException;
+ 
 import com.watches.backend.mappers.CartMapper;
 import com.watches.backend.model.Cart;
 import com.watches.backend.model.Customer;
 import com.watches.backend.model.ProductItem;
+import com.watches.backend.service.CartService;
 import jakarta.validation.Valid;
-import org.springframework.security.access.prepost.PreAuthorize;
+ import org.springframework.security.access.prepost.PreAuthorize;
+ import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+ 
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 
 @RestController
+@RequestMapping("/api/carts")
+@Async
 public class CartController {
+ 
+    private final CartService service;
 
-    private final CartRepository repository;
-    private final CustomerRepository customerRepository;
-    private final ProductRepository  productRepository;
+    public CartController(CartService service) {
+        this.service = service;
+ 
+    }
 
-    public CartController(CartRepository repository, CustomerRepository customerRepository,ProductRepository  productRepository) {
-        this.repository = repository;
-        this.customerRepository = customerRepository;
-        this.productRepository = productRepository;
+    @GetMapping("/{id}")
+    CompletableFuture<ResponseEntity<CartDto>> GetCartById(@PathVariable Long id){
+
+        CompletableFuture<Cart> cart = service.findByIdAsync(id);
+
+        CompletableFuture<CartDto> cartDto =  cart.thenApply(
+                CartMapper::toCartDto
+        );
+
+        return cartDto.thenApply(dto ->
+                ResponseEntity.ok()
+                        .body(dto)
+        );
+    }
+ 
+    @PostMapping
+    CompletableFuture<ResponseEntity<Cart>> CreateCart(@Valid @RequestBody CreateCartDto cartDto){
+
+        CompletableFuture<Cart> cart = service.createAsync(cartDto);
+
+        return cart.thenApply(c ->
+                ResponseEntity.status(HttpStatus.CREATED)
+                        .body(c)
+        );
+ 
 
     }
 
-    @GetMapping("/carts/{id}")
-    CartDto GetCartById(@PathVariable Long id){
-        return repository.findById(id)
-                .map(CartMapper::toCartDto)
-                .orElseThrow(() -> new CartNotFoundException(id));
-    }
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/carts")
-    Cart CreateCart(@Valid @RequestBody CreateCartDto cartDto){
-        Customer customer=customerRepository.findById(cartDto.getCustomer()).orElseThrow(()->new CustomerNotFoundException(cartDto.getCustomer()));
-         cartDto.getItems().forEach(productItem -> {
-            productItem.setProduct(productRepository.findById(productItem.getProduct().getId()).orElseThrow(()->new ProductNotFoundException(productItem.getProduct().getId())));
-        });
+    @PutMapping("/addItem/{id}")
+    CompletableFuture<ResponseEntity<CartDto>> UpdateCart(@Valid @PathVariable Long id,
+                                                          @Valid @RequestBody ProductItem item){
 
-        return repository.save(CartMapper.createToCart(cartDto,customer));
+        CompletableFuture<Cart> cart = service.addItemAsync(id, item);
 
+        CompletableFuture<CartDto> cartDto =  cart.thenApply(
+                CartMapper::toCartDto
+        );
+
+        return cartDto.thenApply(dto ->
+                ResponseEntity.ok()
+                        .body(dto)
+        );
 
     }
 
-    @PutMapping("/carts/addItem/{id}")
-    void UpdateCart(@PathVariable Long id, @RequestBody List<ProductItem> itemslist){
-        repository.findById(id)
-                .map(c -> {
-                    c.getItems().addAll(itemslist);
-                    return repository.save(c);
-                });
+    @PutMapping("/deleteItem/{id}")
+    CompletableFuture<ResponseEntity<CartDto>> deleteItem(@PathVariable Long id,
+                                                          @Valid @RequestBody ProductItem item){
+
+        CompletableFuture<Cart> cart = service.removeItemAsync(id, item);
+
+        CompletableFuture<CartDto> cartDto =  cart.thenApply(
+                CartMapper::toCartDto
+        );
+
+        return cartDto.thenApply(dto ->
+                ResponseEntity.ok()
+                        .body(dto)
+        );
     }
 
-    @PutMapping("/carts/deleteItem/{id}")
-    void deleteItem(@PathVariable Long id){
-        repository.findById(id)
-                .map(c -> {
-                    c.getItems().removeAll(c.getItems());
-                    return repository.save(c);
-                });
-    }
+    @DeleteMapping("/{id}")
+    CompletableFuture<ResponseEntity<Cart>> DeleteCart(@Valid @PathVariable Long id){
 
-    @DeleteMapping("/carts/{id}")
-    void DeleteCart(@PathVariable Long id){
-        repository.deleteById(id);
+        service.deleteByIdAsync(id);
+
+        return CompletableFuture.completedFuture(
+                ResponseEntity.notFound()
+                        .build()
+        );
     }
 
 }
