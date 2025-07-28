@@ -32,7 +32,24 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+        System.out.println("🔹 Method: " + request.getMethod());
+        System.out.println("🔹 URI: " + request.getRequestURI());
 
+        // 🟡 Print all headers
+        System.out.println("🔹 Headers:");
+        request.getHeaderNames().asIterator()
+                .forEachRemaining(headerName -> {
+                    String headerValue = request.getHeader(headerName);
+                    System.out.println("   " + headerName + ": " + headerValue);
+                });
+
+        // 🟡 Print query parameters
+        System.out.println("🔹 Query Parameters:");
+        request.getParameterMap().forEach((key, values) -> {
+            for (String value : values) {
+                System.out.println("   " + key + " = " + value);
+            }
+        });
         final String authorizationHeader = request.getHeader("Authorization");
 
         String username = null;
@@ -48,7 +65,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             System.out.println(",mmmm"+jwtUtil.extractRoles(jwt));
             if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
                 List<String> roles = jwtUtil.extractRoles(jwt); // Extract roles from token
