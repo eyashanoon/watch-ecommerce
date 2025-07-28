@@ -15,7 +15,9 @@ public class AdminMapper {
                 admin.getId(),
                 admin.getUsername(),
                 admin.getEmail(),
-                admin.getPhone()
+                admin.getPhone(),
+                admin.getRoles().stream().map(role -> role.name()).toList()
+
         );
     }
 

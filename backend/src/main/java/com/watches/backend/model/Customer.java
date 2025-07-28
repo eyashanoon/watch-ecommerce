@@ -1,5 +1,6 @@
 package com.watches.backend.model;
 
+import com.watches.backend.enums.Role;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +20,9 @@ public class Customer extends User {
     @JoinColumn(name = "wishlist_id", referencedColumnName = "id")
     private Wishlist wishlist;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SavedCard> savedCards = new ArrayList<>();
+    @OneToOne
+    @JoinColumn(name = "card_id")
+    private SavedCard savedCard;
 
     public Customer(String userName, String email, String password, String phone,
                     List<Order> orders, Cart cart, Wishlist wishlist) {
@@ -31,10 +33,11 @@ public class Customer extends User {
         if (orders != null) {
             orders.forEach(this::addOrder);
         }
-    }
+        this.setRoles(List.of(Role.CUSTOMER));    }
 
     public Customer() {
     }
+
 
 
 
@@ -62,23 +65,17 @@ public class Customer extends User {
         if (wishlist != null) wishlist.setCustomer(this);
     }
 
-    public List<SavedCard> getSavedCards() {
-        return savedCards;
+    public SavedCard getSavedCard() {
+        return savedCard;
     }
 
-    public void setSavedCards(List<SavedCard> savedCards) {
-        this.savedCards = savedCards;
+    public void setSavedCard(SavedCard savedCard) {
+        this.savedCard = savedCard;
     }
 
-    public void addSavedCard(SavedCard card) {
-        card.setCustomer(this);
-        this.savedCards.add(card);
-    }
 
-    public void removeSavedCard(SavedCard card) {
-        card.setCustomer(null);
-        this.savedCards.remove(card);
-    }
+
+
 
     public List<Order> getOrders() {
         return orders;

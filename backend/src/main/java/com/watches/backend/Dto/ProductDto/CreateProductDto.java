@@ -1,23 +1,34 @@
 package com.watches.backend.Dto.ProductDto;
 
-import com.watches.backend.enums.Gender;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+import org.springframework.web.multipart.MultipartFile;
 
 public class CreateProductDto {
 
     @NotBlank(message = "Product name is required")
     private String name;
+
+    private String description;
+
+    @NotNull(message = "Product image is required")
+    private MultipartFile image;
+
     @NotBlank(message = "Product brand is required")
     private String brand;
 
-    private String description;
+    private String size;
+    private Boolean waterProof;
+    private Boolean crystal;
+    private String color;
+
     private String type;
 
-    @NotBlank(message = "Product gender is required")
-    private Gender gender = Gender.ALL;
-
-    private String size;
+    private Boolean supportsDate;
+    private String numberingFormat;
+    private Boolean hasFullNumerals;
+    private Boolean hasTickingSound;
 
     @NotBlank(message = "Product price is required")
     @PositiveOrZero(message = "Product price must be zero or positive")
@@ -25,28 +36,37 @@ public class CreateProductDto {
 
     @PositiveOrZero(message = "Product quantity must be zero or positive")
     private Integer quantity = 0;
-    @PositiveOrZero(message = "Product discount must be zero or positive")
-    private Double discount = 0.0;
 
-    public CreateProductDto(
-            String name,
-            String brand,
-            String description,
-            String type,
-            Gender gender,
-            String size,
-            Double price,
-            Integer quantity,
-            Double discount) {
+    public CreateProductDto(String name,
+                            String description,
+                            MultipartFile image,
+                            String brand,
+                            String size,
+                            Boolean waterProof,
+                            Boolean crystal,
+                            String color,
+                            String type,
+                            Boolean supportsDate,
+                            String numberingFormat,
+                            Boolean hasFullNumerals,
+                            Boolean hasTickingSound,
+                            Double price,
+                            Integer quantity) {
         this.name = name;
-        this.brand = brand;
         this.description = description;
-        this.type = type;
-        this.gender = gender;
+        this.image = image;
+        this.brand = brand;
         this.size = size;
+        this.waterProof = waterProof;
+        this.crystal = crystal;
+        this.color = color;
+        this.type = type;
+        this.supportsDate = supportsDate;
+        this.numberingFormat = numberingFormat;
+        this.hasFullNumerals = hasFullNumerals;
+        this.hasTickingSound = hasTickingSound;
         this.price = price;
         this.quantity = quantity;
-        this.discount = discount;
     }
 
     public String getName() {
@@ -81,22 +101,6 @@ public class CreateProductDto {
         this.type = type;
     }
 
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
-
     public Double getPrice() {
         return price;
     }
@@ -113,11 +117,75 @@ public class CreateProductDto {
         this.quantity = quantity;
     }
 
-    public Double getDiscount() {
-        return discount;
+    public MultipartFile getImage() {
+        return image;
     }
 
-    public void setDiscount(Double discount) {
-        this.discount = discount;
+    public void setImage(MultipartFile image) {
+        this.image = image;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public Boolean getWaterProof() {
+        return waterProof;
+    }
+
+    public void setWaterProof(Boolean waterProof) {
+        this.waterProof = waterProof;
+    }
+
+    public Boolean getCrystal() {
+        return crystal;
+    }
+
+    public void setCrystal(Boolean crystal) {
+        this.crystal = crystal;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public Boolean getSupportsDate() {
+        return supportsDate;
+    }
+
+    public void setSupportsDate(Boolean supportsDate) {
+        this.supportsDate = supportsDate;
+    }
+
+    public String getNumberingFormat() {
+        return numberingFormat;
+    }
+
+    public void setNumberingFormat(String numberingFormat) {
+        this.numberingFormat = numberingFormat;
+    }
+
+    public Boolean getHasFullNumerals() {
+        return hasFullNumerals;
+    }
+
+    public void setHasFullNumerals(Boolean hasFullNumerals) {
+        this.hasFullNumerals = hasFullNumerals;
+    }
+
+    public Boolean getHasTickingSound() {
+        return hasTickingSound;
+    }
+
+    public void setHasTickingSound(Boolean hasTickingSound) {
+        this.hasTickingSound = hasTickingSound;
     }
 }

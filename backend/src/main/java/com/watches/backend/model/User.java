@@ -1,11 +1,15 @@
 package com.watches.backend.model;
 
 import jakarta.persistence.*;
+import com.watches.backend.enums.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
  
 @Inheritance(strategy = InheritanceType.JOINED)
- public abstract class User {
+ public   class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,8 +17,15 @@ import jakarta.persistence.*;
 
     private String userName;
     private String email;
+
+
     private String password;
     private String phone;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    private List<Role> roles = new ArrayList<>();
+
+
 
 
 
@@ -69,8 +80,13 @@ import jakarta.persistence.*;
     }
 
     // Abstract method that must be implemented by subclasses like Customer or Admin
-    public abstract String getRole();
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
 
+    public List<Role> getRoles() {
+        return roles;
+    }
     @Override
     public String toString() {
         return "User{" +
@@ -81,4 +97,5 @@ import jakarta.persistence.*;
                 ", phone='" + phone + '\'' +
                 '}';
     }
+
 }

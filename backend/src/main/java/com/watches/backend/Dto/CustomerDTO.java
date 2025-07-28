@@ -1,4 +1,4 @@
-package com.watches.backend.Dto;
+ package com.watches.backend.Dto;
 
 import java.util.List;
 
@@ -8,30 +8,30 @@ public class CustomerDTO {
     private String username;
     private String email;
     private String phone;
-    private final String role = "CUSTOMER";  // fixed role, no setter
+    private List<String> roles;  // support multiple roles
 
     private Long cartId;
     private Long wishlistId;
     private List<Long> orderIds;
-    private List<Long> savedCardIds;
+    private Long savedCardId;
 
     public CustomerDTO() {
-        // role is always "CUSTOMER"
     }
 
     public CustomerDTO(Long id, String username, String email, String phone,
-                       Long cartId, Long wishlistId, List<Long> orderIds, List<Long> savedCardIds) {
+                       Long cartId, Long wishlistId, List<Long> orderIds, Long savedCardId, List<String> roles) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.phone = phone;
+        this.roles = roles;
         this.cartId = cartId;
         this.wishlistId = wishlistId;
         this.orderIds = orderIds;
-        this.savedCardIds = savedCardIds;
+        this.savedCardId = savedCardId;
     }
 
-    // Getters and Setters (no setter for role)
+    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -65,8 +65,12 @@ public class CustomerDTO {
         this.phone = phone;
     }
 
-    public String getRole() {
-        return role;
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 
     public Long getCartId() {
@@ -93,11 +97,11 @@ public class CustomerDTO {
         this.orderIds = orderIds;
     }
 
-    public List<Long> getSavedCardIds() {
-        return savedCardIds;
+    public  Long getSavedCardId() {
+        return savedCardId;
     }
 
-    public void setSavedCardIds(List<Long> savedCardIds) {
-        this.savedCardIds = savedCardIds;
+    public void setSavedCardId( Long savedCardId) {
+        this.savedCardId = savedCardId;
     }
 }
