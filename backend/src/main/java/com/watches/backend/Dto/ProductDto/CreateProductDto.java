@@ -12,7 +12,7 @@ public class CreateProductDto {
 
     private String description;
 
-    @NotNull(message = "Product image is required")
+//    @NotNull(message = "Product image is required")
     private MultipartFile image;
 
     @NotBlank(message = "Product brand is required")
@@ -30,7 +30,6 @@ public class CreateProductDto {
     private Boolean hasFullNumerals;
     private Boolean hasTickingSound;
 
-    @NotBlank(message = "Product price is required")
     @PositiveOrZero(message = "Product price must be zero or positive")
     private Double price = 0.0;
 

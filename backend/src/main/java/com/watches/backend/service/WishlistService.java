@@ -31,15 +31,13 @@ public class WishlistService {
     private final CustomerRepository customerRepository;
 
     private final ImageService imageService;
-    private final ProductItemRepository productItemRepository;
 
     public WishlistService(WishlistRepository wishlistRepository,
                            CustomerRepository customerRepository,
-                           ImageService imageService, ProductItemRepository productItemRepository) {
+                           ImageService imageService) {
         this.wishlistRepository = wishlistRepository;
         this.customerRepository = customerRepository;
         this.imageService = imageService;
-        this.productItemRepository = productItemRepository;
     }
 
     public CompletableFuture<Wishlist> findByIdAsync(Long id, ProductQueryObject queryObject) {
