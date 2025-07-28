@@ -3,6 +3,7 @@ package com.watches.backend.mappers;
 import com.watches.backend.Dto.CartDto.CartDto;
 import com.watches.backend.Dto.CartDto.CreateCartDto;
 import com.watches.backend.model.Cart;
+import com.watches.backend.model.Customer;
 
 public class CartMapper {
 
@@ -19,9 +20,9 @@ public class CartMapper {
         );
     }
 
-    public static Cart createToCart(CreateCartDto createCartDto) {
+    public static Cart createToCart(CreateCartDto createCartDto, Customer customer) {
         return new Cart(
-                createCartDto.getCustomer(),
+                customer,
                 createCartDto.getItems()
         );
     }

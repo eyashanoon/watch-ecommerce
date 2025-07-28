@@ -3,26 +3,27 @@ package com.watches.backend.Dto.CartDto;
 import com.watches.backend.model.Customer;
 import com.watches.backend.model.ProductItem;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
 public class CreateCartDto {
-    @NotBlank(message = "Cart Customer is required")
-    private Customer customer;
+    @NotNull(message = "Cart Customer is required")
+    private Long customerID;
 
     private List<ProductItem> Items;
 
-    public CreateCartDto(Customer customer, List<ProductItem> items) {
-        this.customer = customer;
+    public CreateCartDto(Long customerID, List<ProductItem> items) {
+        this.customerID = customerID;
         Items = items;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public Long getCustomer() {
+        return customerID;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setCustomer(Long customer) {
+        this.customerID = customer;
     }
 
     public List<ProductItem> getItems() {

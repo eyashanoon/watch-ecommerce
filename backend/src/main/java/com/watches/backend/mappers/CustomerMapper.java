@@ -3,6 +3,7 @@ package com.watches.backend.mappers;
 import com.watches.backend.Dto.CreateCustomerDTO;
 import com.watches.backend.Dto.CustomerDTO;
 import com.watches.backend.Dto.UpdateCustomerDTO;
+import com.watches.backend.enums.Role;
 import com.watches.backend.model.Customer;
 import com.watches.backend.model.Order;
 import com.watches.backend.model.SavedCard;
@@ -17,8 +18,8 @@ public class CustomerMapper {
         List<Long> orderIDs = customer.getOrders() == null ? null :
                 customer.getOrders().stream().map(Order::getId).toList();
 
-        List<Long> savedCardIDs = customer.getSavedCards() == null ? null :
-                customer.getSavedCards().stream().map(SavedCard::getId).toList();
+         Long savedCardID = customer.getSavedCard() == null ? null :
+                customer.getSavedCard().getId();
 
         return new CustomerDTO(
                 customer.getId(),
@@ -28,7 +29,7 @@ public class CustomerMapper {
                 customer.getCart() == null ? null : customer.getCart().getId(),
                 customer.getWishlist() == null ? null : customer.getWishlist().getId(),
                 orderIDs,
-                savedCardIDs,
+                savedCardID,
                 customer.getRoles().stream().map(role -> role.name()).toList()
         );
     }
@@ -41,6 +42,7 @@ public class CustomerMapper {
         customer.setEmail(dto.getEmail());
         customer.setPhone(dto.getPhone());
         customer.setPassword(dto.getPassword());
+        customer.setRoles(List.of(Role.CUSTOMER));
 
         return customer;
     }

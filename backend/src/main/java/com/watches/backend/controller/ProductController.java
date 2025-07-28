@@ -7,7 +7,9 @@ import com.watches.backend.mappers.ProductMapper;
 import com.watches.backend.model.Product;
 import com.watches.backend.service.ProductService;
 import jakarta.validation.Valid;
+ 
 import org.springframework.http.ResponseEntity;
+ 
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -18,7 +20,9 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
+ 
 @RequestMapping("/api/products")
+ 
 @Async
 @EnableMethodSecurity
 public class ProductController {
