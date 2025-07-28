@@ -1,8 +1,10 @@
 package com.watches.backend.controller;
 
 import com.watches.backend.Dto.ProductDto.ProductDto;
+import com.watches.backend.Dto.ProductDto.WishlistProductDto;
 import com.watches.backend.Dto.WishlistDto.CreateWishlistDto;
 import com.watches.backend.Dto.WishlistDto.WishlistDto;
+import com.watches.backend.helpers.ProductQueryObject;
 import com.watches.backend.mappers.WishlistMapper;
 import com.watches.backend.model.Wishlist;
 import com.watches.backend.service.WishlistService;
@@ -27,9 +29,9 @@ public class WishlistController {
     }
 
     @GetMapping("/{id}")
-    CompletableFuture<ResponseEntity<WishlistDto>> getWishlist(@Valid @PathVariable Long id){
+    CompletableFuture<ResponseEntity<WishlistDto>> getWishlist(@Valid @PathVariable Long id, @ModelAttribute ProductQueryObject queryObject) {
 
-        CompletableFuture<Wishlist> wishlist = service.findByIdAsync(id);
+        CompletableFuture<Wishlist> wishlist = service.findByIdAsync(id, queryObject);
 
         CompletableFuture<WishlistDto> wishlistDto = wishlist.thenApply(
                 WishlistMapper::wishlistToDto
@@ -70,7 +72,7 @@ public class WishlistController {
 
     @PutMapping("/add/{id}")
     CompletableFuture<ResponseEntity<WishlistDto>> addProduct(@Valid @PathVariable Long id,
-                                                              @Valid @RequestBody ProductDto product){
+                                                              @Valid @RequestBody WishlistProductDto product){
 
         CompletableFuture<Wishlist> wishlist = service.addProductAsync(id, product);
 
@@ -86,7 +88,7 @@ public class WishlistController {
 
     @PutMapping("/add/customer/{customerID}")
     CompletableFuture<ResponseEntity<WishlistDto>> addProductByCustomerId(@Valid @PathVariable Long customerID,
-                                                                          @Valid @RequestBody ProductDto product){
+                                                                          @Valid @RequestBody WishlistProductDto product){
 
         CompletableFuture<Wishlist> wishlist = service.addProductByCustomerIdAsync(customerID, product);
 
@@ -102,7 +104,7 @@ public class WishlistController {
 
     @PutMapping("/remove/{id}")
     CompletableFuture<ResponseEntity<WishlistDto>> removeProduct(@Valid @PathVariable Long id,
-                                                                 @Valid @RequestBody ProductDto product){
+                                                                 @Valid @RequestBody WishlistProductDto product){
 
         CompletableFuture<Wishlist> wishlist = service.removeProductAsync(id, product);
 
@@ -118,7 +120,7 @@ public class WishlistController {
 
     @PutMapping("/remove/customer/{customerID}")
     CompletableFuture<ResponseEntity<WishlistDto>> removeProductByCustomerId(@Valid @PathVariable Long customerID,
-                                                                             @Valid @RequestBody ProductDto product){
+                                                                             @Valid @RequestBody WishlistProductDto product){
 
         CompletableFuture<Wishlist> wishlist = service.removeProductByCustomerIdAsync(customerID, product);
 

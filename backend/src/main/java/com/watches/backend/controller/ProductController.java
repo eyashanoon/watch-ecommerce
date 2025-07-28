@@ -11,9 +11,12 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
  
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 import java.util.concurrent.CompletableFuture;
 
 @RestController
@@ -21,24 +24,27 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("/api/products")
  
 @Async
+@EnableMethodSecurity
 public class ProductController {
 
     private final ProductService service;
 
-    public ProductController(ProductService service) {
-        this.service = service;
+    public ProductController(ProductService productService) {
+        this.service = productService;
     }
 
 
+
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     CompletableFuture<ResponseEntity<List<ProductDto>>> getAll(@Valid @ModelAttribute ProductQueryObject query){
 
         CompletableFuture<List<Product>> products = service.findAllAsync(query);
 
         CompletableFuture<List<ProductDto>> productDTO = products.thenApply(l ->
                 l.stream()
-                .map(ProductMapper::toDto)
-                .toList()
+                        .map(ProductMapper::toDto)
+                        .toList()
         );
 
         return productDTO.thenApply(l ->
@@ -49,6 +55,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     CompletableFuture<ResponseEntity<ProductDto>> GetById(@PathVariable Long id){
+
         CompletableFuture<Product> product = service.findByIdAsync(id);
 
         CompletableFuture<ProductDto> productDto = product.thenApply(
@@ -62,8 +69,10 @@ public class ProductController {
     }
 
     @PostMapping
-    CompletableFuture<ResponseEntity<Product>> Create(@Valid @RequestBody CreateProductDto productDto){
-        CompletableFuture<Product> product = service.createAsync(productDto);
+    CompletableFuture<ResponseEntity<Product>> Create(@Valid @RequestBody CreateProductDto createProductDto){
+
+        CompletableFuture<Product> product = service.createAsync(createProductDto);
+
         return product.thenApply(p ->
                 ResponseEntity.ok()
                         .body(p)

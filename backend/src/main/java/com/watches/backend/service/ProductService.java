@@ -7,10 +7,12 @@ import com.watches.backend.exceptions.ProductNotFoundException;
 import com.watches.backend.helpers.factories.ProductFilterFactory;
 import com.watches.backend.helpers.productOptions.IProductFilter;
 import com.watches.backend.mappers.ProductMapper;
+import com.watches.backend.model.Image;
 import com.watches.backend.model.Product;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
@@ -20,13 +22,20 @@ import java.util.stream.Stream;
 public class ProductService {
 
     private final ProductRepository repository;
-    public ProductService(ProductRepository repository) {
+    private final ImageService imageService;
+
+    public ProductService(ProductRepository repository,
+                          ImageService imageService) {
         this.repository = repository;
+        this.imageService = imageService;
     }
 
 
-    public CompletableFuture<Product> createAsync(CreateProductDto productDto) {
+    public CompletableFuture<Product> createAsync(CreateProductDto productDto){
+        CompletableFuture<Image> productImage = imageService.createImage(productDto.getImage());
+
         Product product = ProductMapper.createToProduct(productDto);
+        productImage.thenAccept(product::setImage);
         repository.save(product);
         return CompletableFuture.completedFuture(product);
     }
@@ -40,7 +49,6 @@ public class ProductService {
             p.setPrice(createProductDto.getPrice());
             p.setQuantity(createProductDto.getQuantity());
             p.setType(createProductDto.getType());
-            p.setDiscount(createProductDto.getDiscount());
             p.setBrand(createProductDto.getBrand());
             return repository.save(p);
         });

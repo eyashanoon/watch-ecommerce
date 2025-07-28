@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 public class Discount {
@@ -11,9 +12,8 @@ public class Discount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", referencedColumnName = "id")
-    private Product product;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "discount")
+    private Set<Product> products;
 
     @Positive
     private Double discount;
@@ -22,18 +22,18 @@ public class Discount {
 
     public Discount() {}
 
-    public Discount(Product product, Double discount, LocalDateTime endDate) {
-        this.product = product;
+    public Discount(Set<Product> product, Double discount, LocalDateTime endDate) {
+        this.products = product;
         this.discount = discount;
         EndDate = endDate;
     }
 
-    public Product getProduct() {
-        return product;
+    public Set<Product> getProduct() {
+        return products;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProduct(Set<Product> product) {
+        this.products = product;
     }
 
     public Integer getId() {
