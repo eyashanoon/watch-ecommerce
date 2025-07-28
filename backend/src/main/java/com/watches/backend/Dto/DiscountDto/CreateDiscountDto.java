@@ -6,10 +6,11 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 public class CreateDiscountDto {
     @NotBlank(message = "Discount Product Required")
-    Product product = null;
+    Set<Product> product = null;
 
     @NotBlank(message = "Discount must Expire in the future")
     LocalDateTime ExpireAt = null;
@@ -19,17 +20,17 @@ public class CreateDiscountDto {
 
     public CreateDiscountDto() {}
 
-    public CreateDiscountDto(Product product, LocalDateTime expireAt, Double discountPercentage) {
+    public CreateDiscountDto(Set<Product> product, LocalDateTime expireAt, Double discountPercentage) {
         this.product = product;
         ExpireAt = expireAt;
         DiscountPercentage = discountPercentage;
     }
 
-    public Product getProduct() {
+    public Set<Product> getProduct() {
         return product;
     }
 
-    public void setProduct(Product product) {
+    public void setProduct(Set<Product> product) {
         this.product = product;
     }
 

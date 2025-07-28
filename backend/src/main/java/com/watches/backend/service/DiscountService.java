@@ -37,21 +37,21 @@ public class DiscountService {
         );
     }
 
-    public CompletableFuture<Discount> findByProductIdAsync(Long productId){
-
-        productService.findByIdAsync(productId); // checks if the product exists or not
-
-        Discount discount = repository.findAll()
-                        .stream()
-                        .filter(d -> Objects.equals(d.getProduct().getId(), productId))
-                        .toList()
-                        .get(0);
-
-        if(Objects.isNull(discount)){
-            throw new DiscountNotFoundException(productId);
-        }
-        return  CompletableFuture.completedFuture(discount);
-    }
+//    public CompletableFuture<Discount> findByProductIdAsync(Long productId){
+//
+//        productService.findByIdAsync(productId); // checks if the product exists or not
+//
+//        Discount discount = repository.findAll()
+//                        .stream()
+//                        .filter(d -> Objects.equals(d.getProduct().getId(), productId))
+//                        .toList()
+//                        .get(0);
+//
+//        if(Objects.isNull(discount)){
+//            throw new DiscountNotFoundException(productId);
+//        }
+//        return  CompletableFuture.completedFuture(discount);
+//    }
 
     public CompletableFuture<Discount> createAsync(CreateDiscountDto discountDto){
         Discount discount = DiscountMapper.createToDiscount(discountDto);
@@ -68,9 +68,9 @@ public class DiscountService {
         );
     }
 
-    public void deleteByProductIdAsync(Long productId){
-        CompletableFuture<Discount> discount = this.findByProductIdAsync(productId);
-        discount.thenAccept(repository::delete);
-    }
+//    public void deleteByProductIdAsync(Long productId){
+//        CompletableFuture<Discount> discount = this.findByProductIdAsync(productId);
+//        discount.thenAccept(repository::delete);
+//    }
 
 }

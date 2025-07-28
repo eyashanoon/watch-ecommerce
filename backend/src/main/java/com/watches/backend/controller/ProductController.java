@@ -1,9 +1,7 @@
 package com.watches.backend.controller;
 
-import com.watches.backend.Dto.ProductDto.CombinedPorductRequest;
 import com.watches.backend.Dto.ProductDto.CreateProductDto;
 import com.watches.backend.Dto.ProductDto.ProductDto;
-import com.watches.backend.Dto.ProductDto.ProductFeaturesDto;
 import com.watches.backend.helpers.ProductQueryObject;
 import com.watches.backend.mappers.ProductMapper;
 import com.watches.backend.model.Product;
@@ -16,7 +14,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
+
 import java.util.concurrent.CompletableFuture;
 
 @RestController
@@ -27,8 +25,8 @@ public class ProductController {
 
     private final ProductService service;
 
-    public ProductController(ProductService service) {
-        this.service = service;
+    public ProductController(ProductService productService) {
+        this.service = productService;
     }
 
 
@@ -53,6 +51,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     CompletableFuture<ResponseEntity<ProductDto>> GetById(@PathVariable Long id){
+
         CompletableFuture<Product> product = service.findByIdAsync(id);
 
         CompletableFuture<ProductDto> productDto = product.thenApply(
@@ -66,16 +65,9 @@ public class ProductController {
     }
 
     @PostMapping
-    CompletableFuture<ResponseEntity<Product>> Create(@Valid @RequestBody CombinedPorductRequest combinedPorductRequest){
+    CompletableFuture<ResponseEntity<Product>> Create(@Valid @RequestBody CreateProductDto createProductDto){
 
-        CreateProductDto productDto = combinedPorductRequest.getCreateProductDto();
-        Map<String, Object> tags = ProductFeaturesDto.getAllTags(
-                combinedPorductRequest.getProductFeaturesDto()
-        );
-
-        CompletableFuture<Product> product = service.createAsync(productDto);
-
-        product.thenAccept(p -> p.setTags(tags));
+        CompletableFuture<Product> product = service.createAsync(createProductDto);
 
         return product.thenApply(p ->
                 ResponseEntity.ok()

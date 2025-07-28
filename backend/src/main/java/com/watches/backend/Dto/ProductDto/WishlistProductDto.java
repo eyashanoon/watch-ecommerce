@@ -5,15 +5,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.web.multipart.MultipartFile;
 
-public class CreateProductDto {
-
+public class WishlistProductDto {
     @NotBlank(message = "Product name is required")
     private String name;
 
     private String description;
 
     @NotNull(message = "Product image is required")
-    private MultipartFile image;
+    private Long imageId;
 
     @NotBlank(message = "Product brand is required")
     private String brand;
@@ -37,52 +36,12 @@ public class CreateProductDto {
     @PositiveOrZero(message = "Product quantity must be zero or positive")
     private Integer quantity = 0;
 
-    public CreateProductDto(String name,
-                            String description,
-                            MultipartFile image,
-                            String brand,
-                            String size,
-                            Boolean waterProof,
-                            Boolean crystal,
-                            String color,
-                            String type,
-                            Boolean supportsDate,
-                            String numberingFormat,
-                            Boolean hasFullNumerals,
-                            Boolean hasTickingSound,
-                            Double price,
-                            Integer quantity) {
-        this.name = name;
-        this.description = description;
-        this.image = image;
-        this.brand = brand;
-        this.size = size;
-        this.waterProof = waterProof;
-        this.crystal = crystal;
-        this.color = color;
-        this.type = type;
-        this.supportsDate = supportsDate;
-        this.numberingFormat = numberingFormat;
-        this.hasFullNumerals = hasFullNumerals;
-        this.hasTickingSound = hasTickingSound;
-        this.price = price;
-        this.quantity = quantity;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
     }
 
     public String getDescription() {
@@ -93,36 +52,20 @@ public class CreateProductDto {
         this.description = description;
     }
 
-    public String getType() {
-        return type;
+    public Long getImageId() {
+        return imageId;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setImageId(Long imageId) {
+        this.imageId = imageId;
     }
 
-    public Double getPrice() {
-        return price;
+    public String getBrand() {
+        return brand;
     }
 
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public MultipartFile getImage() {
-        return image;
-    }
-
-    public void setImage(MultipartFile image) {
-        this.image = image;
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     public String getSize() {
@@ -157,6 +100,14 @@ public class CreateProductDto {
         this.color = color;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public Boolean getSupportsDate() {
         return supportsDate;
     }
@@ -187,5 +138,21 @@ public class CreateProductDto {
 
     public void setHasTickingSound(Boolean hasTickingSound) {
         this.hasTickingSound = hasTickingSound;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 }

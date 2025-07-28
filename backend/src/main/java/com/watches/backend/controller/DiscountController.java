@@ -43,14 +43,14 @@ public class DiscountController {
         );
     }
 
-    @GetMapping("/product/{id}")
-    public CompletableFuture<ResponseEntity<Discount>> getByProductId(@PathVariable Long id){
-        CompletableFuture<Discount> discount = service.findByProductIdAsync(id);
-        return discount.thenApply(d ->
-                ResponseEntity.ok()
-                        .body(d)
-        );
-    }
+//    @GetMapping("/product/{id}")
+//    public CompletableFuture<ResponseEntity<Discount>> getByProductId(@PathVariable Long id){
+//        CompletableFuture<Discount> discount = service.findByProductIdAsync(id);
+//        return discount.thenApply(d ->
+//                ResponseEntity.ok()
+//                        .body(d)
+//        );
+//    }
 
     @PostMapping
     public CompletableFuture<ResponseEntity<Discount>> create(@Valid @RequestBody CreateDiscountDto discountDto){
@@ -67,10 +67,10 @@ public class DiscountController {
         return CompletableFuture.completedFuture(ResponseEntity.noContent().build());
     }
 
-    @DeleteMapping("/product/{id}")
-    public CompletableFuture<ResponseEntity<Discount>> deleteByProductId(@PathVariable Long id){
-        service.deleteByProductIdAsync(id);
-        return CompletableFuture.completedFuture(ResponseEntity.noContent().build());
-    }
+//    @DeleteMapping("/product/{id}")
+//    public CompletableFuture<ResponseEntity<Discount>> deleteByProductId(@PathVariable Long id){
+//        service.deleteByProductIdAsync(id);
+//        return CompletableFuture.completedFuture(ResponseEntity.noContent().build());
+//    }
 
 }
