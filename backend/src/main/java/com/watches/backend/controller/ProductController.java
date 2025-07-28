@@ -7,7 +7,9 @@ import com.watches.backend.mappers.ProductMapper;
 import com.watches.backend.model.Product;
 import com.watches.backend.service.ProductService;
 import jakarta.validation.Valid;
+ 
 import org.springframework.http.ResponseEntity;
+ 
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +17,9 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
+ 
 @RequestMapping("/api/products")
+ 
 @Async
 public class ProductController {
 

@@ -20,8 +20,9 @@ public class Customer extends User {
     @JoinColumn(name = "wishlist_id", referencedColumnName = "id")
     private Wishlist wishlist;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SavedCard> savedCards = new ArrayList<>();
+    @OneToOne
+    @JoinColumn(name = "card_id")
+    private SavedCard savedCards;
 
     public Customer(String userName, String email, String password, String phone,
                     List<Order> orders, Cart cart, Wishlist wishlist) {

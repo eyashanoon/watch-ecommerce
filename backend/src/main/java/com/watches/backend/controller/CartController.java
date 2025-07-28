@@ -2,14 +2,22 @@ package com.watches.backend.controller;
 
 import com.watches.backend.Dto.CartDto.CartDto;
 import com.watches.backend.Dto.CartDto.CreateCartDto;
+ import com.watches.backend.Repositories.*;
+import com.watches.backend.exceptions.CartNotFoundException;
+import com.watches.backend.exceptions.CustomerNotFoundException;
+import com.watches.backend.exceptions.ProductNotFoundException;
+ 
 import com.watches.backend.mappers.CartMapper;
 import com.watches.backend.model.Cart;
+import com.watches.backend.model.Customer;
 import com.watches.backend.model.ProductItem;
 import com.watches.backend.service.CartService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+ import org.springframework.security.access.prepost.PreAuthorize;
+ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
+ 
 import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.CompletableFuture;
@@ -19,11 +27,12 @@ import java.util.concurrent.CompletableFuture;
 @RequestMapping("/api/carts")
 @Async
 public class CartController {
-
+ 
     private final CartService service;
 
     public CartController(CartService service) {
         this.service = service;
+ 
     }
 
     @GetMapping("/{id}")
@@ -40,7 +49,7 @@ public class CartController {
                         .body(dto)
         );
     }
-
+ 
     @PostMapping
     CompletableFuture<ResponseEntity<Cart>> CreateCart(@Valid @RequestBody CreateCartDto cartDto){
 
@@ -50,6 +59,7 @@ public class CartController {
                 ResponseEntity.status(HttpStatus.CREATED)
                         .body(c)
         );
+ 
 
     }
 

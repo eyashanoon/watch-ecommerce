@@ -49,7 +49,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
+            System.out.println(",mmmm"+jwtUtil.extractRoles(jwt));
             if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
                 List<String> roles = jwtUtil.extractRoles(jwt); // Extract roles from token
                 List<SimpleGrantedAuthority> authorities = roles.stream()

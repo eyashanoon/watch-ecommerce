@@ -21,7 +21,7 @@ public class OrderItem {
 
     private Integer quantity;
 
-    private Double priceAtPurchase;
+    private Double priceAtPurchase=0.0;
 
     public OrderItem(Product product, Order order, int quantity) {
         this.product = product;

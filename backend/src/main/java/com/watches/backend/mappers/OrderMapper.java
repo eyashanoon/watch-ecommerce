@@ -75,4 +75,23 @@ public class OrderMapper {
             order.setStatus(dto.getStatus());
          }
     }
+
+    public static  CreateOrderDTO fromCartToCreateOrderDTO(Cart cart) {
+        if (cart == null) return null;
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO();
+        createOrderDTO.setCustomerId(cart.getCustomer().getId());
+        List<CreateOrderItemDTO> items=cart.getItems().stream().map(OrderMapper::fromCartItemToCreateOrderItemDTO).toList();
+        createOrderDTO.setItems(items);
+        return createOrderDTO;
+
+    }
+    public static CreateOrderItemDTO fromCartItemToCreateOrderItemDTO( ProductItem cartItem) {
+        if (cartItem == null) return null;
+        CreateOrderItemDTO createOrderItemDTO = new CreateOrderItemDTO();
+        createOrderItemDTO.setProductId(cartItem.getProduct().getId());
+        createOrderItemDTO.setQuantity(cartItem.getQuantity());
+        return createOrderItemDTO;
+
+
+    }
 }
