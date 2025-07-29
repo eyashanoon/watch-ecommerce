@@ -15,6 +15,7 @@ public class PaymentController {
 
     @PostMapping("/make")
     public ResponseEntity<?> makePayment(@RequestBody PaymentDTO paymentDTO) {
+        System.out.println(paymentDTO);
         boolean result = paymentService.makePayment(paymentDTO);
         if (result) {
             return ResponseEntity.ok().body("Payment successful");

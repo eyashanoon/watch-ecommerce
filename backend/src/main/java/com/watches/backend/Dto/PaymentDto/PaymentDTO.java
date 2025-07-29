@@ -1,4 +1,6 @@
-package com.payment.paymentServer;
+package com.watches.backend.Dto.PaymentDto;
+
+import com.watches.backend.enums.CardType;
 
 public class PaymentDTO {
      private String cardNumber;
@@ -12,7 +14,7 @@ public class PaymentDTO {
      private Long userId;
      private String companyName;
 
-     public PaymentDTO(  String cardNumber, Double amount, String expiryDate, String cvv) {
+     public PaymentDTO( String cardNumber, Double amount, String expiryDate, String cvv) {
           this.cardNumber = cardNumber;
          this.amount = amount;
          this.expiryDate = expiryDate;
@@ -75,18 +77,4 @@ public class PaymentDTO {
     public void setAmount(Double amount) {
         this.amount = amount;
     }
-    @Override
-    public String toString() {
-        return "PaymentDTO{" +
-                "cardNumber='" + cardNumber + '\'' +
-                ", amount=" + amount +
-                ", expiryDate='" + expiryDate + '\'' +
-                ", cvv='" + cvv + '\'' +
-                ", cardType=" + cardType +
-                ", userId=" + userId +
-                ", companyName='" + companyName + '\'' +
-                '}';
-    }
-
-
 }
