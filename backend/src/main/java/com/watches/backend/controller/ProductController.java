@@ -14,16 +14,14 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 import java.util.concurrent.CompletableFuture;
 
 @RestController
- 
 @RequestMapping("/api/products")
- 
-@Async
 @EnableMethodSecurity
 public class ProductController {
 
@@ -36,8 +34,8 @@ public class ProductController {
 
 
     @GetMapping
-//    @PreAuthorize("hasRole('ADMIN')")
-    CompletableFuture<ResponseEntity<List<ProductDto>>> getAll(@Valid @ModelAttribute ProductQueryObject query){
+    @PreAuthorize("hasRole('ADMIN')")
+    ResponseEntity<List<ProductDto>> getAll(@Valid @ModelAttribute ProductQueryObject query){
 
         CompletableFuture<List<Product>> products = service.findAllAsync(query);
 
@@ -47,14 +45,13 @@ public class ProductController {
                         .toList()
         );
 
-        return productDTO.thenApply(l ->
-                ResponseEntity.ok()
-                        .body(l)
-        );
+        return ResponseEntity.ok()
+                .body(productDTO.join()
+                );
     }
 
     @GetMapping("/{id}")
-    CompletableFuture<ResponseEntity<ProductDto>> getById(@PathVariable Long id){
+    ResponseEntity<ProductDto> getById(@PathVariable Long id){
 
         CompletableFuture<Product> product = service.findByIdAsync(id);
 
@@ -62,21 +59,19 @@ public class ProductController {
                 ProductMapper::toDto
         );
 
-        return productDto.thenApply(dto ->
-                ResponseEntity.ok()
-                        .body(dto)
-        );
+        return ResponseEntity.ok()
+                .body(productDto.join()
+                );
     }
 
     @PostMapping
-    CompletableFuture<ResponseEntity<Product>> create(@Valid @ModelAttribute CreateProductDto createProductDto){
+    ResponseEntity<Product> create(@Valid @ModelAttribute CreateProductDto createProductDto){
 
         CompletableFuture<Product> product = service.createAsync(createProductDto);
 
-        return product.thenApply(p ->
-                ResponseEntity.ok()
-                        .body(p)
-        );
+        return ResponseEntity.ok()
+                .body(product.join()
+                );
     }
 
     @PutMapping("/{id}")
@@ -96,14 +91,12 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    CompletableFuture<ResponseEntity<Product>> delete(@Valid @PathVariable Long id){
+    ResponseEntity<Product> delete(@Valid @PathVariable Long id){
 
         service.deleteByIdAsync(id);
 
-        return CompletableFuture.completedFuture(
-                ResponseEntity.noContent()
-                        .build()
-        );
+        return ResponseEntity.noContent()
+                .build();
     }
 
 

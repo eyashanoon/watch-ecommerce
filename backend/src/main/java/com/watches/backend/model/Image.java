@@ -13,6 +13,8 @@ public class Image {
     @OneToOne(cascade = CascadeType.ALL)
     private Product product;
 
+    @Lob
+    @Column(name = "data", columnDefinition = "LONGTEXT")
     private String data; // encoded using base64
 
     public Image() {
