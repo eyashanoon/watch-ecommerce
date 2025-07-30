@@ -15,47 +15,22 @@ public class Product {
     Long id;
     @Column(nullable = false)
     private String name;
-
+    private String brand;
     private String description;
 
     @OneToOne(cascade = CascadeType.ALL)
     private Image image;
 
+    private String size;
     private Boolean waterProof;
-    private Boolean hasTickingSound;
-    private Boolean includesDate;
+    private Boolean crystal;
+    private String color;
+
+    private String type;
+    private Boolean supportsDate;
+    private String numberingFormat;
     private Boolean hasFullNumerals;
-
-    @ManyToOne
-    @JoinColumn(name = "size_id", referencedColumnName = "id")
-    private Size size;
-    @ManyToOne
-    @JoinColumn(name = "brand_id", referencedColumnName = "id")
-    private Brand brand;
-
-    @ManyToOne
-    @JoinColumn(name = "color_id", referencedColumnName = "id")
-    private Color color;
-
-    @ManyToOne
-    @JoinColumn(name = "shape_id", referencedColumnName = "id")
-    private Shape shape;
-
-    @ManyToOne
-    @JoinColumn(name = "band_id", referencedColumnName = "id")
-    private Band band;
-
-    @ManyToOne
-    @JoinColumn(name = "discount_id", referencedColumnName = "id")
-    private Discount discount;
-
-    @ManyToOne
-    @JoinColumn(name = "weight_id", referencedColumnName = "id")
-    private Weight weight;
-
-    @ManyToOne
-    @JoinColumn(name = "casee_id", referencedColumnName = "id")
-    private Case casee;
+    private Boolean hasTickingSound;
 
     @PositiveOrZero
     private Double price;
@@ -63,74 +38,46 @@ public class Product {
     @PositiveOrZero
     private Integer quantity;
 
-    public Case getCasee() {
-        return casee;
-    }
+    @ManyToOne
+    @JoinColumn(name = "discount_id", referencedColumnName = "id")
+    private Discount discount;
 
-    public void setCasee(Case casee) {
-        this.casee = casee;
-    }
-
-    public Weight getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Weight weight) {
-        this.weight = weight;
-    }
-
-    public Band getBand() {
-        return band;
-    }
-
-    public void setBand(Band band) {
-        this.band = band;
-    }
-
-    public Shape getShape() {
-        return shape;
-    }
-
-    public void setShape(Shape shape) {
-        this.shape = shape;
-    }
 
     public Product() {}
 
-    public Product(Long id,
+    public Product(
                    String name,
+                   String brand,
                    String description,
                    Image image,
+                   String size,
                    Boolean waterProof,
-                   Boolean hasTickingSound,
-                   Boolean includesDate,
+                   Boolean crystal,
+                   String color,
+                   String type,
+                   Boolean supportsDate,
+                   String numberingFormat,
                    Boolean hasFullNumerals,
-                   Size size,
-                   Brand brand,
-                   Color color,
-                   Shape shape,
-                   Band band,
-                   Discount discount,
-                   Weight weight,
+                   Boolean hasTickingSound,
                    Double price,
-                   Integer quantity) {
-        this.id = id;
+                   Integer quantity,
+                   Discount discount) {
         this.name = name;
+        this.brand = brand;
         this.description = description;
         this.image = image;
-        this.waterProof = waterProof;
-        this.hasTickingSound = hasTickingSound;
-        this.includesDate = includesDate;
-        this.hasFullNumerals = hasFullNumerals;
         this.size = size;
-        this.brand = brand;
+        this.waterProof = waterProof;
+        this.crystal = crystal;
         this.color = color;
-        this.shape = shape;
-        this.band = band;
-        this.discount = discount;
-        this.weight = weight;
+        this.type = type;
+        this.supportsDate = supportsDate;
+        this.numberingFormat = numberingFormat;
+        this.hasFullNumerals = hasFullNumerals;
+        this.hasTickingSound = hasTickingSound;
         this.price = price;
         this.quantity = quantity;
+        this.discount = discount;
     }
 
     public Long getId() {
@@ -141,6 +88,13 @@ public class Product {
         this.id = id;
     }
 
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
 
     public String getName() {
         return name;
@@ -166,6 +120,15 @@ public class Product {
         this.image = image;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+
     public Double getPrice() {
         return price;
     }
@@ -190,6 +153,54 @@ public class Product {
         this.discount = discount;
     }
 
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public Boolean getWaterProof() {
+        return waterProof;
+    }
+
+    public void setWaterProof(Boolean waterProof) {
+        this.waterProof = waterProof;
+    }
+
+    public Boolean getCrystal() {
+        return crystal;
+    }
+
+    public void setCrystal(Boolean crystal) {
+        this.crystal = crystal;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public Boolean getSupportsDate() {
+        return supportsDate;
+    }
+
+    public void setSupportsDate(Boolean supportsDate) {
+        this.supportsDate = supportsDate;
+    }
+
+    public String getNumberingFormat() {
+        return numberingFormat;
+    }
+
+    public void setNumberingFormat(String numberingFormat) {
+        this.numberingFormat = numberingFormat;
+    }
+
     public Boolean getHasFullNumerals() {
         return hasFullNumerals;
     }
@@ -206,57 +217,29 @@ public class Product {
         this.hasTickingSound = hasTickingSound;
     }
 
-    public Boolean getWaterProof() {
-        return waterProof;
-    }
-
-    public void setWaterProof(Boolean waterProof) {
-        this.waterProof = waterProof;
-    }
-
-    public Boolean getIncludesDate() {
-        return includesDate;
-    }
-
-    public void setIncludesDate(Boolean includesDate) {
-        this.includesDate = includesDate;
-    }
-
-    public Size getSize() {
-        return size;
-    }
-
-    public void setSize(Size size) {
-        this.size = size;
-    }
-
-    public Brand getBrand() {
-        return brand;
-    }
-
-    public void setBrand(Brand brand) {
-        this.brand = brand;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Objects.equals(name, product.name) && Objects.equals(brand, product.brand) && Objects.equals(description, product.description);
+        return Objects.equals(name, product.name) && Objects.equals(brand, product.brand) && Objects.equals(description, product.description) && Objects.equals(type, product.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, image, waterProof, hasTickingSound, includesDate, hasFullNumerals, size, brand, color, shape, band, discount, weight, price, quantity);
+        return Objects.hash(id, name, brand, description, type, price, quantity, discount);
     }
 
-
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", brand='" + brand + '\'' +
+                ", description='" + description + '\'' +
+                ", type='" + type + '\'' +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                ", discount=" + discount +
+                '}';
+    }
 }

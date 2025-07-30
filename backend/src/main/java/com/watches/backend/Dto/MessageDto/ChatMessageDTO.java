@@ -16,6 +16,7 @@ public class ChatMessageDTO {
         this.content = content;
         this.timestamp = timestamp;
     }
+    public ChatMessageDTO() {}
 
     public Long getId() {
         return id;
