@@ -16,8 +16,23 @@ public class DisplayTypeService {
     }
 
     public CompletableFuture<DisplayType> create(String displayType) {
-        DisplayType dto = new DisplayType(displayType);
-        repository.save(dto);
+        DisplayType dto = getByType(displayType);
+        if(dto == null) {
+            dto = new DisplayType(displayType);
+            repository.save(dto);
+        }
         return  CompletableFuture.completedFuture(dto);
     }
+
+    private DisplayType getByType(String displayType){
+        return repository.findAll()
+                .stream()
+                .filter(d ->
+                        d.getType()
+                                .equals(displayType)
+                )
+                .findFirst()
+                .orElse(null);
+    }
+
 }

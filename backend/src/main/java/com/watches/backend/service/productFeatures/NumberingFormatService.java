@@ -16,8 +16,23 @@ public class NumberingFormatService {
     }
 
     public CompletableFuture<NumberingFormat> create(String numberingFormat) {
-        NumberingFormat nf = new NumberingFormat(numberingFormat);
-        repository.save(nf);
+        NumberingFormat nf = getByFormat(numberingFormat);
+        if(nf == null){
+            nf = new NumberingFormat(numberingFormat);
+            repository.save(nf);
+        }
         return CompletableFuture.completedFuture(nf);
     }
+
+    private NumberingFormat getByFormat(String Format) {
+        return repository.findAll()
+                .stream()
+                .filter(n ->
+                        n.getNumberingFormat()
+                                .equals(Format)
+                )
+                .findFirst()
+                .orElse(null);
+    }
+
 }

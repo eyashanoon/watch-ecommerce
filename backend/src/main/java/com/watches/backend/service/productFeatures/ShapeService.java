@@ -16,8 +16,23 @@ public class ShapeService {
     }
 
     public CompletableFuture<Shape> create(String shape) {
-        Shape s = new Shape(shape);
-        repository.save(s);
+        Shape s = getByShape(shape);
+        if(s == null){
+            s = new Shape(shape);
+            repository.save(s);
+        }
         return CompletableFuture.completedFuture(s);
     }
+
+    private Shape getByShape(String shape) {
+        return repository.findAll()
+                .stream()
+                .filter(s ->
+                        s.getShape()
+                                .equals(shape)
+                )
+                .findFirst()
+                .orElse(null);
+    }
+
 }

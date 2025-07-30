@@ -19,8 +19,23 @@ public class BandService {
     }
 
     public CompletableFuture<Band> create(String bandMaterial) {
-        Band band = new Band(bandMaterial);
-        repository.save(band);
+        Band band = getByMaterial(bandMaterial);
+        if(band == null){
+            band = new Band(bandMaterial);
+            repository.save(band);
+        }
         return CompletableFuture.completedFuture(band);
     }
+
+    private Band getByMaterial(String bandMaterial) {
+        return repository.findAll()
+                .stream()
+                .filter(band ->
+                        band.getBandMaterial()
+                                .equals(bandMaterial)
+                )
+                .findFirst()
+                .orElse(null);
+    }
+
 }

@@ -16,8 +16,23 @@ public class CaseService {
     }
 
     public CompletableFuture<Case> create(String caseMaterial) {
-        Case c = new Case(caseMaterial);
-        repository.save(c);
+        Case c = getByMaterial(caseMaterial);
+        if(c==null){
+            c = new Case(caseMaterial);
+            repository.save(c);
+        }
         return CompletableFuture.completedFuture(c);
     }
+
+    private Case getByMaterial(String material) {
+        return repository.findAll()
+                .stream()
+                .filter(c ->
+                        c.getMaterial()
+                                .equals(material)
+                )
+                .findFirst()
+                .orElse(null);
+    }
+
 }
