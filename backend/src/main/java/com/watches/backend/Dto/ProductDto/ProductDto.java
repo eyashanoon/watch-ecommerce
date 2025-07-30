@@ -1,58 +1,71 @@
 package com.watches.backend.Dto.ProductDto;
 
-import com.watches.backend.model.Discount;
-
 public class ProductDto {
 
     private String name;
-    private String brand;
     private String description;
     private String image;
-    private String size;
-    private Boolean waterProof;
-    private Boolean crystal;
-    private String color;
-    private String type;
-    private Boolean supportsDate;
+    private String brand;
+    private String handsColor;
+    private String backgroundColor;
+    private String bandColor;
     private String numberingFormat;
+    private String bandMaterial;
+    private String caseMaterial;
+    private String DisplayType;
+    private String shape;
+    private Boolean includesDate;
     private Boolean hasFullNumerals;
     private Boolean hasTickingSound;
+    private Boolean waterProof;
+    private Boolean changeableBand;
+    private Double size;
+    private Double weight;
     private Double price;
     private Integer quantity;
-    private Discount discount;
 
     public ProductDto(String name,
-                      String brand,
                       String description,
                       String image,
-                      String size,
-                      Boolean waterProof,
-                      Boolean crystal,
-                      String color,
-                      String type,
-                      Boolean supportsDate,
+                      String brand,
+                      Double size,
+                      Double weight,
+                      String handsColor,
+                      String backgroundColor,
+                      String bandColor,
                       String numberingFormat,
+                      String bandMaterial,
+                      String caseMaterial,
+                      String displayType,
+                      String shape,
+                      Boolean includesDate,
                       Boolean hasFullNumerals,
                       Boolean hasTickingSound,
+                      Boolean waterProof,
+                      Boolean changeableBand,
                       Double price,
-                      Integer quantity,
-                      Discount discount) {
+                      Integer quantity) {
         this.name = name;
-        this.brand = brand;
         this.description = description;
         this.image = image;
+        this.brand = brand;
         this.size = size;
-        this.waterProof = waterProof;
-        this.crystal = crystal;
-        this.color = color;
-        this.type = type;
-        this.supportsDate = supportsDate;
+        this.weight = weight;
+        this.handsColor = handsColor;
+        this.backgroundColor = backgroundColor;
+        this.bandColor = bandColor;
         this.numberingFormat = numberingFormat;
+        this.bandMaterial = bandMaterial;
+        this.caseMaterial = caseMaterial;
+        DisplayType = displayType;
+        this.shape = shape;
+        this.includesDate = includesDate;
         this.hasFullNumerals = hasFullNumerals;
         this.hasTickingSound = hasTickingSound;
+        this.waterProof = waterProof;
+        this.changeableBand = changeableBand;
         this.price = price;
         this.quantity = quantity;
-        this.discount = discount;
     }
 
     public String getName() {
@@ -61,14 +74,6 @@ public class ProductDto {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
     }
 
     public String getDescription() {
@@ -87,52 +92,52 @@ public class ProductDto {
         this.image = image;
     }
 
-    public String getSize() {
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public Double getSize() {
         return size;
     }
 
-    public void setSize(String size) {
+    public void setSize(Double size) {
         this.size = size;
     }
 
-    public Boolean getWaterProof() {
-        return waterProof;
+    public Double getWeight() {
+        return weight;
     }
 
-    public void setWaterProof(Boolean waterProof) {
-        this.waterProof = waterProof;
+    public void setWeight(Double weight) {
+        this.weight = weight;
     }
 
-    public Boolean getCrystal() {
-        return crystal;
+    public String getHandsColor() {
+        return handsColor;
     }
 
-    public void setCrystal(Boolean crystal) {
-        this.crystal = crystal;
+    public void setHandsColor(String handsColor) {
+        this.handsColor = handsColor;
     }
 
-    public String getColor() {
-        return color;
+    public String getBackgroundColor() {
+        return backgroundColor;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setBackgroundColor(String backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 
-    public String getType() {
-        return type;
+    public String getBandColor() {
+        return bandColor;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Boolean getSupportsDate() {
-        return supportsDate;
-    }
-
-    public void setSupportsDate(Boolean supportsDate) {
-        this.supportsDate = supportsDate;
+    public void setBandColor(String bandColor) {
+        this.bandColor = bandColor;
     }
 
     public String getNumberingFormat() {
@@ -141,6 +146,46 @@ public class ProductDto {
 
     public void setNumberingFormat(String numberingFormat) {
         this.numberingFormat = numberingFormat;
+    }
+
+    public String getBandMaterial() {
+        return bandMaterial;
+    }
+
+    public void setBandMaterial(String bandMaterial) {
+        this.bandMaterial = bandMaterial;
+    }
+
+    public String getCaseMaterial() {
+        return caseMaterial;
+    }
+
+    public void setCaseMaterial(String caseMaterial) {
+        this.caseMaterial = caseMaterial;
+    }
+
+    public String getDisplayType() {
+        return DisplayType;
+    }
+
+    public void setDisplayType(String displayType) {
+        DisplayType = displayType;
+    }
+
+    public String getShape() {
+        return shape;
+    }
+
+    public void setShape(String shape) {
+        this.shape = shape;
+    }
+
+    public Boolean getIncludesDate() {
+        return includesDate;
+    }
+
+    public void setIncludesDate(Boolean includesDate) {
+        this.includesDate = includesDate;
     }
 
     public Boolean getHasFullNumerals() {
@@ -159,6 +204,22 @@ public class ProductDto {
         this.hasTickingSound = hasTickingSound;
     }
 
+    public Boolean getWaterProof() {
+        return waterProof;
+    }
+
+    public void setWaterProof(Boolean waterProof) {
+        this.waterProof = waterProof;
+    }
+
+    public Boolean getChangeableBand() {
+        return changeableBand;
+    }
+
+    public void setChangeableBand(Boolean changeableBand) {
+        this.changeableBand = changeableBand;
+    }
+
     public Double getPrice() {
         return price;
     }
@@ -173,13 +234,5 @@ public class ProductDto {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
-    }
-
-    public Discount getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(Discount discount) {
-        this.discount = discount;
     }
 }

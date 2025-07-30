@@ -1,10 +1,14 @@
 package com.watches.backend.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,24 +28,6 @@ public class Cart {
         customer.setCart(this);
         this.items = items;
     }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setCustomer(Customer customer) {this.customer = customer;}
-
-    public Customer getCustomer() {return customer;}
-
-    public void setItems(List<ProductItem> items) {
-        this.items = items;
-    }
-
-    public List<ProductItem> getItems() {return items;}
 
     public void addItem(ProductItem item){
         int exists = this.items.indexOf(item);
@@ -65,8 +51,6 @@ public class Cart {
             }
         }
     }
-
-
 
     @Override
     public String toString() {

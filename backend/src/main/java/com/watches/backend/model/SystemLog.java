@@ -1,10 +1,14 @@
 package com.watches.backend.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
 public class SystemLog {
     @Id
     @GeneratedValue
@@ -24,25 +28,5 @@ public class SystemLog {
 
     public SystemLog() {
 
-    }
-
-    public LocalDateTime getPerformedAt() {
-        return performedAt;
-    }
-
-    public User getPerformedBy() {
-        return performedBy;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
     }
 }

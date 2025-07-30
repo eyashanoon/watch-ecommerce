@@ -3,25 +3,30 @@ package com.watches.backend.Dto.ProductDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+@Setter
+@Getter
 public class CreateProductDto {
 
     @NotBlank(message = "Product name is required")
     @NotNull
     private String name;
     private String description;
+    @NotNull
     private MultipartFile image;
 
     @NotBlank(message = "Product brand is required")
     @NotNull
     private String brand;
-    @NotBlank(message = "Product size is required")
+
     @NotNull
-    private String size;
-    @NotBlank(message = "Product weight is required")
+    private Double size;
+
     @NotNull
-    private String weight;
+    private Double weight;
     @NotBlank(message = "Product hands color is required")
     @NotNull
     private String handsColor;
@@ -68,8 +73,8 @@ public class CreateProductDto {
                             String description,
                             MultipartFile image,
                             String brand,
-                            String size,
-                            String weight,
+                            Double size,
+                            Double weight,
                             String handsColor,
                             String backgroundColor,
                             String bandColor,
@@ -108,171 +113,4 @@ public class CreateProductDto {
         this.quantity = quantity;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public MultipartFile getImage() {
-        return image;
-    }
-
-    public void setImage(MultipartFile image) {
-        this.image = image;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
-
-    public String getWeight() {
-        return weight;
-    }
-
-    public void setWeight(String weight) {
-        this.weight = weight;
-    }
-
-    public String getHandsColor() {
-        return handsColor;
-    }
-
-    public void setHandsColor(String handsColor) {
-        this.handsColor = handsColor;
-    }
-
-    public String getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    public void setBackgroundColor(String backgroundColor) {
-        this.backgroundColor = backgroundColor;
-    }
-
-    public String getBandColor() {
-        return bandColor;
-    }
-
-    public void setBandColor(String bandColor) {
-        this.bandColor = bandColor;
-    }
-
-    public String getNumberingFormat() {
-        return numberingFormat;
-    }
-
-    public void setNumberingFormat(String numberingFormat) {
-        this.numberingFormat = numberingFormat;
-    }
-
-    public String getBandMaterial() {
-        return bandMaterial;
-    }
-
-    public void setBandMaterial(String bandMaterial) {
-        this.bandMaterial = bandMaterial;
-    }
-
-    public String getCaseMaterial() {
-        return caseMaterial;
-    }
-
-    public void setCaseMaterial(String caseMaterial) {
-        this.caseMaterial = caseMaterial;
-    }
-
-    public String getDisplayType() {
-        return DisplayType;
-    }
-
-    public void setDisplayType(String displayType) {
-        DisplayType = displayType;
-    }
-
-    public String getShape() {
-        return shape;
-    }
-
-    public void setShape(String shape) {
-        this.shape = shape;
-    }
-
-    public Boolean getIncludesDate() {
-        return includesDate;
-    }
-
-    public void setIncludesDate(Boolean includesDate) {
-        this.includesDate = includesDate;
-    }
-
-    public Boolean getHasFullNumerals() {
-        return hasFullNumerals;
-    }
-
-    public void setHasFullNumerals(Boolean hasFullNumerals) {
-        this.hasFullNumerals = hasFullNumerals;
-    }
-
-    public Boolean getHasTickingSound() {
-        return hasTickingSound;
-    }
-
-    public void setHasTickingSound(Boolean hasTickingSound) {
-        this.hasTickingSound = hasTickingSound;
-    }
-
-    public Boolean getWaterProof() {
-        return waterProof;
-    }
-
-    public void setWaterProof(Boolean waterProof) {
-        this.waterProof = waterProof;
-    }
-
-    public Boolean getChangeableBand() {
-        return changeableBand;
-    }
-
-    public void setChangeableBand(Boolean changeableBand) {
-        this.changeableBand = changeableBand;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
 }

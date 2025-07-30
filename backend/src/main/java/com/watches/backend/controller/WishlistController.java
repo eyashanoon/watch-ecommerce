@@ -72,7 +72,7 @@ public class WishlistController {
 
     @PutMapping("/add/{id}")
     CompletableFuture<ResponseEntity<WishlistDto>> addProduct(@Valid @PathVariable Long id,
-                                                              @Valid @RequestBody WishlistProductDto product){
+                                                              @Valid @RequestBody ProductDto product){
 
         CompletableFuture<Wishlist> wishlist = service.addProductAsync(id, product);
 
@@ -88,7 +88,7 @@ public class WishlistController {
 
     @PutMapping("/add/customer/{customerID}")
     CompletableFuture<ResponseEntity<WishlistDto>> addProductByCustomerId(@Valid @PathVariable Long customerID,
-                                                                          @Valid @RequestBody WishlistProductDto product){
+                                                                          @Valid @RequestBody ProductDto product){
 
         CompletableFuture<Wishlist> wishlist = service.addProductByCustomerIdAsync(customerID, product);
 
@@ -104,7 +104,7 @@ public class WishlistController {
 
     @PutMapping("/remove/{id}")
     CompletableFuture<ResponseEntity<WishlistDto>> removeProduct(@Valid @PathVariable Long id,
-                                                                 @Valid @RequestBody WishlistProductDto product){
+                                                                 @Valid @RequestBody ProductDto product){
 
         CompletableFuture<Wishlist> wishlist = service.removeProductAsync(id, product);
 
@@ -120,7 +120,7 @@ public class WishlistController {
 
     @PutMapping("/remove/customer/{customerID}")
     CompletableFuture<ResponseEntity<WishlistDto>> removeProductByCustomerId(@Valid @PathVariable Long customerID,
-                                                                             @Valid @RequestBody WishlistProductDto product){
+                                                                             @Valid @RequestBody ProductDto product){
 
         CompletableFuture<Wishlist> wishlist = service.removeProductByCustomerIdAsync(customerID, product);
 

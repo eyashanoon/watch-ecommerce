@@ -1,14 +1,18 @@
 package com.watches.backend.model;
 
-import jakarta.annotation.Nullable;
+import com.watches.backend.model.productFeatures.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
 public class Product {
     private @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,17 +29,18 @@ public class Product {
     private Boolean hasTickingSound;
     private Boolean includesDate;
     private Boolean hasFullNumerals;
+    private Boolean changeableBand;
 
     @ManyToOne
-    @JoinColumn(name = "size_id", referencedColumnName = "id")
-    private Size size;
+    @JoinColumn(name = "numbering_format_id", referencedColumnName = "id")
+    private NumberingFormat numberingFormat;
+
     @ManyToOne
     @JoinColumn(name = "brand_id", referencedColumnName = "id")
     private Brand brand;
 
-    @ManyToOne
-    @JoinColumn(name = "color_id", referencedColumnName = "id")
-    private Color color;
+    @OneToMany(mappedBy="product", cascade = CascadeType.ALL)
+    private List<Color> colors;
 
     @ManyToOne
     @JoinColumn(name = "shape_id", referencedColumnName = "id")
@@ -50,12 +55,16 @@ public class Product {
     private Discount discount;
 
     @ManyToOne
-    @JoinColumn(name = "weight_id", referencedColumnName = "id")
-    private Weight weight;
+    @JoinColumn(name = "case_id", referencedColumnName = "id")
+    private Case aCase;
 
     @ManyToOne
-    @JoinColumn(name = "casee_id", referencedColumnName = "id")
-    private Case casee;
+    @JoinColumn(name = "display_type_id", referencedColumnName = "id")
+    private DisplayType displayType;
+
+
+    private Double weight;
+    private Double size;
 
     @PositiveOrZero
     private Double price;
@@ -63,58 +72,27 @@ public class Product {
     @PositiveOrZero
     private Integer quantity;
 
-    public Case getCasee() {
-        return casee;
-    }
-
-    public void setCasee(Case casee) {
-        this.casee = casee;
-    }
-
-    public Weight getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Weight weight) {
-        this.weight = weight;
-    }
-
-    public Band getBand() {
-        return band;
-    }
-
-    public void setBand(Band band) {
-        this.band = band;
-    }
-
-    public Shape getShape() {
-        return shape;
-    }
-
-    public void setShape(Shape shape) {
-        this.shape = shape;
-    }
-
     public Product() {}
 
-    public Product(Long id,
-                   String name,
+    public Product(String name,
                    String description,
                    Image image,
                    Boolean waterProof,
                    Boolean hasTickingSound,
                    Boolean includesDate,
                    Boolean hasFullNumerals,
-                   Size size,
+                   Boolean changeableBand,
+                   NumberingFormat numberingFormat,
                    Brand brand,
-                   Color color,
                    Shape shape,
                    Band band,
                    Discount discount,
-                   Weight weight,
+                   DisplayType displayType,
+                   Double weight,
+                   Double size,
+                   Case aCase,
                    Double price,
                    Integer quantity) {
-        this.id = id;
         this.name = name;
         this.description = description;
         this.image = image;
@@ -122,128 +100,19 @@ public class Product {
         this.hasTickingSound = hasTickingSound;
         this.includesDate = includesDate;
         this.hasFullNumerals = hasFullNumerals;
-        this.size = size;
+        this.changeableBand = changeableBand;
+        this.numberingFormat = numberingFormat;
         this.brand = brand;
-        this.color = color;
         this.shape = shape;
         this.band = band;
         this.discount = discount;
+        this.displayType = displayType;
         this.weight = weight;
-        this.price = price;
-        this.quantity = quantity;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Image getImage() {
-        return image;
-    }
-
-    public void setImage(Image image) {
-        this.image = image;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public Discount getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(Discount discount) {
-        this.discount = discount;
-    }
-
-    public Boolean getHasFullNumerals() {
-        return hasFullNumerals;
-    }
-
-    public void setHasFullNumerals(Boolean hasFullNumerals) {
-        this.hasFullNumerals = hasFullNumerals;
-    }
-
-    public Boolean getHasTickingSound() {
-        return hasTickingSound;
-    }
-
-    public void setHasTickingSound(Boolean hasTickingSound) {
-        this.hasTickingSound = hasTickingSound;
-    }
-
-    public Boolean getWaterProof() {
-        return waterProof;
-    }
-
-    public void setWaterProof(Boolean waterProof) {
-        this.waterProof = waterProof;
-    }
-
-    public Boolean getIncludesDate() {
-        return includesDate;
-    }
-
-    public void setIncludesDate(Boolean includesDate) {
-        this.includesDate = includesDate;
-    }
-
-    public Size getSize() {
-        return size;
-    }
-
-    public void setSize(Size size) {
         this.size = size;
-    }
-
-    public Brand getBrand() {
-        return brand;
-    }
-
-    public void setBrand(Brand brand) {
-        this.brand = brand;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
+        this.aCase = aCase;
+        this.price = price;
+        this.quantity = quantity;
+        this.colors = new ArrayList<>();
     }
 
     @Override
@@ -255,7 +124,7 @@ public class Product {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, image, waterProof, hasTickingSound, includesDate, hasFullNumerals, size, brand, color, shape, band, discount, weight, price, quantity);
+        return Objects.hash(id, name, description, image, waterProof, hasTickingSound, includesDate, hasFullNumerals, size, brand, colors, shape, band, discount, weight, price, quantity);
     }
 
 

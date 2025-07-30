@@ -31,7 +31,7 @@ public class ProductController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    ResponseEntity<List<ProductDto>> getAll(@Valid @ModelAttribute ProductQueryObject query){
+    List<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
 
         CompletableFuture<List<Product>> products = service.findAllAsync(query);
 
@@ -41,9 +41,7 @@ public class ProductController {
                         .toList()
         );
 
-        return ResponseEntity.ok()
-                .body(productDTO.join()
-                );
+        return productDTO.join();
     }
 
     @GetMapping("/{id}")
@@ -61,6 +59,7 @@ public class ProductController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<Product> create(@Valid @ModelAttribute CreateProductDto createProductDto){
 
         CompletableFuture<Product> product = service.createAsync(createProductDto);
