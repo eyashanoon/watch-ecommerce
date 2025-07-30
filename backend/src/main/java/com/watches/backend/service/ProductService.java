@@ -9,6 +9,12 @@ import com.watches.backend.helpers.productOptions.IProductFilter;
 import com.watches.backend.mappers.ProductMapper;
 import com.watches.backend.model.Image;
 import com.watches.backend.model.Product;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -78,8 +84,15 @@ public class ProductService {
         // Filters factory
         // it takes the product query and generate filters depending on filters user applied
         // then using the for-loop it applies the filters
-        List< IProductFilter> filters = ProductFilterFactory.getFilters(queryObject);
+       List< IProductFilter> filters = ProductFilterFactory.getFilters(queryObject);
 
+        Specification<Product> specification = new Specification<Product>() {
+            @Override
+            public Predicate toPredicate(Root<Product> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                return criteriaBuilder.like(root.get("brand"), queryObject.getBrand());
+            }
+        };
+//        PageRequest.of()
         Stream<Product> products = repository.findAll().stream();
 
         for (IProductFilter filter : filters) {
