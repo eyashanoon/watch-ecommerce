@@ -25,6 +25,7 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private PaymentMethod method;
 
+
     @OneToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     private Order order;
@@ -34,11 +35,10 @@ public class Payment {
         this.status = PaymentStatus.PENDING;
     }
 
-    public Payment(Double amount, PaymentMethod method, Order order) {
+    public Payment(Double amount, PaymentMethod method) {
         this.amount = amount;
         this.method = method;
-        this.order = order;
-        this.paymentDate = LocalDateTime.now();
+         this.paymentDate = LocalDateTime.now();
         this.status = PaymentStatus.PENDING;
     }
 

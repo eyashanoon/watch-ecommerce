@@ -28,7 +28,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) {
-
+          System.out.println(authRequest.getUsername()+" "+authRequest.getPassword());
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
@@ -44,7 +44,7 @@ public class AuthController {
                     .collect(Collectors.toList());
 
             // Generate token with username (email) and roles
-            String token = jwtUtil.generateToken(user.getEmail(), roles);
+             String token = jwtUtil.generateToken(user.getEmail(), roles);
 
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (BadCredentialsException e) {

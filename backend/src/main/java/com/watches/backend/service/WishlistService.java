@@ -38,8 +38,7 @@ public class WishlistService {
         this.wishlistRepository = wishlistRepository;
         this.customerRepository = customerRepository;
         this.imageService = imageService;
-    }
-
+ 
     public CompletableFuture<Wishlist> findByIdAsync(Long id, ProductQueryObject queryObject) {
         Wishlist wishlist = wishlistRepository.findById(id)
                 .orElseThrow(() ->
