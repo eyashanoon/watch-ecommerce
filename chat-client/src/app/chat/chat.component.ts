@@ -21,35 +21,45 @@ interface ChatMessage {
 export class ChatComponent implements OnInit, OnDestroy {
   messages: ChatMessage[] = [];
   newMessage: string = '';
-  senderId = 1;       // Replace with actual logged-in user ID
-  recipientId = 2;    // Replace with actual recipient ID
+  senderId?: number;
+  recipientId?: number;
+  isSenderSet: boolean = false;
   messageSubscription?: Subscription;
 
   constructor(private chatService: ChatService) {}
 
   ngOnInit(): void {
-    this.chatService.connect(() => {
-      // Connected successfully
-      console.log('STOMP connected');
-    });
+    // Do not connect here anymore; wait for senderId
+  }
 
-    this.messageSubscription = this.chatService.getMessages().subscribe((msgJson) => {
-      try {
-        const msg: ChatMessage = JSON.parse(msgJson);
-        this.messages.push(msg);
-        setTimeout(() => {
-          const container = document.querySelector('.messages');
-          if (container) container.scrollTop = container.scrollHeight;
-        }, 0);
-      } catch (e) {
-        console.error('Error parsing incoming message:', e);
-      }
-    });
+  confirmSender(): void {
+    if (this.senderId && this.senderId > 0) {
+      this.isSenderSet = true;
+
+      this.chatService.connect(this.senderId, () => {
+        console.log('STOMP connected');
+      });
+
+      this.messageSubscription = this.chatService.getMessages().subscribe((msgJson) => {
+        try {
+          const msg: ChatMessage = JSON.parse(msgJson);
+          this.messages.push(msg);
+          setTimeout(() => {
+            const container = document.querySelector('.messages');
+            if (container) container.scrollTop = container.scrollHeight;
+          }, 0);
+        } catch (e) {
+          console.error('Error parsing incoming message:', e);
+        }
+      });
+    } else {
+      alert('Please enter a valid sender ID');
+    }
   }
 
   sendMessage(): void {
-    if (this.newMessage.trim() === '') return;
-    this.chatService.sendMessage(this.newMessage, this.senderId, this.recipientId);
+    if (!this.newMessage.trim() || !this.recipientId) return;
+    this.chatService.sendMessage(this.newMessage, this.senderId!, this.recipientId);
     this.newMessage = '';
   }
 

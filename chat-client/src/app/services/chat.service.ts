@@ -11,8 +11,8 @@ export class ChatService {
   private messageSubject = new Subject<string>();
   private subscription?: StompSubscription;
 
-  connect(onConnected?: () => void): void {
-    const socket = new SockJS('http://localhost:8080/ws'); // Your backend WebSocket endpoint
+  connect(senderId: number, onConnected?: () => void): void {
+    const socket = new SockJS(`http://10.10.33.90:8080/ws?userId=${senderId}`);
 
     this.stompClient = new Client({
       webSocketFactory: () => socket as WebSocket,
@@ -21,14 +21,13 @@ export class ChatService {
     });
 
     this.stompClient.onConnect = () => {
-      // Subscribe to topic after connected
-      this.subscription = this.stompClient.subscribe('/topic/messages', (message: IMessage) => {
+      this.subscription = this.stompClient.subscribe('/user/queue/messages', (message: IMessage) => {
         if (message.body) {
+          console.log(message.body);
           this.messageSubject.next(message.body);
         }
       });
 
-      // Notify the component that the connection is ready
       if (onConnected) onConnected();
     };
 
@@ -53,7 +52,7 @@ export class ChatService {
     };
 
     this.stompClient.publish({
-      destination: '/app/chat.sendMessage',
+      destination: '/app/chat',
       body: JSON.stringify(message),
     });
   }

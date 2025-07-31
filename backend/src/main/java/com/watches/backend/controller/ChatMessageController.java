@@ -1,5 +1,6 @@
 package com.watches.backend.controller;
 
+import com.watches.backend.Dto.MessageDto.ChatMessageDTO;
 import com.watches.backend.model.ChatMessage;
 import com.watches.backend.Dto.MessageDto.SendMessageDTO;
 import com.watches.backend.service.ChatMessageService;
@@ -20,8 +21,8 @@ public class ChatMessageController {
 
     // Send a new message
     @PostMapping("/send")
-    public ResponseEntity<ChatMessage> sendMessage(@RequestBody SendMessageDTO dto) {
-        ChatMessage savedMessage = chatMessageService.saveMessage(dto);
+    public ResponseEntity<ChatMessageDTO> sendMessage(@RequestBody SendMessageDTO dto) {
+        ChatMessageDTO savedMessage = chatMessageService.saveMessage(dto);
         return ResponseEntity.ok(savedMessage);
     }
 

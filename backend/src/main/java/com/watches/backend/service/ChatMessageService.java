@@ -1,5 +1,6 @@
 package com.watches.backend.service;
 
+import com.watches.backend.Dto.MessageDto.ChatMessageDTO;
 import com.watches.backend.model.ChatMessage;
 import com.watches.backend.model.User;
 import com.watches.backend.Repositories.ChatMessageRepository;
@@ -19,10 +20,10 @@ public class ChatMessageService {
     public ChatMessageService(ChatMessageRepository chatMessageRepository, UserRepository userRepository) {
         this.chatMessageRepository = chatMessageRepository;
         this.userRepository = userRepository;
-    }
+     }
 
     // Save new message
-    public ChatMessage saveMessage(SendMessageDTO dto) {
+    public ChatMessageDTO saveMessage(SendMessageDTO dto) {
         User sender = userRepository.findById(dto.getSenderId())
                 .orElseThrow(() -> new RuntimeException("Sender not found"));
 
@@ -30,7 +31,8 @@ public class ChatMessageService {
                 .orElseThrow(() -> new RuntimeException("Recipient not found"));
 
         ChatMessage message = ChatMessageMapper.toEntity(dto, sender, recipient);
-        return chatMessageRepository.save(message);
+        chatMessageRepository.save(message);
+        return ChatMessageMapper.toDTO(message);
     }
 
     // Get all messages between two users
