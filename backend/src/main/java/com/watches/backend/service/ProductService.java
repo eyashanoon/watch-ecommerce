@@ -6,7 +6,6 @@ import com.watches.backend.Repositories.ProductRepository;
 import com.watches.backend.exceptions.ProductNotFoundException;
 import com.watches.backend.helpers.ProductSpecificationBuilder;
 import com.watches.backend.mappers.ProductMapper;
-import com.watches.backend.model.Image;
 import com.watches.backend.model.Product;
 import com.watches.backend.model.productFeatures.*;
 import com.watches.backend.service.productFeatures.*;
@@ -17,8 +16,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-
-import java.awt.image.BandedSampleModel;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -59,21 +56,18 @@ public class ProductService {
     }
 
     private void setFeatures(Product product, CreateProductDto dto) {
-        CompletableFuture<Image> image = imageService.create(dto.getImage());
-        CompletableFuture<Band> band = bandService.create(dto.getBandMaterial());
-        CompletableFuture<Brand> brand = brandService.create(dto.getBrand());
-        CompletableFuture<Case> productCase = caseService.create(dto.getCaseMaterial());
-        CompletableFuture<DisplayType> displayType = displayTypeService.create(dto.getDisplayType());
-        CompletableFuture<NumberingFormat> numberingFormat = numberingFormatService.create(dto.getNumberingFormat());
-        CompletableFuture<Shape> shape = shapeService.create(dto.getShape());
 
-        image.thenAccept(product::setImage);
-        band.thenAccept(product::setBand);
-        brand.thenAccept(product::setBrand);
-        productCase.thenAccept(product::setACase);
-        displayType.thenAccept(product::setDisplayType);
-        numberingFormat.thenAccept(product::setNumberingFormat);
-        shape.thenAccept(product::setShape);
+        CompletableFuture<Void> allFutures = CompletableFuture.allOf(
+        imageService.create(dto.getImage()).thenAccept(product::setImage),
+        bandService.create(dto.getBandMaterial()).thenAccept(product::setBand),
+        brandService.create(dto.getBrand()).thenAccept(product::setBrand),
+        caseService.create(dto.getCaseMaterial()).thenAccept(product::setACase),
+        displayTypeService.create(dto.getDisplayType()).thenAccept(product::setDisplayType),
+        numberingFormatService.create(dto.getNumberingFormat()).thenAccept(product::setNumberingFormat),
+        shapeService.create(dto.getShape()).thenAccept(product::setShape)
+        );
+
+        allFutures.join();
 
         List<CompletableFuture<Color>> colorFutures = List.of(
                 colorService.create("hands", dto.getHandsColor()),
@@ -81,7 +75,15 @@ public class ProductService {
                 colorService.create("band", dto.getBandColor())
         );
 
-        colorFutures.forEach(cf -> cf.thenAccept(color -> product.getColors().add(color)));
+        CompletableFuture<Void> allColorFutures = CompletableFuture.allOf(
+                colorFutures.stream()
+                        .map(future ->
+                                future.thenAccept(
+                                        product.getColors()::add)
+                        )
+                        .toArray(CompletableFuture[]::new)
+        );
+        allColorFutures.join();
 
     }
 
@@ -102,19 +104,27 @@ public class ProductService {
     }
 
     public CompletableFuture<Product> updateAsync(CreateProductDto createProductDto, Long id) {
-//        CompletableFuture<Product> product = this.findByIdAsync(id); // throws ProductNotFoundException if not found
-//
-//        product = product.thenApply(p -> {
-//            p.setName(createProductDto.getName());
-//            p.setDescription(createProductDto.getDescription());
-//            p.setPrice(createProductDto.getPrice());
-//            p.setQuantity(createProductDto.getQuantity());
-//            p.setType(createProductDto.getType());
-//            p.setBrand(createProductDto.getBrand());
-//            return repository.save(p);
-//        });
+        CompletableFuture<Product> product = this.findByIdAsync(id); // throws ProductNotFoundException if not found
 
-        return null;
+        product = product.thenApply(p -> {
+            p.setName(createProductDto.getName());
+            p.setDescription(createProductDto.getDescription());
+            p.setPrice(createProductDto.getPrice());
+            p.setQuantity(createProductDto.getQuantity());
+            p.setSize(createProductDto.getSize());
+            p.setWeight(createProductDto.getWeight());
+            p.setChangeableBand(createProductDto.getChangeableBand());
+            p.setHasFullNumerals(createProductDto.getHasFullNumerals());
+            p.setHasTickingSound(createProductDto.getHasTickingSound());
+            p.setIncludesDate(createProductDto.getIncludesDate());
+            p.setWaterProof(createProductDto.getWaterProof());
+
+            setFeatures(p, createProductDto);
+
+            return repository.save(p);
+        });
+
+        return product;
     }
 
     public void deleteByIdAsync(Long id) {
@@ -135,22 +145,16 @@ public class ProductService {
         );
     }
 
-    public CompletableFuture<List<Product>> findAllAsync(ProductQueryObject queryObject) {
-        // Filters factory
-        // it takes the product query and generate filters depending on filters user applied
-        // then using the for-loop it applies the filters
+    public CompletableFuture<Page<Product>> findAllAsync(ProductQueryObject queryObject) {
 
-//       Specification<Product> spec = new ProductSpecificationBuilder()
-//               .withFilter(queryObject)
-//               .build();
-//
-//       Pageable pg = PageRequest.of(queryObject.getPage(), queryObject.getPageSize());
-//       Page<Product> products = repository.findAll(spec, pg);
+       Specification<Product> spec = new ProductSpecificationBuilder()
+               .withFilter(queryObject)
+               .build();
 
+       Page<Product> products = repository.findAll(spec,
+               PageRequest.of(queryObject.getPage() - 1, queryObject.getPageSize())
+       );
 
-
-        return CompletableFuture.completedFuture(
-                repository.findAll().stream().toList()
-        );
+       return CompletableFuture.completedFuture(products);
     }
 }

@@ -1,98 +1,26 @@
 package com.watches.backend.helpers;
 
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 public class ProductQueryObject {
-    private String productName = null;
-    private String productDescription = null;
+    private String name = null;
+    private String description = null;
     private String brand = null;
-    private Integer maxPrice = Integer.MAX_VALUE;
-    private Integer minPrice = -1;
+    private String numberingFormat;
+    private String bandMaterial;
+    private String caseMaterial;
+    private String DisplayType;
+    private String shape;
+    private Boolean includesDate = null;
+    private Boolean hasFullNumerals = null;
+    private Boolean hasTickingSound = null;
+    private Boolean waterProof = null;
+    private Boolean changeableBand = null;
+    private Double maxPrice = Double.MAX_VALUE;
+    private Double minPrice = -1.0;
     private Integer page = 1;
     private Integer pageSize = 20;
-
-    public ProductQueryObject() {}
-
-    public ProductQueryObject(String productName,
-                              String productDescription,
-                              String brand,
-                              Integer MaxPrice,
-                              Integer MinPrice) {
-        this.productName = productName;
-        this.productDescription = productDescription;
-        this.brand = brand;
-        this.maxPrice = MaxPrice;
-        this.minPrice = MinPrice;
-    }
-
-    public ProductQueryObject(String productName,
-                              String productDescription,
-                              String brand,
-                              Integer MaxPrice,
-                              Integer MinPrice,
-                              Integer page,
-                              Integer pageSize) {
-        this.productName = productName;
-        this.productDescription = productDescription;
-        this.brand = brand;
-        this.maxPrice = MaxPrice;
-        this.minPrice = MinPrice;
-        this.page = page;
-        this.pageSize = pageSize;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public String getProductDescription() {
-        return productDescription;
-    }
-
-    public void setProductDescription(String productDescription) {
-        this.productDescription = productDescription;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public Integer getMaxPrice() {
-        return maxPrice;
-    }
-
-    public void setMaxPrice(Integer maxPrice) {
-        this.maxPrice = maxPrice;
-    }
-
-    public Integer getMinPrice() {
-        return minPrice;
-    }
-
-    public void setMinPrice(Integer minPrice) {
-        this.minPrice = minPrice;
-    }
-
-    public Integer getPage() {
-        return page;
-    }
-
-    public void setPage(Integer page) {
-        this.page = page;
-    }
-
-    public Integer getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
-    }
 }

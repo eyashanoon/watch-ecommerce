@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -23,5 +24,17 @@ public class Brand extends BaseFeatureEntity {
 
     public Brand(String brand) {
         this.brand = brand;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Brand brand1 = (Brand) o;
+        return Objects.equals(getBrand(), brand1.getBrand());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getBrand(), getProducts());
     }
 }
