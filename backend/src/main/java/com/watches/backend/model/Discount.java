@@ -2,11 +2,15 @@ package com.watches.backend.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
 public class Discount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,29 +38,5 @@ public class Discount {
 
     public void setProduct(Set<Product> product) {
         this.products = product;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Double getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(Double discount) {
-        this.discount = discount;
-    }
-
-    public LocalDateTime getEndDate() {
-        return EndDate;
-    }
-
-    public void setEndDate(LocalDateTime endDate) {
-        EndDate = endDate;
     }
 }

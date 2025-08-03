@@ -26,7 +26,7 @@ public class ImageService {
         return image;
     }
 
-    public CompletableFuture<Image> createImage(MultipartFile image){
+    public CompletableFuture<Image> create(MultipartFile image){
         try {
             Image newImage = createImageObject(
                     image.getOriginalFilename(), image.getBytes()

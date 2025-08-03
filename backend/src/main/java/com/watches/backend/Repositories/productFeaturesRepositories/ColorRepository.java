@@ -1,0 +1,7 @@
+package com.watches.backend.Repositories.productFeaturesRepositories;
+
+import com.watches.backend.model.productFeatures.Color;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ColorRepository extends JpaRepository<Color, String> {
+}

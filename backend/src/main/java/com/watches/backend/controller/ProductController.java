@@ -7,7 +7,8 @@ import com.watches.backend.mappers.ProductMapper;
 import com.watches.backend.model.Product;
 import com.watches.backend.service.ProductService;
 import jakarta.validation.Valid;
- 
+
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
  
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,9 +32,9 @@ public class ProductController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    ResponseEntity<List<ProductDto>> getAll(@Valid @ModelAttribute ProductQueryObject query){
+    List<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
 
-        CompletableFuture<List<Product>> products = service.findAllAsync(query);
+        CompletableFuture<Page<Product>> products = service.findAllAsync(query);
 
         CompletableFuture<List<ProductDto>> productDTO = products.thenApply(l ->
                 l.stream()
@@ -41,13 +42,11 @@ public class ProductController {
                         .toList()
         );
 
-        return ResponseEntity.ok()
-                .body(productDTO.join()
-                );
+        return productDTO.join();
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<ProductDto> getById(@PathVariable Long id){
+    ProductDto getById(@PathVariable Long id){
 
         CompletableFuture<Product> product = service.findByIdAsync(id);
 
@@ -55,24 +54,21 @@ public class ProductController {
                 ProductMapper::toDto
         );
 
-        return ResponseEntity.ok()
-                .body(productDto.join()
-                );
+        return productDto.join();
     }
 
     @PostMapping
-    ResponseEntity<Product> create(@Valid @ModelAttribute CreateProductDto createProductDto){
+    @PreAuthorize("hasRole('ADMIN')")
+    Product create(@Valid @ModelAttribute CreateProductDto createProductDto){
 
         CompletableFuture<Product> product = service.createAsync(createProductDto);
 
-        return ResponseEntity.ok()
-                .body(product.join()
-                );
+        return product.join();
     }
 
     @PutMapping("/{id}")
-    CompletableFuture<ResponseEntity<ProductDto>> update(@Valid @RequestBody CreateProductDto productDto,
-                                                         @Valid @PathVariable Long id){
+    ProductDto update(@Valid @RequestBody CreateProductDto productDto,
+                      @Valid @PathVariable Long id){
 
         CompletableFuture<Product> product = service.updateAsync(productDto, id);
 
@@ -80,10 +76,7 @@ public class ProductController {
                 ProductMapper::toDto
         );
 
-        return productDTO.thenApply(dto ->
-                ResponseEntity.ok()
-                        .body(dto)
-        );
+        return productDTO.join();
     }
 
     @DeleteMapping("/{id}")

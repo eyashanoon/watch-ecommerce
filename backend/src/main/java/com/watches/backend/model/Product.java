@@ -1,14 +1,18 @@
 package com.watches.backend.model;
 
-import jakarta.annotation.Nullable;
+import com.watches.backend.model.productFeatures.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
 public class Product {
     private @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,32 +27,56 @@ public class Product {
 
     private String size;
     private Boolean waterProof;
-    private Boolean crystal;
-    private String color;
-
-    private String type;
-    private Boolean supportsDate;
-    private String numberingFormat;
+     private Boolean hasTickingSound;
+    private Boolean includesDate;
     private Boolean hasFullNumerals;
-    private Boolean hasTickingSound;
+    private Boolean changeableBand;
 
+    @ManyToOne
+    @JoinColumn(name = "numbering_format_id", referencedColumnName = "id")
+    private NumberingFormat numberingFormat;
+
+    @ManyToOne
+    @JoinColumn(name = "brand_id", referencedColumnName = "id")
+    private Brand brand;
+
+    @OneToMany(mappedBy="product", cascade = CascadeType.ALL)
+    private List<Color> colors;
+
+    @ManyToOne
+    @JoinColumn(name = "shape_id", referencedColumnName = "id")
+    private Shape shape;
+
+    @ManyToOne
+    @JoinColumn(name = "band_id", referencedColumnName = "id")
+    private Band band;
+
+    @ManyToOne
+    @JoinColumn(name = "discount_id", referencedColumnName = "id")
+    private Discount discount;
+
+    @ManyToOne
+    @JoinColumn(name = "case_id", referencedColumnName = "id")
+    private Case aCase;
+
+    @ManyToOne
+    @JoinColumn(name = "display_type_id", referencedColumnName = "id")
+    private DisplayType displayType;
+
+
+    private Double weight;
+    private Double size;
+ 
     @PositiveOrZero
     private Double price;
 
     @PositiveOrZero
     private Integer quantity;
 
-    @ManyToOne
-    @JoinColumn(name = "discount_id", referencedColumnName = "id")
-    private Discount discount;
+     public Product() {}
 
-
-    public Product() {}
-
-    public Product(
-                   String name,
-                   String brand,
-                   String description,
+    public Product(String name,
+        String description,
                    Image image,
                    String size,
                    Boolean waterProof,
@@ -58,163 +86,42 @@ public class Product {
                    Boolean supportsDate,
                    String numberingFormat,
                    Boolean hasFullNumerals,
-                   Boolean hasTickingSound,
+                    Boolean changeableBand,
+                   NumberingFormat numberingFormat,
+                   Brand brand,
+                   Shape shape,
+                   Band band,
+                   Discount discount,
+                   DisplayType displayType,
+                   Double weight,
+                   Double size,
+                   Case aCase,
                    Double price,
-                   Integer quantity,
-                   Discount discount) {
+                   Integer quantity) {
+ 
+ 
         this.name = name;
         this.brand = brand;
         this.description = description;
         this.image = image;
-        this.size = size;
-        this.waterProof = waterProof;
-        this.crystal = crystal;
-        this.color = color;
-        this.type = type;
-        this.supportsDate = supportsDate;
-        this.numberingFormat = numberingFormat;
-        this.hasFullNumerals = hasFullNumerals;
+         this.waterProof = waterProof;
         this.hasTickingSound = hasTickingSound;
-        this.price = price;
-        this.quantity = quantity;
-        this.discount = discount;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
+        this.includesDate = includesDate;
+        this.hasFullNumerals = hasFullNumerals;
+        this.changeableBand = changeableBand;
+        this.numberingFormat = numberingFormat;
         this.brand = brand;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Image getImage() {
-        return image;
-    }
-
-    public void setImage(Image image) {
-        this.image = image;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public Discount getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(Discount discount) {
+        this.shape = shape;
+        this.band = band;
         this.discount = discount;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
+        this.displayType = displayType;
+        this.weight = weight;
         this.size = size;
-    }
-
-    public Boolean getWaterProof() {
-        return waterProof;
-    }
-
-    public void setWaterProof(Boolean waterProof) {
-        this.waterProof = waterProof;
-    }
-
-    public Boolean getCrystal() {
-        return crystal;
-    }
-
-    public void setCrystal(Boolean crystal) {
-        this.crystal = crystal;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public Boolean getSupportsDate() {
-        return supportsDate;
-    }
-
-    public void setSupportsDate(Boolean supportsDate) {
-        this.supportsDate = supportsDate;
-    }
-
-    public String getNumberingFormat() {
-        return numberingFormat;
-    }
-
-    public void setNumberingFormat(String numberingFormat) {
-        this.numberingFormat = numberingFormat;
-    }
-
-    public Boolean getHasFullNumerals() {
-        return hasFullNumerals;
-    }
-
-    public void setHasFullNumerals(Boolean hasFullNumerals) {
-        this.hasFullNumerals = hasFullNumerals;
-    }
-
-    public Boolean getHasTickingSound() {
-        return hasTickingSound;
-    }
-
-    public void setHasTickingSound(Boolean hasTickingSound) {
-        this.hasTickingSound = hasTickingSound;
+        this.aCase = aCase;
+        this.price = price;
+        this.quantity = quantity;
+        this.colors = new ArrayList<>();
+ 
     }
 
     @Override
@@ -226,7 +133,8 @@ public class Product {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, brand, description, type, price, quantity, discount);
+         return Objects.hash(id, name, description, image, waterProof, hasTickingSound, includesDate, hasFullNumerals, size, brand, colors, shape, band, discount, weight, price, quantity);
+ 
     }
 
     @Override
