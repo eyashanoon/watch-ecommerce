@@ -31,12 +31,18 @@ public class AdminService {
         // ✅ Encode password before saving
         admin.setPassword(passwordEncoder.encode(admin.getPassword()));
 
-        Admin saved = adminRepository.save(admin);
         if( createAdminDTO.getRoles()!=null && !createAdminDTO.getRoles().isEmpty()) {
-            if(admin.getRoles()==null)admin.setRoles(createAdminDTO.getRoles());
-            createAdminDTO.getRoles().forEach(role -> {saved.getRoles().add(role);});
-
+            if(admin.getRoles()==null) {
+                admin.setRoles(new ArrayList<>());
+                System.out.println("121123345");
+            }
+            System.out.println(createAdminDTO.getRoles());
+           System.out.println(admin.getRoles()+"fdfdfdfdfdf1214");
+           List<Role> roles = createAdminDTO.getRoles();
+           roles.add(Role.ADMIN);
+            admin.setRoles(roles);
         }
+        Admin saved = adminRepository.save(admin);
         return AdminMapper.toDTO(saved);
     }
 

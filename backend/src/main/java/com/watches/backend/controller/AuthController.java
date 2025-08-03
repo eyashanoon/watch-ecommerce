@@ -45,8 +45,7 @@ public class AuthController {
 
             // Generate token with username (email) and roles
              String token = jwtUtil.generateToken(user.getEmail(), roles);
-
-            return ResponseEntity.ok(new AuthResponse(token));
+             return ResponseEntity.ok(new AuthResponse(token,roles));
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
@@ -66,13 +65,20 @@ public class AuthController {
 
     public static class AuthResponse {
         private String token;
+        private List<String> roles;
 
-        public AuthResponse(String token) {
+        public AuthResponse(String token, List<String> roles) {
             this.token = token;
+            this.roles = roles;
         }
 
         public String getToken() {
             return token;
         }
+
+        public List<String> getRoles() {
+            return roles;
+        }
     }
+
 }

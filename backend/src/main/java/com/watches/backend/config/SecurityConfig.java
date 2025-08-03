@@ -39,9 +39,9 @@ public class SecurityConfig {
                 .cors(cors -> {})
 
                 .authorizeHttpRequests(auth -> auth
-                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
- 
+                        .requestMatchers("/swagger-ui.html").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -51,7 +51,7 @@ public class SecurityConfig {
     }
 
     @Bean
-     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
     @Bean

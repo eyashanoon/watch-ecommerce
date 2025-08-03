@@ -19,15 +19,14 @@ public class Product {
     Long id;
     @Column(nullable = false)
     private String name;
-    private String brand;
+
     private String description;
 
     @OneToOne(cascade = CascadeType.ALL)
     private Image image;
 
-    private String size;
     private Boolean waterProof;
-     private Boolean hasTickingSound;
+    private Boolean hasTickingSound;
     private Boolean includesDate;
     private Boolean hasFullNumerals;
     private Boolean changeableBand;
@@ -66,27 +65,23 @@ public class Product {
 
     private Double weight;
     private Double size;
- 
+
     @PositiveOrZero
     private Double price;
 
     @PositiveOrZero
     private Integer quantity;
 
-     public Product() {}
+    public Product() {}
 
     public Product(String name,
-        String description,
+                   String description,
                    Image image,
-                   String size,
                    Boolean waterProof,
-                   Boolean crystal,
-                   String color,
-                   String type,
-                   Boolean supportsDate,
-                   String numberingFormat,
+                   Boolean hasTickingSound,
+                   Boolean includesDate,
                    Boolean hasFullNumerals,
-                    Boolean changeableBand,
+                   Boolean changeableBand,
                    NumberingFormat numberingFormat,
                    Brand brand,
                    Shape shape,
@@ -98,13 +93,10 @@ public class Product {
                    Case aCase,
                    Double price,
                    Integer quantity) {
- 
- 
         this.name = name;
-        this.brand = brand;
         this.description = description;
         this.image = image;
-         this.waterProof = waterProof;
+        this.waterProof = waterProof;
         this.hasTickingSound = hasTickingSound;
         this.includesDate = includesDate;
         this.hasFullNumerals = hasFullNumerals;
@@ -121,33 +113,20 @@ public class Product {
         this.price = price;
         this.quantity = quantity;
         this.colors = new ArrayList<>();
- 
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Objects.equals(name, product.name) && Objects.equals(brand, product.brand) && Objects.equals(description, product.description) && Objects.equals(type, product.type);
+        return Objects.equals(name, product.name) && Objects.equals(brand, product.brand) && Objects.equals(description, product.description);
     }
 
     @Override
     public int hashCode() {
-         return Objects.hash(id, name, description, image, waterProof, hasTickingSound, includesDate, hasFullNumerals, size, brand, colors, shape, band, discount, weight, price, quantity);
- 
+        return Objects.hash(id, name, description, image, waterProof, hasTickingSound, includesDate, hasFullNumerals, size, brand, colors, shape, band, discount, weight, price, quantity);
     }
 
-    @Override
-    public String toString() {
-        return "Product{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", brand='" + brand + '\'' +
-                ", description='" + description + '\'' +
-                ", type='" + type + '\'' +
-                ", price=" + price +
-                ", quantity=" + quantity +
-                ", discount=" + discount +
-                '}';
-    }
+
+
 }

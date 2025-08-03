@@ -4,4 +4,6 @@ public enum Role {
     ADMIN,
     CUSTOMER,
     ADD_ADMINS,
+    CONTROLADMINS,
+    CONTROLPRODUCTS,
 }
