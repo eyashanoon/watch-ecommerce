@@ -9,6 +9,7 @@ import com.watches.backend.model.Order;
 import com.watches.backend.model.SavedCard;
 
 import java.util.List;
+import java.util.Set;
 
 public class CustomerMapper {
 
@@ -42,7 +43,7 @@ public class CustomerMapper {
         customer.setEmail(dto.getEmail());
         customer.setPhone(dto.getPhone());
         customer.setPassword(dto.getPassword());
-        customer.setRoles(List.of(Role.CUSTOMER));
+        customer.setRoles(Set.of(Role.CUSTOMER));
 
         return customer;
     }

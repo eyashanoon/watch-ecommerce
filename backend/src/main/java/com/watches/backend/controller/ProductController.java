@@ -9,13 +9,12 @@ import com.watches.backend.service.ProductService;
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
  
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -32,32 +31,18 @@ public class ProductController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    List<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
-
+    Page<Product> getAll(@Valid @ModelAttribute ProductQueryObject query){
         CompletableFuture<Page<Product>> products = service.findAllAsync(query);
-
-        CompletableFuture<List<ProductDto>> productDTO = products.thenApply(l ->
-                l.stream()
-                        .map(ProductMapper::toDto)
-                        .toList()
-        );
-
-        return productDTO.join();
+        return products.join();
     }
 
     @GetMapping("/{id}")
-    ProductDto getById(@PathVariable Long id){
-
+    Product getById(@PathVariable Long id){
         CompletableFuture<Product> product = service.findByIdAsync(id);
-
-        CompletableFuture<ProductDto> productDto = product.thenApply(
-                ProductMapper::toDto
-        );
-
-        return productDto.join();
+        return product.join();
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     Product create(@Valid @ModelAttribute CreateProductDto createProductDto){
 

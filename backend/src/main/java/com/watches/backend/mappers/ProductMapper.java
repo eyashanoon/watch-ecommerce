@@ -2,28 +2,18 @@ package com.watches.backend.mappers;
 
 import com.watches.backend.Dto.ProductDto.CreateProductDto;
 import com.watches.backend.Dto.ProductDto.ProductDto;
-import com.watches.backend.Dto.ProductDto.WishlistProductDto;
-import com.watches.backend.Repositories.ImageRepository;
-import com.watches.backend.model.Image;
 import com.watches.backend.model.Product;
 import com.watches.backend.model.productFeatures.*;
-import jakarta.validation.Valid;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.io.IOException;
-import java.util.Base64;
 
 public class ProductMapper {
 
     public static ProductDto toDto(Product product){
-        ProductDto productDto = new ProductDto(
+
+        return new ProductDto(
                 product.getName(),
                 product.getDescription(),
-                 (product.getImage() == null ? "" : product.getImage().getData()),
+                (product.getImage() == null ? null : product.getImage().getId()),
                 product.getBrand().getBrand(),
- 
-                product.getSize(),
-                product.getWeight(),
                 product.getColors()
                         .get(0)
                         .getColor(),
@@ -43,9 +33,10 @@ public class ProductMapper {
                 product.getHasTickingSound(),
                 product.getWaterProof(),
                 product.getChangeableBand(),
+                product.getSize(),
+                product.getWeight(),
                 product.getPrice(),
-                 product.getQuantity()
- 
+                product.getQuantity()
         );
     }
 

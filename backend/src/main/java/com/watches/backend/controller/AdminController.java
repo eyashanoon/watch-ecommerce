@@ -23,13 +23,14 @@ public class AdminController {
 
     @PostMapping
     public ResponseEntity<AdminDTO> CreateAdmin(@RequestBody CreateAdminDTO  createAdminDTO){
-        return ResponseEntity.status(HttpStatus.CREATED).body(adminService.createAdmin(createAdminDTO) );
+        return ResponseEntity.status(HttpStatus.CREATED).body(adminService.createAdmin(createAdminDTO));
     }
     @GetMapping("/{id}")
     public ResponseEntity<AdminDTO> getAdmin(@PathVariable Long id){
          return ResponseEntity.status(HttpStatus.OK).body(adminService.getAdminById(id));
     }
-    //@PreAuthorize("hasRole('ADD_ADMINS')")
+
+    @PreAuthorize("hasRole('ADD_ADMINS')")
     @GetMapping
     public ResponseEntity<List<AdminDTO>> getAllAdmin(){
          return ResponseEntity.status(HttpStatus.OK).body(adminService.getAllAdmins());

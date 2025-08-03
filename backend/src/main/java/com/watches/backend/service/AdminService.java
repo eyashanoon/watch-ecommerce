@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,7 +76,7 @@ public class AdminService {
 
         // Ensure the roles collection is initialized
         if (admin.getRoles() == null) {
-            admin.setRoles(new ArrayList<>()); // or new ArrayList<> depending on your design
+            admin.setRoles(new HashSet<>()); // or new ArrayList<> depending on your design
         }
 
         if (admin.getRoles().add(role)) {

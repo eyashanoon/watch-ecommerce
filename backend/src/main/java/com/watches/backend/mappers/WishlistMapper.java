@@ -18,8 +18,8 @@ public class WishlistMapper {
 
     public static WishlistDto wishlistToDto(Wishlist wishlist) {
         return new WishlistDto(
-                wishlist.getCustomer(),
-                wishlist.getProducts()
+                wishlist.getCustomer().getUsername(),
+                wishlist.getProducts().stream().map(ProductMapper::toDto).toList()
         );
     }
 

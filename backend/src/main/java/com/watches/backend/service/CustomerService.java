@@ -7,6 +7,8 @@ import com.watches.backend.mappers.CustomerMapper;
 import com.watches.backend.model.Customer;
 import com.watches.backend.Repositories.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,13 +18,22 @@ import java.util.stream.Collectors;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final WishlistService wishlistService;
 
-    public CustomerService(CustomerRepository customerRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public CustomerService(CustomerRepository customerRepository,
+                           PasswordEncoder passwordEncoder,
+                           WishlistService wishlistService) {
         this.customerRepository = customerRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.wishlistService = wishlistService;
     }
 
      public CustomerDTO createCustomer(CreateCustomerDTO createCustomerDTO) {
         Customer customer = CustomerMapper.fromCreateDTO(createCustomerDTO);
+        customer.setPassword(passwordEncoder.encode(createCustomerDTO.getPassword()));
+        customer.setWishlist(wishlistService.createAsync().join());
         Customer saved = customerRepository.save(customer);
         return CustomerMapper.toDTO(saved);
     }
