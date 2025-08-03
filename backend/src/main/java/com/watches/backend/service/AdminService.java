@@ -32,6 +32,11 @@ public class AdminService {
         admin.setPassword(passwordEncoder.encode(admin.getPassword()));
 
         Admin saved = adminRepository.save(admin);
+        if( createAdminDTO.getRoles()!=null && !createAdminDTO.getRoles().isEmpty()) {
+            if(admin.getRoles()==null)admin.setRoles(createAdminDTO.getRoles());
+            createAdminDTO.getRoles().forEach(role -> {saved.getRoles().add(role);});
+
+        }
         return AdminMapper.toDTO(saved);
     }
 
