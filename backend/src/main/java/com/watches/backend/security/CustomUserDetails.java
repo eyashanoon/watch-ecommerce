@@ -53,7 +53,8 @@ public class CustomUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true; // or your logic
     }
-     public User getUser(){
+
+    public User getUser(){
         return user;
     }
 }
