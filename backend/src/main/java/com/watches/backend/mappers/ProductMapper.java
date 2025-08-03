@@ -16,12 +16,12 @@ import java.util.Base64;
 public class ProductMapper {
 
     public static ProductDto toDto(Product product){
-
-        return new ProductDto(
+        ProductDto productDto = new ProductDto(
                 product.getName(),
                 product.getDescription(),
-                (product.getImage() == null ? "" : product.getImage().getData()),
+                 (product.getImage() == null ? "" : product.getImage().getData()),
                 product.getBrand().getBrand(),
+ 
                 product.getSize(),
                 product.getWeight(),
                 product.getColors()
@@ -44,7 +44,8 @@ public class ProductMapper {
                 product.getWaterProof(),
                 product.getChangeableBand(),
                 product.getPrice(),
-                product.getQuantity()
+                 product.getQuantity()
+ 
         );
     }
 
