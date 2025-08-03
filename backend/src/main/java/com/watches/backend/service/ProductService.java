@@ -1,6 +1,7 @@
 package com.watches.backend.service;
 
 import com.watches.backend.Dto.ProductDto.CreateProductDto;
+import com.watches.backend.Dto.ProductDto.UpdateProductDto;
 import com.watches.backend.helpers.ProductQueryObject;
 import com.watches.backend.Repositories.ProductRepository;
 import com.watches.backend.exceptions.ProductNotFoundException;
@@ -83,6 +84,36 @@ public class ProductService {
                         .toArray(CompletableFuture[]::new)
         );
         allColorFutures.join();
+    }
+
+    private void updateFeatures(Product product, UpdateProductDto dto) {
+
+        CompletableFuture<Void> allFutures = CompletableFuture.allOf(
+                bandService.create(dto.getBandMaterial()).thenAccept(product::setBand),
+                brandService.create(dto.getBrand()).thenAccept(product::setBrand),
+                caseService.create(dto.getCaseMaterial()).thenAccept(product::setACase),
+                displayTypeService.create(dto.getDisplayType()).thenAccept(product::setDisplayType),
+                numberingFormatService.create(dto.getNumberingFormat()).thenAccept(product::setNumberingFormat),
+                shapeService.create(dto.getShape()).thenAccept(product::setShape)
+        );
+
+        allFutures.join();
+
+        List<CompletableFuture<Color>> colorFutures = List.of(
+                colorService.create("hands", dto.getHandsColor()),
+                colorService.create("background", dto.getBackgroundColor()),
+                colorService.create("band", dto.getBandColor())
+        );
+
+        CompletableFuture<Void> allColorFutures = CompletableFuture.allOf(
+                colorFutures.stream()
+                        .map(future ->
+                                future.thenAccept(
+                                        product.getColors()::add)
+                        )
+                        .toArray(CompletableFuture[]::new)
+        );
+        allColorFutures.join();
 
     }
 
@@ -102,7 +133,7 @@ public class ProductService {
         return CompletableFuture.completedFuture(product);
     }
 
-    public CompletableFuture<Product> updateAsync(CreateProductDto createProductDto, Long id) {
+    public CompletableFuture<Product> updateAsync(UpdateProductDto createProductDto, Long id) {
         CompletableFuture<Product> product = this.findByIdAsync(id); // throws ProductNotFoundException if not found
 
         product = product.thenApply(p -> {
@@ -118,7 +149,7 @@ public class ProductService {
             p.setIncludesDate(createProductDto.getIncludesDate());
             p.setWaterProof(createProductDto.getWaterProof());
 
-            setFeatures(p, createProductDto);
+            updateFeatures(p, createProductDto);
 
             return repository.save(p);
         });

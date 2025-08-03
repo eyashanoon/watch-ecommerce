@@ -29,7 +29,6 @@ public class AdminService {
     public AdminDTO createAdmin(CreateAdminDTO createAdminDTO) {
         Admin admin = AdminMapper.fromCreateDTO(createAdminDTO);
 
-        // ✅ Encode password before saving
         admin.setPassword(passwordEncoder.encode(admin.getPassword()));
 
         Admin saved = adminRepository.save(admin);

@@ -2,6 +2,7 @@ package com.watches.backend.controller;
 
 import com.watches.backend.Dto.ProductDto.CreateProductDto;
 import com.watches.backend.Dto.ProductDto.ProductDto;
+import com.watches.backend.Dto.ProductDto.UpdateProductDto;
 import com.watches.backend.helpers.ProductQueryObject;
 import com.watches.backend.mappers.ProductMapper;
 import com.watches.backend.model.Product;
@@ -16,7 +17,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/products")
@@ -31,15 +34,17 @@ public class ProductController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    Page<Product> getAll(@Valid @ModelAttribute ProductQueryObject query){
+    List<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
         CompletableFuture<Page<Product>> products = service.findAllAsync(query);
-        return products.join();
+        List<ProductDto> productDto = products.join().stream().map(ProductMapper::toDto).toList();
+        return productDto;
     }
 
     @GetMapping("/{id}")
-    Product getById(@PathVariable Long id){
+    ProductDto getById(@PathVariable Long id){
         CompletableFuture<Product> product = service.findByIdAsync(id);
-        return product.join();
+        ProductDto productDto = ProductMapper.toDto(product.join());
+        return productDto;
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -52,7 +57,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    ProductDto update(@Valid @RequestBody CreateProductDto productDto,
+    ProductDto update(@Valid @RequestBody UpdateProductDto productDto,
                       @Valid @PathVariable Long id){
 
         CompletableFuture<Product> product = service.updateAsync(productDto, id);

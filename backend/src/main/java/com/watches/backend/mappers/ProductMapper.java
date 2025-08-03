@@ -10,6 +10,7 @@ public class ProductMapper {
     public static ProductDto toDto(Product product){
 
         return new ProductDto(
+                product.getId(),
                 product.getName(),
                 product.getDescription(),
                 (product.getImage() == null ? null : product.getImage().getId()),
