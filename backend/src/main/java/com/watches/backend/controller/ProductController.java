@@ -59,9 +59,9 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    ProductDto update(@Valid @RequestBody UpdateProductDto productDto,
+     ProductDto update(@Valid @RequestBody UpdateProductDto productDto,
                       @Valid @PathVariable Long id){
-
+ 
         CompletableFuture<Product> product = service.updateAsync(productDto, id);
 
         CompletableFuture<ProductDto> productDTO = product.thenApply(

@@ -32,7 +32,8 @@ public class WishlistService {
                            ProductService productService) {
         this.wishlistRepository = wishlistRepository;
         this.customerRepository = customerRepository;
-        this.productService = productService;
+         this.productService = productService;
+ 
     }
 
     public CompletableFuture<Wishlist> findByIdAsync(Long id) {
@@ -43,13 +44,14 @@ public class WishlistService {
         return CompletableFuture.completedFuture(wishlist);
     }
 
-    public CompletableFuture<Wishlist> createAsync(){
+     public CompletableFuture<Wishlist> createAsync(){
         Wishlist wishlist = new Wishlist();
+ 
         wishlistRepository.save(wishlist);
         return CompletableFuture.completedFuture(wishlist);
     }
 
-    public CompletableFuture<Wishlist> findByCustomerIdAsync(String customerUsername) {
+     public CompletableFuture<Wishlist> findByCustomerIdAsync(String customerUsername) {
 
         Customer customer = customerRepository.findByEmail(customerUsername)
                 .orElseThrow(() ->
@@ -115,4 +117,5 @@ public class WishlistService {
 //                wishlistRepository::delete
 //        );
 //    }
+ 
 }
