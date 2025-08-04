@@ -7,11 +7,12 @@ import com.watches.backend.mappers.CustomerMapper;
 import com.watches.backend.model.Customer;
 import com.watches.backend.Repositories.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,12 +31,13 @@ public class CustomerService {
         this.wishlistService = wishlistService;
     }
 
-     public CustomerDTO createCustomer(CreateCustomerDTO createCustomerDTO) {
+    @Async
+    public CompletableFuture<Customer> createCustomer(CreateCustomerDTO createCustomerDTO) {
         Customer customer = CustomerMapper.fromCreateDTO(createCustomerDTO);
         customer.setPassword(passwordEncoder.encode(createCustomerDTO.getPassword()));
         customer.setWishlist(wishlistService.createAsync().join());
         Customer saved = customerRepository.save(customer);
-        return CustomerMapper.toDTO(saved);
+        return CompletableFuture.completedFuture(saved);
     }
 
      public CustomerDTO getCustomerById(Long id) {

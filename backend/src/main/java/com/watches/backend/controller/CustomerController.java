@@ -3,8 +3,11 @@ package com.watches.backend.controller;
 import com.watches.backend.Dto.CreateCustomerDTO;
 import com.watches.backend.Dto.UpdateCustomerDTO;
 import com.watches.backend.Dto.CustomerDTO;
+import com.watches.backend.mappers.CustomerMapper;
+import com.watches.backend.model.Customer;
 import com.watches.backend.service.CustomerService;
 import com.watches.backend.service.WishlistService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/customers")
@@ -24,9 +28,10 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CreateCustomerDTO createCustomerDTO) {
-        CustomerDTO createdCustomer = customerService.createCustomer(createCustomerDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdCustomer);
+    public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CreateCustomerDTO createCustomerDTO) {
+        CompletableFuture<Customer> createdCustomer = customerService.createCustomer(createCustomerDTO);
+        CustomerDTO customerDTO = CustomerMapper.toDTO(createdCustomer.join());
+        return ResponseEntity.status(HttpStatus.CREATED).body(customerDTO);
     }
 
     @GetMapping("/{id}")
@@ -47,6 +52,6 @@ public class CustomerController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
-        return ResponseEntity.noContent().build(); // HTTP 204 No Content
+        return ResponseEntity.noContent().build();
     }
 }

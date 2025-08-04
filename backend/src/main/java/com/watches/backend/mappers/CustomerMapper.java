@@ -6,7 +6,6 @@ import com.watches.backend.Dto.UpdateCustomerDTO;
 import com.watches.backend.enums.Role;
 import com.watches.backend.model.Customer;
 import com.watches.backend.model.Order;
-import com.watches.backend.model.SavedCard;
 
 import java.util.List;
 import java.util.Set;
@@ -19,7 +18,7 @@ public class CustomerMapper {
         List<Long> orderIDs = customer.getOrders() == null ? null :
                 customer.getOrders().stream().map(Order::getId).toList();
 
-         Long savedCardID = customer.getSavedCard() == null ? null :
+        Long savedCardID = customer.getSavedCard() == null ? null :
                 customer.getSavedCard().getId();
 
         return new CustomerDTO(
@@ -27,11 +26,11 @@ public class CustomerMapper {
                 customer.getUsername(),
                 customer.getEmail(),
                 customer.getPhone(),
+                customer.getRoles().stream().map(Enum::name).toList(),
                 customer.getCart() == null ? null : customer.getCart().getId(),
                 customer.getWishlist() == null ? null : customer.getWishlist().getId(),
                 orderIDs,
-                savedCardID,
-                customer.getRoles().stream().map(role -> role.name()).toList()
+                savedCardID
         );
     }
 

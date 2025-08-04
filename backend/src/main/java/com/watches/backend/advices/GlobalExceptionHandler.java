@@ -1,6 +1,7 @@
 package com.watches.backend.advices;
 
 import com.watches.backend.exceptions.*;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,7 +17,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
-        return ResponseEntity.badRequest().body(ex.getMessage());
+        String errorMessage = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .findFirst()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .orElse("Invalid input");
+        return ResponseEntity.badRequest().body(errorMessage);
     }
 
     @ExceptionHandler(DiscountNotFoundException.class)
