@@ -5,6 +5,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class DisplayType extends BaseFeatureEntity {
 
     private String type;
@@ -19,10 +21,7 @@ public class DisplayType extends BaseFeatureEntity {
     @OneToMany(mappedBy = "displayType", cascade = CascadeType.ALL)
     private List<Product> products;
 
-    public DisplayType() {}
-
     public DisplayType(String type) {
         this.type = type;
     }
-
 }

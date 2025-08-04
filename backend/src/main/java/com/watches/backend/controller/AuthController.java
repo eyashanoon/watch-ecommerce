@@ -3,6 +3,8 @@ package com.watches.backend.controller;
 import com.watches.backend.model.User;
 import com.watches.backend.security.CustomUserDetails;
 import com.watches.backend.security.JwtUtil;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -45,26 +47,28 @@ public class AuthController {
 
             // Generate token with username (email) and roles
              String token = jwtUtil.generateToken(user.getEmail(), roles);
-             return ResponseEntity.ok(new AuthResponse(token,roles));
+ 
+            return ResponseEntity.ok(new AuthResponse(token, user));
+ 
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
     }
 
+
+
+    @Getter
+    @Setter
     public static class AuthRequest {
         private String username;
         private String password;
-
-        // Getters and setters
-        public String getUsername() { return username; }
-        public void setUsername(String username) { this.username = username; }
-
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
     }
 
+    @Getter
+    @Setter
     public static class AuthResponse {
         private String token;
+ 
         private List<String> roles;
 
         public AuthResponse(String token, List<String> roles) {
@@ -79,6 +83,6 @@ public class AuthController {
         public List<String> getRoles() {
             return roles;
         }
-    }
+     }
 
 }

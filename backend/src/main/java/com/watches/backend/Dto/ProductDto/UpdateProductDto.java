@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 @Getter
 @AllArgsConstructor
-public class CreateProductDto {
+public class UpdateProductDto {
 
     @NotBlank(message = "Product name is required")
     @NotNull
@@ -76,5 +76,5 @@ public class CreateProductDto {
 
     @PositiveOrZero(message = "Product quantity must be zero or positive")
     private Integer quantity;
- 
+
 }

@@ -2,7 +2,9 @@ package com.watches.backend.model.productFeatures;
 
 import com.watches.backend.model.Product;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -11,18 +13,15 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Band extends BaseFeatureEntity {
 
-    private String bandMaterial;
+    private String material;
 
     @OneToMany(mappedBy = "band", cascade = CascadeType.ALL)
     private List<Product> products;
 
-    public Band() {
+    public Band(String material) {
+        this.material = material;
     }
-
-    public Band(String bandMaterial) {
-        this.bandMaterial = bandMaterial;
-    }
-
 }
