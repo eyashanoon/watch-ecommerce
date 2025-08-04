@@ -44,11 +44,12 @@ public class AuthController {
             List<String> roles = userDetails.getAuthorities().stream()
                     .map(authority -> authority.getAuthority().replace("ROLE_", ""))
                     .collect(Collectors.toList());
+            System.out.println(roles);
 
             // Generate token with username (email) and roles
              String token = jwtUtil.generateToken(user.getEmail(), roles);
  
-            return ResponseEntity.ok(new AuthResponse(token, user));
+            return ResponseEntity.ok(new AuthResponse(token, roles));
  
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");

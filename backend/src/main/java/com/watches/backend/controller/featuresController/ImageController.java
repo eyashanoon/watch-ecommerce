@@ -23,7 +23,7 @@ public class ImageController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('ADMIN')")
+   // @PreAuthorize("hasRole('ADMIN')")
     ImageDto addImage(@Valid @RequestParam("ProductId") Long productId, @RequestParam("image") MultipartFile file) {
         CompletableFuture<Image> image = imageService.create(productId, file);
         return FeaturesMapper.imageToDto(image.join());
@@ -48,9 +48,10 @@ public class ImageController {
         return FeaturesMapper.imageToDto(image.join());
     }
 
-    @DeleteMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    void delete(@Valid @RequestParam("productId") Long productId){
+    @DeleteMapping("/{productId}")
+    //@PreAuthorize("hasRole('ADMIN')")
+    void delete(@Valid @PathVariable("productId") Long productId){
+
         imageService.delete(productId);
     }
 

@@ -39,8 +39,7 @@ public class ProductMapper {
                 product.getPrice(),
                 product.getQuantity()
         );
-        return productDto;
-    }
+     }
 
     public static Product createToProduct(CreateProductDto dto) {
 

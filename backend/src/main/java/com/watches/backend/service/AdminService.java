@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,9 +37,9 @@ public class AdminService {
 
         if( createAdminDTO.getRoles()!=null && !createAdminDTO.getRoles().isEmpty()) {
             if(admin.getRoles()==null) {
-                admin.setRoles(new ArrayList<>());
+                admin.setRoles(new HashSet<>());
              }
-            List<Role> roles = createAdminDTO.getRoles();
+            Set<Role> roles = createAdminDTO.getRoles();
            roles.add(Role.ADMIN);
             admin.setRoles(roles);
         }
@@ -73,9 +74,9 @@ public class AdminService {
                 .orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
         if( updateAdminDTO.getRoles() !=null && !updateAdminDTO.getRoles().isEmpty()) {
             if(admin.getRoles()==null) {
-                admin.setRoles(new ArrayList<>());
+                admin.setRoles(new HashSet<>());
             }
-            List<Role> roles = updateAdminDTO.getRoles();
+            Set<Role> roles = updateAdminDTO.getRoles();
              admin.setRoles(roles);
         }
         AdminMapper.updateAdminFromDTO(updateAdminDTO, admin);
@@ -83,18 +84,7 @@ public class AdminService {
         return AdminMapper.toDTO(updated);
     }
     public AdminDTO updateAdminPassword(Long id, UpdateAdminDTO updateAdminDTO) {
-        Admin admin = adminRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
-        if( updateAdminDTO.getRoles() !=null && !updateAdminDTO.getRoles().isEmpty()) {
-            if(admin.getRoles()==null) {
-                admin.setRoles(new ArrayList<>());
-            }
-            List<Role> roles = updateAdminDTO.getRoles();
-            admin.setRoles(roles);
-        }
-        AdminMapper.updateAdminFromDTO(updateAdminDTO, admin);
-        Admin updated = adminRepository.save(admin);
-        return AdminMapper.toDTO(updated);
+         return new AdminDTO();
     }
 
     public void deleteAdmin(Long id) {
