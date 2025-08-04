@@ -7,9 +7,11 @@ import com.watches.backend.Repositories.ProductRepository;
 import com.watches.backend.exceptions.ProductNotFoundException;
 import com.watches.backend.helpers.ProductSpecificationBuilder;
 import com.watches.backend.mappers.ProductMapper;
+import com.watches.backend.model.Image;
 import com.watches.backend.model.Product;
 import com.watches.backend.model.productFeatures.*;
 import com.watches.backend.service.productFeatures.*;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -22,11 +24,11 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @Async
+@AllArgsConstructor
 public class ProductService {
 
     private final ProductRepository repository;
 
-    private final ImageService imageService;
     private final BrandService brandService;
     private final BandService bandService;
     private final CaseService caseService;
@@ -35,90 +37,67 @@ public class ProductService {
     private final NumberingFormatService numberingFormatService;
     private final ShapeService shapeService;
 
-    public ProductService(ProductRepository repository,
-                          ImageService imageService,
-                          BrandService brandService,
-                          BandService bandService,
-                          CaseService caseService,
-                          ColorService colorService,
-                          DisplayTypeService displayTypeService,
-                          NumberingFormatService numberingFormatService,
-                          ShapeService shapeService) {
-        this.repository = repository;
-        this.imageService = imageService;
-        this.brandService = brandService;
-        this.bandService = bandService;
-        this.caseService = caseService;
-        this.colorService = colorService;
-        this.displayTypeService = displayTypeService;
-        this.numberingFormatService = numberingFormatService;
-        this.shapeService = shapeService;
+    private void getFeaturesList(Product product, String bandMaterial, String brand, String caseMaterial, String displayType, String numberingFormat, String shape, String handsColor, String backgroundColor, String bandColor) {
+        CompletableFuture<Void> allFutures = CompletableFuture.allOf(
+                bandService.create(bandMaterial).thenAccept(product::setBand),
+                brandService.create(brand).thenAccept(product::setBrand),
+                caseService.create(caseMaterial).thenAccept(product::setACase),
+                displayTypeService.create(displayType).thenAccept(product::setDisplayType),
+                numberingFormatService.create(numberingFormat).thenAccept(product::setNumberingFormat),
+                shapeService.create(shape).thenAccept(product::setShape)
+        );
+
+        allFutures.join();
+
+        List<CompletableFuture<Color>> colorFutures = List.of(
+                colorService.create("hands", handsColor),
+                colorService.create("background", backgroundColor),
+                colorService.create("band", bandColor)
+        );
+
+        CompletableFuture<Void> allColorFutures = CompletableFuture.allOf(
+                colorFutures.stream()
+                        .map(future ->
+                                future.thenAccept(
+                                        product.getColors()::add)
+                        )
+                        .toArray(CompletableFuture[]::new)
+        );
+        allColorFutures.join();
     }
 
     private void setFeatures(Product product, CreateProductDto dto) {
 
-        CompletableFuture<Void> allFutures = CompletableFuture.allOf(
-        imageService.create(dto.getImage()).thenAccept(product::setImage),
-        bandService.create(dto.getBandMaterial()).thenAccept(product::setBand),
-        brandService.create(dto.getBrand()).thenAccept(product::setBrand),
-        caseService.create(dto.getCaseMaterial()).thenAccept(product::setACase),
-        displayTypeService.create(dto.getDisplayType()).thenAccept(product::setDisplayType),
-        numberingFormatService.create(dto.getNumberingFormat()).thenAccept(product::setNumberingFormat),
-        shapeService.create(dto.getShape()).thenAccept(product::setShape)
-        );
-
-        allFutures.join();
-
-        List<CompletableFuture<Color>> colorFutures = List.of(
-                colorService.create("hands", dto.getHandsColor()),
-                colorService.create("background", dto.getBackgroundColor()),
-                colorService.create("band", dto.getBandColor())
-        );
-
-        CompletableFuture<Void> allColorFutures = CompletableFuture.allOf(
-                colorFutures.stream()
-                        .map(future ->
-                                future.thenAccept(
-                                        product.getColors()::add)
-                        )
-                        .toArray(CompletableFuture[]::new)
-        );
-        allColorFutures.join();
+        getFeaturesList(product,
+                dto.getBandMaterial(),
+                dto.getBrand(),
+                dto.getCaseMaterial(),
+                dto.getDisplayType(),
+                dto.getNumberingFormat(),
+                dto.getShape(),
+                dto.getHandsColor(),
+                dto.getBackgroundColor(),
+                dto.getBandColor());
     }
 
     private void updateFeatures(Product product, UpdateProductDto dto) {
 
-        CompletableFuture<Void> allFutures = CompletableFuture.allOf(
-                bandService.create(dto.getBandMaterial()).thenAccept(product::setBand),
-                brandService.create(dto.getBrand()).thenAccept(product::setBrand),
-                caseService.create(dto.getCaseMaterial()).thenAccept(product::setACase),
-                displayTypeService.create(dto.getDisplayType()).thenAccept(product::setDisplayType),
-                numberingFormatService.create(dto.getNumberingFormat()).thenAccept(product::setNumberingFormat),
-                shapeService.create(dto.getShape()).thenAccept(product::setShape)
-        );
-
-        allFutures.join();
-
-        List<CompletableFuture<Color>> colorFutures = List.of(
-                colorService.create("hands", dto.getHandsColor()),
-                colorService.create("background", dto.getBackgroundColor()),
-                colorService.create("band", dto.getBandColor())
-        );
-
-        CompletableFuture<Void> allColorFutures = CompletableFuture.allOf(
-                colorFutures.stream()
-                        .map(future ->
-                                future.thenAccept(
-                                        product.getColors()::add)
-                        )
-                        .toArray(CompletableFuture[]::new)
-        );
-        allColorFutures.join();
+        getFeaturesList(product,
+                dto.getBandMaterial(),
+                dto.getBrand(),
+                dto.getCaseMaterial(),
+                dto.getDisplayType(),
+                dto.getNumberingFormat(),
+                dto.getShape(),
+                dto.getHandsColor(),
+                dto.getBackgroundColor(),
+                dto.getBandColor());
 
     }
 
-    public CompletableFuture<Product> createAsync(CreateProductDto productDto){
 
+
+    public CompletableFuture<Product> createAsync(CreateProductDto productDto){
 
         Product product = ProductMapper.createToProduct(productDto);
         setFeatures(product, productDto);
@@ -134,7 +113,7 @@ public class ProductService {
     }
 
     public CompletableFuture<Product> updateAsync(UpdateProductDto createProductDto, Long id) {
-        CompletableFuture<Product> product = this.findByIdAsync(id); // throws ProductNotFoundException if not found
+        CompletableFuture<Product> product = this.findByIdAsync(id);
 
         product = product.thenApply(p -> {
             p.setName(createProductDto.getName());
@@ -187,4 +166,10 @@ public class ProductService {
 
        return CompletableFuture.completedFuture(products);
     }
+
+    public void setImage(Product product, Image image){
+        product.setImage(image);
+        repository.save(product);
+    }
+
 }

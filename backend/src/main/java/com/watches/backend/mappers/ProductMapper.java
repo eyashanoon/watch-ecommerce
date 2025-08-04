@@ -14,7 +14,7 @@ public class ProductMapper {
                 product.getName(),
                 product.getDescription(),
                 (product.getImage() == null ? null : product.getImage().getId()),
-                product.getBrand().getBrand(),
+                product.getBrand().getName(),
                 product.getColors()
                         .get(0)
                         .getColor(),
@@ -24,11 +24,11 @@ public class ProductMapper {
                 product.getColors()
                         .get(2)
                         .getColor(),
-                product.getNumberingFormat().getNumberingFormat(),
-                product.getBand().getBandMaterial(),
+                product.getNumberingFormat().getFormat(),
+                product.getBand().getMaterial(),
                 product.getACase().getMaterial(),
                 product.getDisplayType().getType(),
-                product.getShape().getShape(),
+                product.getShape().getName(),
                 product.getIncludesDate(),
                 product.getHasFullNumerals(),
                 product.getHasTickingSound(),

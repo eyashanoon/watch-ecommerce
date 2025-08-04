@@ -3,13 +3,13 @@ package com.watches.backend.model.productFeatures;
 import com.watches.backend.model.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Color extends BaseFeatureEntity {
 
     private String watchPart;
@@ -18,8 +18,6 @@ public class Color extends BaseFeatureEntity {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
-
-    public Color(){};
 
     public Color(String watchPart, String color) {
         this.watchPart = watchPart;

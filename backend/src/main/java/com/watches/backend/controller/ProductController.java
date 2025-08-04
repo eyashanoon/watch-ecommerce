@@ -35,25 +35,27 @@ public class ProductController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     List<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
-        CompletableFuture<Page<Product>> products = service.findAllAsync(query);
-        List<ProductDto> productDto = products.join().stream().map(ProductMapper::toDto).toList();
-        return productDto;
+
+        return service.findAllAsync(query)
+                .thenApply(page -> page.stream()
+                        .map(ProductMapper::toDto)
+                        .toList())
+                .join();
     }
 
     @GetMapping("/{id}")
     ProductDto getById(@PathVariable Long id){
         CompletableFuture<Product> product = service.findByIdAsync(id);
-        ProductDto productDto = ProductMapper.toDto(product.join());
-        return productDto;
+        return ProductMapper.toDto(product.join());
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    Product create(@Valid @ModelAttribute CreateProductDto createProductDto){
+    ProductDto create(@Valid @ModelAttribute CreateProductDto createProductDto){
 
         CompletableFuture<Product> product = service.createAsync(createProductDto);
 
-        return product.join();
+        return ProductMapper.toDto(product.join());
     }
 
     @PutMapping("/{id}")

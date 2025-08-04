@@ -18,9 +18,6 @@ public class CreateProductDto {
     private String name;
     private String description;
 
-    @NotNull
-    private MultipartFile image;
-
     @NotBlank(message = "Product brand is required")
     @NotNull
     private String brand;
