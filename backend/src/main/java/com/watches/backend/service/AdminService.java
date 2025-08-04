@@ -6,6 +6,7 @@ import com.watches.backend.Dto.AdminDTO;
 import com.watches.backend.enums.Role;
 import com.watches.backend.mappers.AdminMapper;
 import com.watches.backend.model.Admin;
+import com.watches.backend.service.AuthService;
 import com.watches.backend.Repositories.AdminRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,10 +20,12 @@ import java.util.stream.Collectors;
 public class AdminService {
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
 
-    public AdminService(AdminRepository adminRepository, PasswordEncoder passwordEncoder) {
+    public AdminService(AdminRepository adminRepository, PasswordEncoder passwordEncoder, AuthService authService) {
         this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authService = authService;
     }
 
     public AdminDTO createAdmin(CreateAdminDTO createAdminDTO) {
@@ -34,11 +37,8 @@ public class AdminService {
         if( createAdminDTO.getRoles()!=null && !createAdminDTO.getRoles().isEmpty()) {
             if(admin.getRoles()==null) {
                 admin.setRoles(new ArrayList<>());
-                System.out.println("121123345");
-            }
-            System.out.println(createAdminDTO.getRoles());
-           System.out.println(admin.getRoles()+"fdfdfdfdfdf1214");
-           List<Role> roles = createAdminDTO.getRoles();
+             }
+            List<Role> roles = createAdminDTO.getRoles();
            roles.add(Role.ADMIN);
             admin.setRoles(roles);
         }
@@ -59,10 +59,39 @@ public class AdminService {
                 .collect(Collectors.toList());
     }
 
+    public List<AdminDTO> getAllAdminsWithoutTheSingedInAdmin() {
+        Long adminId = authService.getCurrentUserId();
+        return adminRepository.findAll()
+                .stream()
+                .map(AdminMapper::toDTO)
+                .toList().stream().filter(admin -> !admin.getId().equals(adminId)).collect(Collectors.toList());
+    }
+
+
     public AdminDTO updateAdmin(Long id, UpdateAdminDTO updateAdminDTO) {
         Admin admin = adminRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
-
+        if( updateAdminDTO.getRoles() !=null && !updateAdminDTO.getRoles().isEmpty()) {
+            if(admin.getRoles()==null) {
+                admin.setRoles(new ArrayList<>());
+            }
+            List<Role> roles = updateAdminDTO.getRoles();
+             admin.setRoles(roles);
+        }
+        AdminMapper.updateAdminFromDTO(updateAdminDTO, admin);
+        Admin updated = adminRepository.save(admin);
+        return AdminMapper.toDTO(updated);
+    }
+    public AdminDTO updateAdminPassword(Long id, UpdateAdminDTO updateAdminDTO) {
+        Admin admin = adminRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
+        if( updateAdminDTO.getRoles() !=null && !updateAdminDTO.getRoles().isEmpty()) {
+            if(admin.getRoles()==null) {
+                admin.setRoles(new ArrayList<>());
+            }
+            List<Role> roles = updateAdminDTO.getRoles();
+            admin.setRoles(roles);
+        }
         AdminMapper.updateAdminFromDTO(updateAdminDTO, admin);
         Admin updated = adminRepository.save(admin);
         return AdminMapper.toDTO(updated);
