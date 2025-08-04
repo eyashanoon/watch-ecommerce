@@ -1,26 +1,21 @@
 package com.watches.backend.service;
 
 import com.watches.backend.Dto.ProductDto.ProductDto;
-import com.watches.backend.Dto.ProductDto.WishlistProductDto;
 import com.watches.backend.Dto.WishlistDto.CreateWishlistDto;
 import com.watches.backend.Repositories.CustomerRepository;
 import com.watches.backend.Repositories.WishlistRepository;
 import com.watches.backend.exceptions.CustomerNotFoundException;
 import com.watches.backend.exceptions.WishlistNotFoundException;
 import com.watches.backend.helpers.ProductQueryObject;
-import com.watches.backend.helpers.factories.ProductFilterFactory;
-import com.watches.backend.helpers.productOptions.IProductFilter;
 import com.watches.backend.mappers.ProductMapper;
 import com.watches.backend.mappers.WishlistMapper;
 import com.watches.backend.model.Customer;
-import com.watches.backend.model.Image;
 import com.watches.backend.model.Product;
 import com.watches.backend.model.Wishlist;
 import jakarta.validation.Valid;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -29,62 +24,60 @@ public class WishlistService {
 
     private final WishlistRepository wishlistRepository;
     private final CustomerRepository customerRepository;
+    private final ProductService productService;
 
-    private final ImageService imageService;
 
     public WishlistService(WishlistRepository wishlistRepository,
                            CustomerRepository customerRepository,
-                           ImageService imageService) {
+                           ProductService productService) {
         this.wishlistRepository = wishlistRepository;
         this.customerRepository = customerRepository;
-        this.imageService = imageService;
-     }
+         this.productService = productService;
+ 
+    }
 
-    public CompletableFuture<Wishlist> findByIdAsync(Long id, ProductQueryObject queryObject) {
+    public CompletableFuture<Wishlist> findByIdAsync(Long id) {
         Wishlist wishlist = wishlistRepository.findById(id)
                 .orElseThrow(() ->
                         new WishlistNotFoundException(id)
                 );
-        List<IProductFilter> filters = ProductFilterFactory.getFilters(queryObject);
-
-        for(IProductFilter filter : filters) {
-            filter.applyFilter(wishlist.getProducts().stream(), queryObject);
-        }
         return CompletableFuture.completedFuture(wishlist);
     }
 
-    public CompletableFuture<Wishlist> createAsync(CreateWishlistDto wishlistDto){
-        Wishlist wishlist = WishlistMapper.createToWishlist(wishlistDto);
+     public CompletableFuture<Wishlist> createAsync(){
+        Wishlist wishlist = new Wishlist();
+ 
         wishlistRepository.save(wishlist);
         return CompletableFuture.completedFuture(wishlist);
     }
 
-    public CompletableFuture<Wishlist> findByCustomerIdAsync(@Valid Long customerId) {
+     public CompletableFuture<Wishlist> findByCustomerIdAsync(String customerUsername) {
 
-        Customer customer = customerRepository.findById(customerId)
+        Customer customer = customerRepository.findByEmail(customerUsername)
                 .orElseThrow(() ->
-                        new CustomerNotFoundException(customerId)
+                        new CustomerNotFoundException(customerUsername)
                 );
-
+        Wishlist wishlist = customer.getWishlist();
+        if(wishlist == null) {
+            throw new RuntimeException("Wishlist not found");
+        }
         return CompletableFuture.completedFuture(customer.getWishlist());
     }
 
-    public CompletableFuture<Wishlist> addProductAsync(Long id, WishlistProductDto productDto){
+    public CompletableFuture<Wishlist> addProductAsync(String username, Long productId){
 
-        CompletableFuture<Wishlist> wishlist = this.findByIdAsync(id, null);
-        return getWishlistCompletableFuture(productDto, wishlist);
+        CompletableFuture<Wishlist> wishlist = this.findByCustomerIdAsync(username);
+        return addWishlistCompletableFuture(productId, wishlist);
     }
 
-    public CompletableFuture<Wishlist> addProductByCustomerIdAsync(@Valid Long customerID, @Valid WishlistProductDto productDto){
+//    public CompletableFuture<Wishlist> addProductByCustomerIdAsync(@Valid Long customerID, @Valid ProductDto productDto){
+//
+//        CompletableFuture<Wishlist> wishlist = this.findByCustomerIdAsync(customerID);
+//        return getWishlistCompletableFuture(productDto, wishlist);
+//    }
 
-        CompletableFuture<Wishlist> wishlist = this.findByCustomerIdAsync(customerID);
-        return getWishlistCompletableFuture(productDto, wishlist);
-    }
-
-    private CompletableFuture<Wishlist> getWishlistCompletableFuture(@Valid WishlistProductDto productDto, CompletableFuture<Wishlist> wishlist) {
-        Product product = ProductMapper.WishlistDtoToProduct(productDto);
-        CompletableFuture<Image> image = imageService.getImageById(productDto.getImageId());
-        image.thenAccept(product::setImage);
+    private CompletableFuture<Wishlist> addWishlistCompletableFuture(Long productId, CompletableFuture<Wishlist> wishlist) {
+        Product product = productService.findByIdAsync(productId).join();
 
         wishlist = wishlist.thenApply(wl -> {
             wl.addItem(product);
@@ -94,24 +87,35 @@ public class WishlistService {
         return wishlist.thenApply(wl -> wl);
     }
 
-    public CompletableFuture<Wishlist> removeProductAsync(@Valid Long id, @Valid WishlistProductDto productDto){
+    private CompletableFuture<Wishlist> removeWishlistCompletableFuture(Long productId, CompletableFuture<Wishlist> wishlist) {
+        Product product = productService.findByIdAsync(productId).join();
 
-        CompletableFuture<Wishlist> wishlist = this.findByIdAsync(id, null);
-        return getWishlistCompletableFuture(productDto, wishlist);
+        wishlist = wishlist.thenApply(wl -> {
+            wl.removeItem(product);
+            return wishlistRepository.save(wl);
+        });
+
+        return wishlist.thenApply(wl -> wl);
     }
 
-    public CompletableFuture<Wishlist> removeProductByCustomerIdAsync(@Valid Long customerID, @Valid WishlistProductDto productDto){
-
-        CompletableFuture<Wishlist> wishlist = this.findByCustomerIdAsync(customerID);
-
-        return getWishlistCompletableFuture(productDto, wishlist);
+    public CompletableFuture<Wishlist> removeProductAsync(String username, Long productId){
+        CompletableFuture<Wishlist> wishlist = this.findByCustomerIdAsync(username);
+        return removeWishlistCompletableFuture(productId, wishlist);
     }
 
-    public void deleteById(Long id){
-        CompletableFuture<Wishlist> wishlist = this.findByIdAsync(id, null);
+//    public CompletableFuture<Wishlist> removeProductByCustomerIdAsync(@Valid Long customerID, @Valid ProductDto productDto){
+//
+//        CompletableFuture<Wishlist> wishlist = this.findByCustomerIdAsync(customerID);
+//
+//        return getWishlistCompletableFuture(productDto, wishlist);
+//    }
 
-        wishlist.thenAccept(
-                wishlistRepository::delete
-        );
-    }
+//    public void deleteById(Long id){
+//        CompletableFuture<Wishlist> wishlist = this.findByIdAsync(id, null);
+//
+//        wishlist.thenAccept(
+//                wishlistRepository::delete
+//        );
+//    }
+ 
 }

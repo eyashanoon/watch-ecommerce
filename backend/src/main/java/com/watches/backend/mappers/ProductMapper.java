@@ -2,82 +2,101 @@ package com.watches.backend.mappers;
 
 import com.watches.backend.Dto.ProductDto.CreateProductDto;
 import com.watches.backend.Dto.ProductDto.ProductDto;
-import com.watches.backend.Dto.ProductDto.WishlistProductDto;
-import com.watches.backend.Repositories.ImageRepository;
-import com.watches.backend.model.Image;
 import com.watches.backend.model.Product;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.io.IOException;
-import java.util.Base64;
+import com.watches.backend.model.productFeatures.*;
 
 public class ProductMapper {
 
     public static ProductDto toDto(Product product){
-        ProductDto productDto = new ProductDto(
+
+        return new ProductDto(
+                product.getId(),
                 product.getName(),
-                product.getBrand(),
                 product.getDescription(),
-                product.getImage().getData(),
-                product.getSize(),
-                product.getWaterProof(),
-                product.getCrystal(),
-                product.getColor(),
-                product.getType(),
-                product.getSupportsDate(),
-                product.getNumberingFormat(),
+                (product.getImage() == null ? null : product.getImage().getId()),
+                product.getBrand().getName(),
+                product.getColors()
+                        .get(0)
+                        .getColor(),
+                product.getColors()
+                        .get(1)
+                        .getColor(),
+                product.getColors()
+                        .get(2)
+                        .getColor(),
+                product.getNumberingFormat().getFormat(),
+                product.getBand().getMaterial(),
+                product.getACase().getMaterial(),
+                product.getDisplayType().getType(),
+                product.getShape().getName(),
+                product.getIncludesDate(),
                 product.getHasFullNumerals(),
                 product.getHasTickingSound(),
+                product.getWaterProof(),
+                product.getChangeableBand(),
+                product.getSize(),
+                product.getWeight(),
                 product.getPrice(),
-                product.getQuantity(),
-                product.getDiscount()
+                product.getQuantity()
         );
-
-        return productDto;
-    }
-
-    public static Product WishlistDtoToProduct(WishlistProductDto productDto){
-
-        return new Product(
-                productDto.getName(),
-                productDto.getBrand(),
-                productDto.getDescription(),
-                null,
-                productDto.getSize(),
-                productDto.getWaterProof(),
-                productDto.getCrystal(),
-                productDto.getColor(),
-                productDto.getType(),
-                productDto.getSupportsDate(),
-                productDto.getNumberingFormat(),
-                productDto.getHasFullNumerals(),
-                productDto.getHasTickingSound(),
-                productDto.getPrice(),
-                productDto.getQuantity(),
-                null
-        );
-    }
+     }
 
     public static Product createToProduct(CreateProductDto dto) {
 
+
         return new Product(
                 dto.getName(),
-                dto.getBrand(),
                 dto.getDescription(),
                 null,
-                dto.getSize(),
                 dto.getWaterProof(),
-                dto.getCrystal(),
-                dto.getColor(),
-                dto.getType(),
-                dto.getSupportsDate(),
-                dto.getNumberingFormat(),
-                dto.getHasFullNumerals(),
                 dto.getHasTickingSound(),
+                dto.getIncludesDate(),
+                dto.getHasFullNumerals(),
+                dto.getChangeableBand(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                dto.getWeight(),
+                dto.getSize(),
+                null,
                 dto.getPrice(),
-                dto.getQuantity(),
-                null
+                dto.getQuantity()
         );
     }
 
+    public static Product dtoToProduct(ProductDto productDto) {
+
+        Band band = new Band(productDto.getBandMaterial());
+
+        Brand brand = new Brand(productDto.getBrand());
+        Case casee = new Case(productDto.getCaseMaterial());
+        Shape shape = new Shape(productDto.getShape());
+        NumberingFormat nf = new NumberingFormat(productDto.getNumberingFormat());
+        DisplayType dt = new DisplayType(productDto.getDisplayType());
+
+        return new Product(
+                productDto.getName(),
+                productDto.getDescription(),
+                null,
+                productDto.getWaterProof(),
+                productDto.getHasTickingSound(),
+                productDto.getIncludesDate(),
+                productDto.getHasFullNumerals(),
+                productDto.getChangeableBand(),
+                nf,
+                brand,
+                shape,
+                band,
+                null,
+                dt,
+                productDto.getWeight(),
+                productDto.getSize(),
+                casee,
+                productDto.getPrice(),
+                productDto.getQuantity()
+        );
+    }
 }

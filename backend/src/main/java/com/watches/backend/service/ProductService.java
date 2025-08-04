@@ -1,59 +1,139 @@
 package com.watches.backend.service;
 
 import com.watches.backend.Dto.ProductDto.CreateProductDto;
+import com.watches.backend.Dto.ProductDto.UpdateProductDto;
 import com.watches.backend.helpers.ProductQueryObject;
 import com.watches.backend.Repositories.ProductRepository;
 import com.watches.backend.exceptions.ProductNotFoundException;
-import com.watches.backend.helpers.factories.ProductFilterFactory;
-import com.watches.backend.helpers.productOptions.IProductFilter;
+import com.watches.backend.helpers.ProductSpecificationBuilder;
 import com.watches.backend.mappers.ProductMapper;
 import com.watches.backend.model.Image;
 import com.watches.backend.model.Product;
+import com.watches.backend.model.productFeatures.*;
+import com.watches.backend.service.productFeatures.*;
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
+
 
 @Service
 @Async
+@AllArgsConstructor
 public class ProductService {
 
     private final ProductRepository repository;
-    private final ImageService imageService;
 
-    public ProductService(ProductRepository repository,
-                          ImageService imageService) {
-        this.repository = repository;
-        this.imageService = imageService;
+    private final BrandService brandService;
+    private final BandService bandService;
+    private final CaseService caseService;
+    private final ColorService colorService;
+    private final DisplayTypeService displayTypeService;
+    private final NumberingFormatService numberingFormatService;
+    private final ShapeService shapeService;
+
+    private void getFeaturesList(Product product, String bandMaterial, String brand, String caseMaterial, String displayType, String numberingFormat, String shape, String handsColor, String backgroundColor, String bandColor) {
+        CompletableFuture<Void> allFutures = CompletableFuture.allOf(
+                bandService.create(bandMaterial).thenAccept(product::setBand),
+                brandService.create(brand).thenAccept(product::setBrand),
+                caseService.create(caseMaterial).thenAccept(product::setACase),
+                displayTypeService.create(displayType).thenAccept(product::setDisplayType),
+                numberingFormatService.create(numberingFormat).thenAccept(product::setNumberingFormat),
+                shapeService.create(shape).thenAccept(product::setShape)
+        );
+
+        allFutures.join();
+
+        List<CompletableFuture<Color>> colorFutures = List.of(
+                colorService.create("hands", handsColor),
+                colorService.create("background", backgroundColor),
+                colorService.create("band", bandColor)
+        );
+
+        CompletableFuture<Void> allColorFutures = CompletableFuture.allOf(
+                colorFutures.stream()
+                        .map(future ->
+                                future.thenAccept(
+                                        product.getColors()::add)
+                        )
+                        .toArray(CompletableFuture[]::new)
+        );
+        allColorFutures.join();
     }
+
+    private void setFeatures(Product product, CreateProductDto dto) {
+
+        getFeaturesList(product,
+                dto.getBandMaterial(),
+                dto.getBrand(),
+                dto.getCaseMaterial(),
+                dto.getDisplayType(),
+                dto.getNumberingFormat(),
+                dto.getShape(),
+                dto.getHandsColor(),
+                dto.getBackgroundColor(),
+                dto.getBandColor());
+    }
+
+    private void updateFeatures(Product product, UpdateProductDto dto) {
+
+        getFeaturesList(product,
+                dto.getBandMaterial(),
+                dto.getBrand(),
+                dto.getCaseMaterial(),
+                dto.getDisplayType(),
+                dto.getNumberingFormat(),
+                dto.getShape(),
+                dto.getHandsColor(),
+                dto.getBackgroundColor(),
+                dto.getBandColor());
+
+    }
+
 
 
     public CompletableFuture<Product> createAsync(CreateProductDto productDto){
-        CompletableFuture<Image> productImage = imageService.createImage(productDto.getImage());
 
         Product product = ProductMapper.createToProduct(productDto);
-        productImage.thenAccept(product::setImage);
+        setFeatures(product, productDto);
+
         repository.save(product);
+
+        for(Color color : product.getColors()){
+            color.setProduct(product);
+            colorService.update(color);
+        }
+
         return CompletableFuture.completedFuture(product);
     }
 
-    public CompletableFuture<Product> updateAsync(CreateProductDto createProductDto, Long id) {
-        CompletableFuture<Product> product = this.findByIdAsync(id); // throws ProductNotFoundException if not found
+    public CompletableFuture<Product> updateAsync(UpdateProductDto createProductDto, Long id) {
+        CompletableFuture<Product> product = this.findByIdAsync(id);
 
         product = product.thenApply(p -> {
             p.setName(createProductDto.getName());
             p.setDescription(createProductDto.getDescription());
             p.setPrice(createProductDto.getPrice());
             p.setQuantity(createProductDto.getQuantity());
-            p.setType(createProductDto.getType());
-            p.setBrand(createProductDto.getBrand());
+            p.setSize(createProductDto.getSize());
+            p.setWeight(createProductDto.getWeight());
+            p.setChangeableBand(createProductDto.getChangeableBand());
+            p.setHasFullNumerals(createProductDto.getHasFullNumerals());
+            p.setHasTickingSound(createProductDto.getHasTickingSound());
+            p.setIncludesDate(createProductDto.getIncludesDate());
+            p.setWaterProof(createProductDto.getWaterProof());
+
+            updateFeatures(p, createProductDto);
+
             return repository.save(p);
         });
 
-        return product.thenApply(p -> p);
+        return product;
     }
 
     public void deleteByIdAsync(Long id) {
@@ -74,30 +154,22 @@ public class ProductService {
         );
     }
 
-    public CompletableFuture<List<Product>> findAllAsync(ProductQueryObject queryObject) {
-        // Filters factory
-        // it takes the product query and generate filters depending on filters user applied
-        // then using the for-loop it applies the filters
-        List< IProductFilter> filters = ProductFilterFactory.getFilters(queryObject);
+    public CompletableFuture<Page<Product>> findAllAsync(ProductQueryObject queryObject) {
 
-        Stream<Product> products = repository.findAll().stream();
+       Specification<Product> spec = new ProductSpecificationBuilder()
+               .withFilter(queryObject)
+               .build();
 
-        for (IProductFilter filter : filters) {
-            products = filter.applyFilter(products, queryObject);
-        }
+       Page<Product> products = repository.findAll(spec,
+               PageRequest.of(queryObject.getPage() - 1, queryObject.getPageSize())
+       );
 
-        // skip number of pages
-        products = products.skip(
-                (long) (queryObject.getPage() - 1) * queryObject.getPageSize()
-        );
-
-        // reduce the number of products to fit in the page size
-        products = products.limit(
-                queryObject.getPageSize()
-        );
-
-        return CompletableFuture.completedFuture(
-                products.toList()
-        );
+       return CompletableFuture.completedFuture(products);
     }
+
+    public void setImage(Product product, Image image){
+        product.setImage(image);
+        repository.save(product);
+    }
+
 }

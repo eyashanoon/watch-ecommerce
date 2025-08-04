@@ -14,13 +14,14 @@ public class CorsGlobalConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true); // allow cookies/auth headers
-        config.setAllowedOrigins(List.of("http://localhost:4200")); // Angular origin
-        config.setAllowedHeaders(List.of("*")); // allow all headers
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // HTTP methods
+        config.setAllowCredentials(true);
+        config.setAllowedOriginPatterns(List.of("http://localhost:4200", "http://10.10.33.90:4200")); // updated
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
 }
+

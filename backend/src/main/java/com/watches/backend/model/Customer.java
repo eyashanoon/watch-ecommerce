@@ -2,11 +2,18 @@ package com.watches.backend.model;
 
 import com.watches.backend.enums.Role;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
- 
+@Getter
+@Setter
+@NoArgsConstructor
 public class Customer extends User {
 
     @OneToOne
@@ -33,17 +40,7 @@ public class Customer extends User {
         if (orders != null) {
             orders.forEach(this::addOrder);
         }
-        this.setRoles(List.of(Role.CUSTOMER));    }
-
-    public Customer() {
-    }
-
-
-
-
-
-    public Cart getCart() {
-        return cart;
+        this.setRoles(Set.of(Role.CUSTOMER));
     }
 
     public void setCart(Cart cart) {
@@ -56,28 +53,9 @@ public class Customer extends User {
         order.setCustomer(this);
     }
 
-    public Wishlist getWishlist() {
-        return wishlist;
-    }
-
     public void setWishlist(Wishlist wishlist) {
         this.wishlist = wishlist;
         if (wishlist != null) wishlist.setCustomer(this);
     }
 
-    public SavedCard getSavedCard() {
-        return savedCard;
-    }
-
-    public void setSavedCard(SavedCard savedCard) {
-        this.savedCard = savedCard;
-    }
-
-
-
-
-
-    public List<Order> getOrders() {
-        return orders;
-    }
 }

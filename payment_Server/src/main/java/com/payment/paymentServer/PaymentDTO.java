@@ -1,15 +1,8 @@
 package com.payment.paymentServer;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.OneToMany;
-
-import java.util.List;
-
 public class PaymentDTO {
      private String cardNumber;
-     private Long amount;
+     private Double amount;
 
     private String expiryDate;
 
@@ -19,7 +12,7 @@ public class PaymentDTO {
      private Long userId;
      private String companyName;
 
-     public PaymentDTO(Long balance, String cardNumber, Long amount, String expiryDate, String cvv) {
+     public PaymentDTO(  String cardNumber, Double amount, String expiryDate, String cvv) {
           this.cardNumber = cardNumber;
          this.amount = amount;
          this.expiryDate = expiryDate;
@@ -75,11 +68,25 @@ public class PaymentDTO {
         this.companyName = companyName;
     }
 
-    public Long getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(Long amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
+    @Override
+    public String toString() {
+        return "PaymentDTO{" +
+                "cardNumber='" + cardNumber + '\'' +
+                ", amount=" + amount +
+                ", expiryDate='" + expiryDate + '\'' +
+                ", cvv='" + cvv + '\'' +
+                ", cardType=" + cardType +
+                ", userId=" + userId +
+                ", companyName='" + companyName + '\'' +
+                '}';
+    }
+
+
 }

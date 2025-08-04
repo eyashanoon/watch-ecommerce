@@ -12,28 +12,32 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-@RestController
+ @RestController
 @RequestMapping("/api/admins")
 public class AdminController {
     public final AdminService adminService;
     public AdminController(AdminService adminService){
         this.adminService=adminService;
     }
-
+   @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<AdminDTO> CreateAdmin(@RequestBody CreateAdminDTO  createAdminDTO){
-        return ResponseEntity.status(HttpStatus.CREATED).body(adminService.createAdmin(createAdminDTO) );
+        return ResponseEntity.status(HttpStatus.CREATED).body(adminService.createAdmin(createAdminDTO));
     }
     @GetMapping("/{id}")
     public ResponseEntity<AdminDTO> getAdmin(@PathVariable Long id){
          return ResponseEntity.status(HttpStatus.OK).body(adminService.getAdminById(id));
     }
-    //@PreAuthorize("hasRole('ADD_ADMINS')")
+
+    @PreAuthorize("hasRole('ADD_ADMINS')")
     @GetMapping
     public ResponseEntity<List<AdminDTO>> getAllAdmin(){
          return ResponseEntity.status(HttpStatus.OK).body(adminService.getAllAdmins());
     }
+     @GetMapping("/without-loggedin")
+     public ResponseEntity<List<AdminDTO>> getAllAdminWithoutTheSignedInAdmin(){
+         return ResponseEntity.status(HttpStatus.OK).body(adminService.getAllAdminsWithoutTheSingedInAdmin());
+     }
     @PutMapping("/{id}")
     public ResponseEntity<AdminDTO> updateAdmin(@PathVariable Long id, @RequestBody UpdateAdminDTO updateAdminDTO) {
         AdminDTO updatedAdmin = adminService.updateAdmin(id, updateAdminDTO);

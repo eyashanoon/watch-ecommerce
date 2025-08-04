@@ -1,29 +1,24 @@
 package com.watches.backend.Dto;
 
+import com.watches.backend.enums.Role;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateAdminDTO {
-    private String userName;
+    private String username;
     private String email;
     private String password;
     private String phone;
+    private Set<Role> roles;
 
-    public CreateAdminDTO() {}
-
-    public CreateAdminDTO(String username, String email, String password, String phone) {
-        this.userName = username;
-        this.email = email;
-        this.password = password;
-        this.phone = phone;
-    }
-
-    // Getters
-    public String getUsername() { return userName; }
-    public String getEmail() { return email; }
-    public String getPassword() { return password; }
-    public String getPhone() { return phone; }
-
-    // Setters
-    public void setUsername(String username) { this.userName = username; }
-    public void setEmail(String email) { this.email = email; }
-    public void setPassword(String password) { this.password = password; }
-    public void setPhone(String phone) { this.phone = phone; }
 }

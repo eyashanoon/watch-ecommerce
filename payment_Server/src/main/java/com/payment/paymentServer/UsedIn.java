@@ -1,13 +1,12 @@
 package com.payment.paymentServer;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 @Entity
 public class UsedIn {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
     private Long userId;
@@ -15,6 +14,10 @@ public class UsedIn {
     @ManyToOne
     @JoinColumn(name = "payment_info_id")
     private PaymentInfo paymentInfo;
+
+    public UsedIn() {
+
+    }
 
     public void setPaymentInfo(PaymentInfo paymentInfo) {
         this.paymentInfo = paymentInfo;

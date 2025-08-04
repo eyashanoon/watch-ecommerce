@@ -8,9 +8,10 @@ import java.util.List;
 public class PaymentInfo {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long balance;
+    private Double balance;
     private String cardNumber;
 
     private String expiryDate;
@@ -19,12 +20,12 @@ public class PaymentInfo {
 
     @Enumerated(EnumType.STRING)
     private CardType cardType;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "paymentInfo", cascade = CascadeType.ALL)
     private List<UsedIn> usedIn;
 
     private boolean isDefault = false;
 
-    public PaymentInfo(Long balance, String cardNumber, String expiryDate, String cvv, CardType cardType, List<UsedIn> usedIn) {
+    public PaymentInfo(Double balance, String cardNumber, String expiryDate, String cvv, CardType cardType, List<UsedIn> usedIn) {
         this.balance = balance;
         this.cardNumber = cardNumber;
         this.expiryDate = expiryDate;
@@ -85,11 +86,11 @@ public class PaymentInfo {
         this.cardNumber = cardNumber;
     }
 
-    public Long getBalance() {
+    public Double getBalance() {
         return balance;
     }
 
-    public void setBalance(Long balance) {
+    public void setBalance(Double balance) {
         this.balance = balance;
     }
 
@@ -100,4 +101,18 @@ public class PaymentInfo {
     public void setExpiryDate(String expiryDate) {
         this.expiryDate = expiryDate;
     }
+    @Override
+    public String toString() {
+        return "PaymentInfo{" +
+                "id=" + id +
+                ", balance=" + balance +
+                ", cardNumber" + cardNumber +
+                ", expiryDate='" + expiryDate + '\'' +
+                ", cvv='***'" +
+                ", cardType=" + cardType +
+                ", usedIn=" + (usedIn != null ? usedIn.size() + " records" : "null") +
+                ", isDefault=" + isDefault +
+                '}';
+    }
+
 }
