@@ -28,8 +28,6 @@ public class CreateCustomerDTO {
             message = "Password must be at least 8 characters and include a number, an uppercase letter, and a symbol"
     )
     private String password;
-
-
     private String phone;
 
 }

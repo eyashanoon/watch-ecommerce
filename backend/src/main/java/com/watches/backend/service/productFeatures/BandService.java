@@ -20,6 +20,7 @@ public class BandService {
     }
 
     public CompletableFuture<Band> create(String bandMaterial) {
+        bandMaterial = Utils.normalizeString(bandMaterial);
         Band band = getByMaterial(bandMaterial);
         if(band == null){
             band = new Band(bandMaterial);

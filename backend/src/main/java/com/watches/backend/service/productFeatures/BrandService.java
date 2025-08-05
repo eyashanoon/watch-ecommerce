@@ -20,6 +20,7 @@ public class BrandService {
     }
 
     public CompletableFuture<Brand> create(String brand) {
+        brand = Utils.normalizeString(brand);
         Brand b = getByBrand(brand);
         if (b == null) {
             b = new Brand(brand);

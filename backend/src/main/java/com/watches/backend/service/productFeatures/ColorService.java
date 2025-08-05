@@ -1,6 +1,7 @@
 package com.watches.backend.service.productFeatures;
 
 import com.watches.backend.Repositories.productFeaturesRepositories.ColorRepository;
+import com.watches.backend.helpers.Utils;
 import com.watches.backend.model.productFeatures.Color;
 import com.watches.backend.service.ProductService;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,8 @@ public class ColorService {
     private final ColorRepository repository;
 
     public CompletableFuture<Color> create(String part, String handsColor) {
+        handsColor = Utils.normalizeString(handsColor);
+        part = Utils.normalizeString(part);
         Color color = new Color(part, handsColor);
         repository.save(color);
         return CompletableFuture.completedFuture(color);

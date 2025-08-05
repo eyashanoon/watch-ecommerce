@@ -20,6 +20,7 @@ public class NumberingFormatService {
     }
 
     public CompletableFuture<NumberingFormat> create(String numberingFormat) {
+        numberingFormat = Utils.normalizeString(numberingFormat);
         NumberingFormat nf = getByFormat(numberingFormat);
         if(nf == null){
             nf = new NumberingFormat(numberingFormat);

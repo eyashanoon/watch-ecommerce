@@ -34,16 +34,14 @@ public class ProductController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    List<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
-
+    Page<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
         return service.findAllAsync(query)
-                .thenApply(page -> page.stream()
-                        .map(ProductMapper::toDto)
-                        .toList())
+                .thenApply(page -> page.map(ProductMapper::toDto))
                 .join();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     ProductDto getById(@PathVariable Long id){
         CompletableFuture<Product> product = service.findByIdAsync(id);
         return ProductMapper.toDto(product.join());

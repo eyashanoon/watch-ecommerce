@@ -38,13 +38,28 @@ public class Wishlist {
     }
 
     public void addItem(Product product) {
-        if (!this.products.contains(product)) {
+        boolean contains = false;
+
+        for(Product p : products){
+            if(p.getId().equals(product.getId())){
+                contains = true;
+                break;
+            }
+        }
+
+        if (!contains) {
             this.products.add(product);
         }
     }
 
     public void removeItem(Product product) {
-        this.products.remove(product);
+
+        for(Product p : products){
+            if(p.getId().equals(product.getId())){
+                products.remove(p);
+                break;
+            }
+        }
     }
 
     @Override

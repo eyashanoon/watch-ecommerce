@@ -19,6 +19,10 @@ public class ProductQueryObject {
     private Boolean hasTickingSound = null;
     private Boolean waterProof = null;
     private Boolean changeableBand = null;
+    private Double MaxSize = Double.MAX_VALUE;
+    private Double MinSize = -1.0;
+    private Double MaxWeight = Double.MAX_VALUE;
+    private Double MinWeight = -1.0;
     private Double maxPrice = Double.MAX_VALUE;
     private Double minPrice = -1.0;
     private Integer page = 1;

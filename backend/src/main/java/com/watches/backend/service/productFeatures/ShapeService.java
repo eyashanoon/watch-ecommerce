@@ -20,6 +20,7 @@ public class ShapeService {
     }
 
     public CompletableFuture<Shape> create(String shape) {
+        shape = Utils.normalizeString(shape);
         Shape s = getByShape(shape);
         if(s == null){
             s = new Shape(shape);

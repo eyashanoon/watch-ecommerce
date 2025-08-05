@@ -2,10 +2,14 @@ package com.watches.backend.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
 @Embeddable
+@Getter
+@Setter
 public class ProductItem {
 
     @ManyToOne
@@ -26,26 +30,6 @@ public class ProductItem {
         this.product = product;
         this.quantity = quantity;
         this.price = this.product.getPrice() * quantity;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
     }
 
     @Override

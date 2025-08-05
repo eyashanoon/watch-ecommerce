@@ -4,6 +4,7 @@ import com.watches.backend.Dto.DiscountDto.CreateDiscountDto;
 import com.watches.backend.model.Discount;
 import com.watches.backend.service.DiscountService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -15,14 +16,10 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/discounts")
-@Async
+@AllArgsConstructor
 public class DiscountController {
 
     private final DiscountService service;
-
-    public DiscountController(DiscountService service) {
-        this.service = service;
-    }
 
     @GetMapping
     public CompletableFuture<ResponseEntity<List<Discount>>> getAll(){
@@ -42,15 +39,6 @@ public class DiscountController {
                         .body(d)
         );
     }
-
-//    @GetMapping("/product/{id}")
-//    public CompletableFuture<ResponseEntity<Discount>> getByProductId(@PathVariable Long id){
-//        CompletableFuture<Discount> discount = service.findByProductIdAsync(id);
-//        return discount.thenApply(d ->
-//                ResponseEntity.ok()
-//                        .body(d)
-//        );
-//    }
 
     @PostMapping
     public CompletableFuture<ResponseEntity<Discount>> create(@Valid @RequestBody CreateDiscountDto discountDto){

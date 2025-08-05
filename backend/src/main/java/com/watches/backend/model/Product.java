@@ -30,6 +30,7 @@ public class Product {
     private Boolean includesDate;
     private Boolean hasFullNumerals;
     private Boolean changeableBand;
+    private Boolean deleted;
 
     @ManyToOne
     @JoinColumn(name = "numbering_format_id", referencedColumnName = "id")

@@ -48,11 +48,13 @@ public class ImageService {
     }
 
     public CompletableFuture<Image> getImageByProductId(Long productId) {
-        return CompletableFuture.completedFuture(
-                service.findByIdAsync(productId)
+        Image img = service.findByIdAsync(productId)
                         .join()
-                        .getImage()
-        );
+                        .getImage();
+        if (img == null) {
+            throw new RuntimeException("Either product does not exists or product does not have an image");
+        }
+        return CompletableFuture.completedFuture(img);
     }
 
     public CompletableFuture<Image> update(Long productId, MultipartFile image) {

@@ -20,6 +20,7 @@ public class DisplayTypeService {
     }
 
     public CompletableFuture<DisplayType> create(String displayType) {
+        displayType = Utils.normalizeString(displayType);
         DisplayType dto = getByType(displayType);
         if(dto == null) {
             dto = new DisplayType(displayType);

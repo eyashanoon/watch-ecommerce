@@ -21,6 +21,7 @@ public class CaseService {
     }
 
     public CompletableFuture<Case> create(String caseMaterial) {
+        caseMaterial = Utils.normalizeString(caseMaterial);
         Case c = getByMaterial(caseMaterial);
         if(c==null){
             c = new Case(caseMaterial);

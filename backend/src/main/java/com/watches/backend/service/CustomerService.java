@@ -7,6 +7,7 @@ import com.watches.backend.mappers.CustomerMapper;
 import com.watches.backend.model.Customer;
 import com.watches.backend.Repositories.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,26 +17,21 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final WishlistService wishlistService;
+    private final CartService cartService;
 
     private final PasswordEncoder passwordEncoder;
-
-    public CustomerService(CustomerRepository customerRepository,
-                           PasswordEncoder passwordEncoder,
-                           WishlistService wishlistService) {
-        this.customerRepository = customerRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.wishlistService = wishlistService;
-    }
 
     @Async
     public CompletableFuture<Customer> createCustomer(CreateCustomerDTO createCustomerDTO) {
         Customer customer = CustomerMapper.fromCreateDTO(createCustomerDTO);
         customer.setPassword(passwordEncoder.encode(createCustomerDTO.getPassword()));
         customer.setWishlist(wishlistService.createAsync().join());
+        customer.setCart(cartService.createAsync().join());
         Customer saved = customerRepository.save(customer);
         return CompletableFuture.completedFuture(saved);
     }
@@ -66,6 +62,7 @@ public class CustomerService {
         if (!customerRepository.existsById(id)) {
             throw new EntityNotFoundException("Customer not found with id " + id);
         }
+
         customerRepository.deleteById(id);
     }
 }

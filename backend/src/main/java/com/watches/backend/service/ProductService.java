@@ -137,12 +137,9 @@ public class ProductService {
     }
 
     public void deleteByIdAsync(Long id) {
-
-        CompletableFuture<Product> product = this.findByIdAsync(id); // throws ProductNotFoundException if not found
-
-        product.thenAccept(
-                repository::delete
-        );
+        CompletableFuture<Product> product = this.findByIdAsync(id);
+        product.thenAccept(p -> p.setDeleted(true));
+        product.thenAccept(repository::save);
     }
 
     public CompletableFuture<Product> findByIdAsync(Long id) {
