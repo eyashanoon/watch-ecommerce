@@ -169,4 +169,8 @@ public class ProductService {
         repository.save(product);
     }
 
+    public void saveAfterDiscount(Product product){
+        repository.save(product);
+    }
+
 }

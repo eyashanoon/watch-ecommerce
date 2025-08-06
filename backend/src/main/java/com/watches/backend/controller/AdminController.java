@@ -34,10 +34,10 @@ public class AdminController {
     public ResponseEntity<List<AdminDTO>> getAllAdmin(){
          return ResponseEntity.status(HttpStatus.OK).body(adminService.getAllAdmins());
     }
-     @GetMapping("/without-loggedin")
-     public ResponseEntity<List<AdminDTO>> getAllAdminWithoutTheSignedInAdmin(){
+    @GetMapping("/without-loggedin")
+    public ResponseEntity<List<AdminDTO>> getAllAdminWithoutTheSignedInAdmin(){
          return ResponseEntity.status(HttpStatus.OK).body(adminService.getAllAdminsWithoutTheSingedInAdmin());
-     }
+    }
     @PutMapping("/{id}")
     public ResponseEntity<AdminDTO> updateAdmin(@PathVariable Long id, @RequestBody UpdateAdminDTO updateAdminDTO) {
         AdminDTO updatedAdmin = adminService.updateAdmin(id, updateAdminDTO);

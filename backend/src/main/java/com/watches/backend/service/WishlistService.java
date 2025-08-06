@@ -121,5 +121,8 @@ public class WishlistService {
         CompletableFuture<Wishlist> wishlist = this.findByCustomerIdAsync(username, null);
         return removeWishlistCompletableFuture(productId, wishlist);
     }
- 
+
+    public void delete(Wishlist wishlist) {
+        wishlistRepository.delete(wishlist);
+    }
 }

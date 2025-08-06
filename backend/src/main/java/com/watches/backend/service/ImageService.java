@@ -22,7 +22,7 @@ public class ImageService {
     private static Image createImageObject(String fileName, byte[] fileContent) {
         Image image = new Image();
         image.setFilename(fileName);
-        image.setData(Base64.getEncoder().encodeToString(fileContent));
+        image.setData(fileContent);
         return image;
     }
 
@@ -61,7 +61,7 @@ public class ImageService {
         try {
             Image img = getImageByProductId(productId).join();
             img.setFilename(image.getOriginalFilename());
-            img.setData(Base64.getEncoder().encodeToString(image.getBytes()));
+            img.setData(image.getBytes());
             return CompletableFuture.completedFuture(repository.save(img));
         }catch (Exception e){
             throw new RuntimeException("There was an exception while updating the image");

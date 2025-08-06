@@ -84,4 +84,8 @@ public class CartService {
                 .orElseThrow(() -> new CustomerNotFoundException(customerUsername));
         return CompletableFuture.completedFuture(customer.getCart());
     }
+
+    public void delete(Cart cart) {
+        repository.delete(cart);
+    }
 }

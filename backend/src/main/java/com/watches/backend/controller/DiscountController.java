@@ -1,64 +1,58 @@
 package com.watches.backend.controller;
 
 import com.watches.backend.Dto.DiscountDto.CreateDiscountDto;
+import com.watches.backend.Dto.DiscountDto.DiscountDto;
+import com.watches.backend.mappers.DiscountMapper;
 import com.watches.backend.model.Discount;
 import com.watches.backend.service.DiscountService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
-@RequestMapping("/api/discounts")
+@RequestMapping("/api/product/discount")
 @AllArgsConstructor
 public class DiscountController {
 
     private final DiscountService service;
 
-    @GetMapping
-    public CompletableFuture<ResponseEntity<List<Discount>>> getAll(){
-        CompletableFuture<List<Discount>> discounts = service.findAllAsync();
+    @PostMapping
+    List<Long> addDiscount(@Valid @RequestBody CreateDiscountDto dto) {
+        Discount discount = service.createAsync(dto).join();
+        return discount.getProductsId();
+    }
 
-        return discounts.thenApply(d ->
-                ResponseEntity.ok()
-                        .body(d)
-        );
+    @GetMapping
+    List<DiscountDto> getAllDiscounts(){
+        List<Discount> discounts = service.findAllAsync().join();
+        return discounts.stream().map(DiscountMapper::toDiscountDto).toList();
     }
 
     @GetMapping("/{id}")
-    public CompletableFuture<ResponseEntity<Discount>> getById(@Valid @PathVariable Long id){
-        CompletableFuture<Discount> discount = service.findByIdAsync(id);
-        return discount.thenApply(d ->
-                ResponseEntity.ok()
-                        .body(d)
-        );
+    DiscountDto getDiscountById(@PathVariable Long id){
+        Discount discount = service.findById(id).join();
+        return DiscountMapper.toDiscountDto(discount);
     }
 
-    @PostMapping
-    public CompletableFuture<ResponseEntity<Discount>> create(@Valid @RequestBody CreateDiscountDto discountDto){
-        CompletableFuture<Discount> discount = service.createAsync(discountDto);
-        return discount.thenApply(d ->
-                ResponseEntity.status(HttpStatus.CREATED)
-                        .body(d)
-        );
+    @GetMapping("/by_product/{productId}")
+    DiscountDto getDiscountByProductId(@PathVariable Long productId) {
+        Discount discount = service.findByProductIdAsync(productId).join();
+        return DiscountMapper.toDiscountDto(discount);
+    }
+
+    @PutMapping("/remove")
+    ResponseEntity<?> removeDiscountFromProduct(@RequestBody List<Long> products) {
+        service.removeProductsAsync(products);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public CompletableFuture<ResponseEntity<Discount>> deleteById(@Valid @PathVariable Long id){
-        service.deleteByIdAsync(id);
-        return CompletableFuture.completedFuture(ResponseEntity.noContent().build());
+    DiscountDto removeDiscountFromProduct(@PathVariable Long id) {
+        Discount discount = service.deleteByIdAsync(id).join();
+        return DiscountMapper.toDiscountDto(discount);
     }
-
-//    @DeleteMapping("/product/{id}")
-//    public CompletableFuture<ResponseEntity<Discount>> deleteByProductId(@PathVariable Long id){
-//        service.deleteByProductIdAsync(id);
-//        return CompletableFuture.completedFuture(ResponseEntity.noContent().build());
-//    }
 
 }

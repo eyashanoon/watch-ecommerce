@@ -6,7 +6,6 @@ import com.watches.backend.Dto.UpdateCustomerDTO;
 import com.watches.backend.mappers.CustomerMapper;
 import com.watches.backend.model.Customer;
 import com.watches.backend.Repositories.CustomerRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,9 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @Service
+@Async
 @AllArgsConstructor
 public class CustomerService {
 
@@ -26,7 +25,6 @@ public class CustomerService {
 
     private final PasswordEncoder passwordEncoder;
 
-    @Async
     public CompletableFuture<Customer> createCustomer(CreateCustomerDTO createCustomerDTO) {
         Customer customer = CustomerMapper.fromCreateDTO(createCustomerDTO);
         customer.setPassword(passwordEncoder.encode(createCustomerDTO.getPassword()));
@@ -36,32 +34,34 @@ public class CustomerService {
         return CompletableFuture.completedFuture(saved);
     }
 
-     public CustomerDTO getCustomerById(Long id) {
+     public CompletableFuture<Customer> getCustomerById(Long id) {
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found with id " + id));
-        return CustomerMapper.toDTO(customer);
+                .orElseThrow(() -> new RuntimeException("Customer not found with id " + id));
+        return CompletableFuture.completedFuture(customer);
     }
 
-     public List<CustomerDTO> getAllCustomers() {
-        return customerRepository.findAll()
-                .stream()
-                .map(CustomerMapper::toDTO)
-                .collect(Collectors.toList());
+     public CompletableFuture<List<Customer>> getAllCustomers() {
+        return CompletableFuture.completedFuture(customerRepository.findAll());
     }
 
-     public CustomerDTO updateCustomer(Long id, UpdateCustomerDTO updateCustomerDTO) {
-        Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Customer not found with id " + id));
+     public CompletableFuture<Customer> updateCustomer(String username, UpdateCustomerDTO updateCustomerDTO) {
+        Customer customer = customerRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("Customer not found { username = " + username + " }"));
 
-        CustomerMapper.updateCustomerFromDTO(updateCustomerDTO, customer);
-        Customer updated = customerRepository.save(customer);
-        return CustomerMapper.toDTO(updated);
+        customer.setUsername(username);
+        customer.setEmail(updateCustomerDTO.getEmail());
+        customer.setPhone(updateCustomerDTO.getPhone());
+        if(customer.getPassword().equals(updateCustomerDTO.getOldPassword())){
+            customer.setPassword(passwordEncoder.encode(updateCustomerDTO.getOldPassword()));
+        }
+        return CompletableFuture.completedFuture(customerRepository.save(customer));
     }
 
      public void deleteCustomer(Long id) {
-        if (!customerRepository.existsById(id)) {
-            throw new EntityNotFoundException("Customer not found with id " + id);
-        }
+        Customer customer = getCustomerById(id).join();
+
+        wishlistService.delete(customer.getWishlist());
+        cartService.delete(customer.getCart());
 
         customerRepository.deleteById(id);
     }

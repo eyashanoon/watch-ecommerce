@@ -1,16 +1,20 @@
 package com.watches.backend.mappers;
 
-import com.watches.backend.Dto.DiscountDto.CreateDiscountDto;
+import com.watches.backend.Dto.DiscountDto.DiscountDto;
 import com.watches.backend.model.Discount;
+
 
 public class DiscountMapper {
 
-    public static Discount createToDiscount(CreateDiscountDto discountDto){
-        return new Discount(
-                discountDto.getProduct(),
-                discountDto.getDiscountPercentage(),
-                discountDto.getExpireAt()
+    public static DiscountDto toDiscountDto(Discount discount) {
+        return new DiscountDto(
+                discount.getId(),
+                discount.getProductsId(),
+                discount.getDiscount(),
+                discount.getEndDate(),
+                discount.isExpired()
         );
     }
+
 
 }
