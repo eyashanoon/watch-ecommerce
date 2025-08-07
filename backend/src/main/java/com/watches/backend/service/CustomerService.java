@@ -1,17 +1,20 @@
 package com.watches.backend.service;
 
 import com.watches.backend.Dto.CreateCustomerDTO;
-import com.watches.backend.Dto.CustomerDTO;
 import com.watches.backend.Dto.UpdateCustomerDTO;
+import com.watches.backend.helpers.CustomerQueryObject;
+import com.watches.backend.helpers.CustomerSpecificationBuilder;
 import com.watches.backend.mappers.CustomerMapper;
 import com.watches.backend.model.Customer;
 import com.watches.backend.Repositories.CustomerRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -40,8 +43,21 @@ public class CustomerService {
         return CompletableFuture.completedFuture(customer);
     }
 
-     public CompletableFuture<List<Customer>> getAllCustomers() {
-        return CompletableFuture.completedFuture(customerRepository.findAll());
+    public CompletableFuture<Customer> getCustomerByUsername(String username) {
+        Customer customer = customerRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("Customer not found with email " + username));
+        return CompletableFuture.completedFuture(customer);
+    }
+
+    public CompletableFuture<Page<Customer>> getAllCustomers(CustomerQueryObject queryObject) {
+
+        Specification<Customer> spec = new CustomerSpecificationBuilder().withFilter(queryObject).build();
+
+        Page<Customer> res = customerRepository.findAll(spec,
+                 PageRequest.of(queryObject.getPageNumber() - 1, queryObject.getPageSize())
+        );
+
+        return CompletableFuture.completedFuture(res);
     }
 
      public CompletableFuture<Customer> updateCustomer(String username, UpdateCustomerDTO updateCustomerDTO) {
@@ -60,9 +76,15 @@ public class CustomerService {
      public void deleteCustomer(Long id) {
         Customer customer = getCustomerById(id).join();
 
+        customer.setDeleted(true);
+
         wishlistService.delete(customer.getWishlist());
         cartService.delete(customer.getCart());
 
-        customerRepository.deleteById(id);
+        customerRepository.save(customer);
+    }
+
+    public void save(Customer customer) {
+        customerRepository.save(customer);
     }
 }

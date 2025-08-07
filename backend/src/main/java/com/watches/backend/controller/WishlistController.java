@@ -25,7 +25,8 @@ public class WishlistController {
 
     @GetMapping("/customer/{customerUsername}")
     @PreAuthorize("hasRole('CUSTOMER') || hasRole('ADMIN')")
-    WishlistDto getWishlistByCustomerUsername(@Valid @PathVariable String customerUsername, @ModelAttribute ProductQueryObject productQueryObject) {
+    WishlistDto getWishlistByCustomerUsername(@Valid @PathVariable String customerUsername,
+                                              @ModelAttribute ProductQueryObject productQueryObject) {
 
         CompletableFuture<Wishlist> wishlist = service.findByCustomerIdAsync(customerUsername, productQueryObject);
 

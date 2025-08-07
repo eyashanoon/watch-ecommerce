@@ -6,7 +6,7 @@ public class Utils {
     }
 
     public static boolean validBooleanValue(Boolean bool){
-        return bool != null && bool;
+        return bool != null;
     }
 
     public static String normalizeString(String input) {

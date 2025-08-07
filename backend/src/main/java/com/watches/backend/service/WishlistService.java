@@ -123,6 +123,7 @@ public class WishlistService {
     }
 
     public void delete(Wishlist wishlist) {
-        wishlistRepository.delete(wishlist);
+        wishlist.setDeleted(true);
+        wishlistRepository.save(wishlist);
     }
 }

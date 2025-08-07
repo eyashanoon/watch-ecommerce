@@ -57,14 +57,14 @@ public class CustomerMapper {
     }
 
     // Optional: Only needed if your frontend sends empty forms pre-filled
-    public static UpdateCustomerDTO toUpdateDTO(Customer customer) {
-        if (customer == null) return null;
-        return new UpdateCustomerDTO(
-                customer.getUsername(),
-                customer.getEmail(),
-                customer.getPhone()
-        );
-    }
+//    public static UpdateCustomerDTO toUpdateDTO(Customer customer) {
+//        if (customer == null) return null;
+//        return new UpdateCustomerDTO(
+//                customer.getUsername(),
+//                customer.getEmail(),
+//                customer.getPhone()
+//        );
+//    }
 
     // Optional: Not needed unless you need to send a prefilled "create" form
     public static CreateCustomerDTO toCreateDTO(Customer customer) {

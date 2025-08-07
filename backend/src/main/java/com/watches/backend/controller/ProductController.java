@@ -65,6 +65,4 @@ public class ProductController {
     void delete(@Valid @PathVariable Long id){
         service.deleteByIdAsync(id);
     }
-
-
 }

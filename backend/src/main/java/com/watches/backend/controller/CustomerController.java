@@ -3,17 +3,16 @@ package com.watches.backend.controller;
 import com.watches.backend.Dto.CreateCustomerDTO;
 import com.watches.backend.Dto.UpdateCustomerDTO;
 import com.watches.backend.Dto.CustomerDTO;
+import com.watches.backend.helpers.CustomerQueryObject;
 import com.watches.backend.mappers.CustomerMapper;
 import com.watches.backend.model.Customer;
 import com.watches.backend.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/customers")
@@ -25,9 +24,8 @@ public class CustomerController {
 
     @PostMapping
     AuthController.AuthResponse createCustomer(@Valid @RequestBody CreateCustomerDTO createCustomerDTO) {
-        CompletableFuture<Customer> createdCustomer = customerService.createCustomer(createCustomerDTO);
-        Customer compCustomer = createdCustomer.join();
-        return authController.login(new AuthController.AuthRequest(compCustomer.getEmail(), createCustomerDTO.getPassword()));
+        customerService.createCustomer(createCustomerDTO);
+        return authController.login(new AuthController.AuthRequest(createCustomerDTO.getEmail(), createCustomerDTO.getPassword()));
     }
 
     @GetMapping("/{id}")
@@ -37,9 +35,9 @@ public class CustomerController {
     }
 
     @GetMapping
-    List<CustomerDTO> getAllCustomers() {
-       List<Customer> customer = customerService.getAllCustomers().join();
-       return customer.stream().map(CustomerMapper::toDTO).toList();
+    Page<CustomerDTO> getAllCustomers(@RequestBody CustomerQueryObject queryObject) {
+       Page<Customer> customer = customerService.getAllCustomers(queryObject).join();
+       return customer.map(CustomerMapper::toDTO);
     }
 
     @PutMapping

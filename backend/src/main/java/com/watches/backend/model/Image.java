@@ -1,7 +1,6 @@
 package com.watches.backend.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,4 +25,5 @@ public class Image {
     @Column(name = "data", columnDefinition = "LONGTEXT")
     private byte[] data;
 
+    private boolean deleted;
 }

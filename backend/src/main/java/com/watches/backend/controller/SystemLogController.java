@@ -46,16 +46,16 @@ public class SystemLogController {
         );
     }
 
-    @PostMapping
-    CompletableFuture<ResponseEntity<SystemLog>> create(@Valid @RequestBody CreateSystemLogDto systemLogDto){
-        CompletableFuture<SystemLog> systemLog = service.createAsync(systemLogDto);
-
-        return systemLog.thenApply(sl ->
-                ResponseEntity.status(HttpStatus.CREATED)
-                        .body(sl)
-        );
-
-    }
+//    @PostMapping
+//    CompletableFuture<ResponseEntity<SystemLog>> create(@Valid @RequestBody CreateSystemLogDto systemLogDto){
+//        CompletableFuture<SystemLog> systemLog = service.createAsync(systemLogDto);
+//
+//        return systemLog.thenApply(sl ->
+//                ResponseEntity.status(HttpStatus.CREATED)
+//                        .body(sl)
+//        );
+//
+//    }
 
     @DeleteMapping("/{id}")
     CompletableFuture<ResponseEntity<SystemLog>> delete(@PathVariable Long id){

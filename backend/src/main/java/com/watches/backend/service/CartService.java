@@ -86,6 +86,7 @@ public class CartService {
     }
 
     public void delete(Cart cart) {
-        repository.delete(cart);
+        cart.setDeleted(true);
+        repository.save(cart);
     }
 }

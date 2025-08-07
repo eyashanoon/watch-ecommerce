@@ -29,6 +29,7 @@ public class ProductSpecificationBuilder {
         addBoolSpec(filter.getHasTickingSound(), path("hasTickingSound"));
         addBoolSpec(filter.getWaterProof(), path("waterProof"));
         addBoolSpec(filter.getChangeableBand(), path("changeableBand"));
+        addBoolSpec(filter.getDeleted(), path("deleted"));
 
         addRangeSpec(filter.getMinSize(), filter.getMaxSize(), -1.0, Double.MAX_VALUE, path("size"));
         addRangeSpec(filter.getMinWeight(), filter.getMaxWeight(), -1.0, Double.MAX_VALUE, path("weight"));
@@ -58,6 +59,7 @@ public class ProductSpecificationBuilder {
                              Function3<Root<Product>, CriteriaQuery<?>, CriteriaBuilder, Expression<Boolean>> expressionProvider){
 
         if(Utils.validBooleanValue(value)) {
+
             specifications.add((root, query, cb) ->
                     cb.equal(expressionProvider.apply(root, query, cb), value)
             );
@@ -92,7 +94,6 @@ public class ProductSpecificationBuilder {
         };
     }
 
-    // an Interface to handle 3 arguments method
     @FunctionalInterface
     interface Function3<T, U, V, R>{
         R apply(T t, U u, V v);

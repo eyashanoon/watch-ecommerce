@@ -1,7 +1,9 @@
 package com.watches.backend.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -9,6 +11,8 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SystemLog {
     @Id
     @GeneratedValue
@@ -19,14 +23,5 @@ public class SystemLog {
     @JoinColumn(name = "user_id")
     private User performedBy;
     private LocalDateTime performedAt;
-
-    public SystemLog(String action, User performedBy, LocalDateTime performedAt) {
-        this.action = action;
-        this.performedBy = performedBy;
-        this.performedAt = performedAt;
-    }
-
-    public SystemLog() {
-
-    }
+    private boolean deleted;
 }

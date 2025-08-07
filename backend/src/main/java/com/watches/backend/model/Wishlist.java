@@ -2,6 +2,7 @@ package com.watches.backend.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @Table(name = "wishlist")
 public class Wishlist {
 
@@ -28,7 +30,7 @@ public class Wishlist {
     )
     private List<Product> products = new ArrayList<>();
 
-    public Wishlist() {}
+    private boolean deleted;
 
     public Wishlist(Customer customer, List<Product> products) {
         this.customer = customer;

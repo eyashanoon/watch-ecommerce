@@ -31,9 +31,9 @@ public class Customer extends User {
     @JoinColumn(name = "card_id")
     private SavedCard savedCard;
 
-    public Customer(String userName, String email, String password, String phone,
+    public Customer(String username, String email, String password, String phone,
                     List<Order> orders, Cart cart, Wishlist wishlist) {
-        super(userName, email, password, phone);
+        super(username, email, password, phone);
         this.cart = cart;
         this.wishlist = wishlist;
         this.orders = new ArrayList<>();

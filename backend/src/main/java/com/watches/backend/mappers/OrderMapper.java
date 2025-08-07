@@ -32,7 +32,6 @@ public class OrderMapper {
 
         return new OrderItemDTO(
                 item.getProduct().getId(),
-                item.getProduct().getName(),
                 item.getPriceAtPurchase(),
                 item.getQuantity()
         );
@@ -70,10 +69,10 @@ public class OrderMapper {
     }
 
     // Update Order status from DTO
-    public static void updateStatus(Order order, UpdateOrderStatusDTO dto) {
-        if (order != null && dto != null) {
-            order.setStatus(dto.getStatus());
-         }
+    public static void updateStatus(Order order, OrderStatus status) {
+        if (order != null && status != null) {
+            order.setStatus(status);
+        }
     }
 
     public static  CreateOrderDTO fromCartToCreateOrderDTO(Cart cart) {

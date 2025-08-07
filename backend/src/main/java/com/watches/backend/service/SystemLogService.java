@@ -21,11 +21,11 @@ public class SystemLogService {
         this.repository = repository;
     }
 
-    public CompletableFuture<SystemLog> createAsync(CreateSystemLogDto createSystemLogDto){
-        SystemLog systemLog = SystemLogMapper.createToSystemLog(createSystemLogDto);
-        repository.save(systemLog);
-        return CompletableFuture.completedFuture(systemLog);
-    }
+//    public CompletableFuture<SystemLog> createAsync(CreateSystemLogDto createSystemLogDto){
+//        SystemLog systemLog = SystemLogMapper.createToSystemLog(createSystemLogDto);
+//        repository.save(systemLog);
+//        return CompletableFuture.completedFuture(systemLog);
+//    }
 
     public CompletableFuture<List<SystemLog>> getAllAsync(){
         return CompletableFuture.completedFuture(repository.findAll());

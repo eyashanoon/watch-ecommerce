@@ -20,6 +20,7 @@ public class ProductItem {
     private Integer quantity;
 
     private Double price;
+    private boolean deleted;
 
     public ProductItem() {
         this.quantity = 0;

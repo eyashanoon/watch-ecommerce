@@ -19,10 +19,12 @@ public class Cart {
     private Long id;
 
     @OneToOne(mappedBy = "cart", cascade = CascadeType.ALL)
-     private Customer customer;
+    private Customer customer;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<ProductItem> items;
+
+    private Boolean deleted;
 
     public void addItem(ProductItem item){
         int exists = this.items.indexOf(item);

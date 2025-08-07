@@ -4,18 +4,23 @@ import com.watches.backend.Dto.CreateAdminDTO;
 import com.watches.backend.Dto.UpdateAdminDTO;
 import com.watches.backend.Dto.AdminDTO;
 import com.watches.backend.enums.Role;
+import com.watches.backend.helpers.AdminQueryObject;
+import com.watches.backend.helpers.AdminSpecificationBuilder;
 import com.watches.backend.mappers.AdminMapper;
 import com.watches.backend.model.Admin;
-import com.watches.backend.service.AuthService;
 import com.watches.backend.Repositories.AdminRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,11 +58,15 @@ public class AdminService {
         return AdminMapper.toDTO(admin);
     }
 
-    public List<AdminDTO> getAllAdmins() {
-        return adminRepository.findAll()
-                .stream()
-                .map(AdminMapper::toDTO)
-                .collect(Collectors.toList());
+    @Async
+    public CompletableFuture<Page<Admin>> getAllAdmins(AdminQueryObject queryObject) {
+
+        Specification<Admin> spec = new AdminSpecificationBuilder().withFilter(queryObject).build();
+
+        Page<Admin> res = adminRepository.findAll(spec,
+                PageRequest.of(queryObject.getPageNumber() - 1, queryObject.getPageSize())
+        );
+        return CompletableFuture.completedFuture(res);
     }
 
     public List<AdminDTO> getAllAdminsWithoutTheSingedInAdmin() {
