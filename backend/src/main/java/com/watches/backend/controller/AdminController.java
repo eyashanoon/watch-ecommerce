@@ -1,9 +1,6 @@
 package com.watches.backend.controller;
 
-import com.watches.backend.Dto.AdminDTO;
-import com.watches.backend.Dto.CreateAdminDTO;
-import com.watches.backend.Dto.UpdateAdminDTO;
-import com.watches.backend.Dto.AddRoleDTO;
+import com.watches.backend.Dto.*;
 import com.watches.backend.enums.Role;
 import com.watches.backend.service.AdminService;
 import org.springframework.http.HttpStatus;
@@ -16,6 +13,7 @@ import java.util.List;
 @RequestMapping("/api/admins")
 public class AdminController {
     public final AdminService adminService;
+
     public AdminController(AdminService adminService){
         this.adminService=adminService;
     }
@@ -43,6 +41,11 @@ public class AdminController {
         AdminDTO updatedAdmin = adminService.updateAdmin(id, updateAdminDTO);
         return ResponseEntity.ok(updatedAdmin);
     }
+     @PutMapping("/changePassword/{id}")
+     public ResponseEntity<AdminDTO> updateAdminPassword(@PathVariable Long id, @RequestBody UpdateAdminPasswordDTO updateAdminPasswordDTO) {
+         AdminDTO updatedAdmin = adminService.updateAdminPassword(id, updateAdminPasswordDTO);
+         return ResponseEntity.ok(updatedAdmin);
+     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAdmin(@PathVariable Long id){
         adminService.deleteAdmin(id);
