@@ -41,7 +41,8 @@ public class ProductMapper {
                 product.getDiscount() == null ? null : product.getDiscount().getDiscount(),
                 product.getQuantity()
         );
-    }
+     }
+ 
 
     public static Product createToProduct(CreateProductDto dto) {
         return new Product(

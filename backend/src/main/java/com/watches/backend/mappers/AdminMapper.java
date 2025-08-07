@@ -3,6 +3,7 @@ package com.watches.backend.mappers;
 import com.watches.backend.Dto.AdminDTO;
 import com.watches.backend.Dto.CreateAdminDTO;
 import com.watches.backend.Dto.UpdateAdminDTO;
+import com.watches.backend.Dto.UpdateAdminPasswordDTO;
 import com.watches.backend.model.Admin;
 
 public class AdminMapper {
@@ -41,5 +42,10 @@ public class AdminMapper {
         admin.setEmail(dto.getEmail());
         admin.setPhone(dto.getPhone());
      }
+    public static void updatePassAdminFromDTO(UpdateAdminPasswordDTO dto, Admin admin) {
+        if (dto == null || admin == null) return;
+        admin.setPassword(dto.getPassword());
+
+    }
 
 }

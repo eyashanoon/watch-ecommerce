@@ -3,12 +3,17 @@ package com.watches.backend.service;
 import com.watches.backend.Dto.CreateAdminDTO;
 import com.watches.backend.Dto.UpdateAdminDTO;
 import com.watches.backend.Dto.AdminDTO;
+import com.watches.backend.Dto.UpdateAdminPasswordDTO;
+import com.watches.backend.Repositories.UserRepository;
 import com.watches.backend.enums.Role;
+import com.watches.backend.exceptions.EmailIsAlreadyUsed;
+import com.watches.backend.exceptions.PasswordDontFollowConstraints;
 import com.watches.backend.mappers.AdminMapper;
 import com.watches.backend.model.Admin;
 import com.watches.backend.service.AuthService;
 import com.watches.backend.Repositories.AdminRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.hibernate.procedure.ParameterStrategyException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,16 +28,30 @@ public class AdminService {
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthService authService;
+    private final UserRepository userRepository;
 
-    public AdminService(AdminRepository adminRepository, PasswordEncoder passwordEncoder, AuthService authService) {
+    public AdminService(AdminRepository adminRepository, PasswordEncoder passwordEncoder, AuthService authService, UserRepository userRepository) {
         this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
         this.authService = authService;
+        this.userRepository = userRepository;
     }
 
     public AdminDTO createAdmin(CreateAdminDTO createAdminDTO) {
-        Admin admin = AdminMapper.fromCreateDTO(createAdminDTO);
+        String password=createAdminDTO.getPassword();
+        boolean hasUppercase = password.matches(".*[A-Z].*");
+        boolean hasLowercase = password.matches(".*[a-z].*");
+        boolean hasSymbol = password.matches(".*[^a-zA-Z0-9].*");
 
+        if(password.length() < 8 || !(hasUppercase && hasLowercase && hasSymbol)){
+            throw new PasswordDontFollowConstraints(password);
+        };
+        if(userRepository.findByEmail(createAdminDTO.getEmail()).isPresent()){
+            throw new EmailIsAlreadyUsed(createAdminDTO.getEmail());
+        }
+
+
+        Admin admin = AdminMapper.fromCreateDTO(createAdminDTO);
         admin.setPassword(passwordEncoder.encode(admin.getPassword()));
 
         if( createAdminDTO.getRoles()!=null && !createAdminDTO.getRoles().isEmpty()) {
@@ -83,20 +102,28 @@ public class AdminService {
         Admin updated = adminRepository.save(admin);
         return AdminMapper.toDTO(updated);
     }
-    public AdminDTO updateAdminPassword(Long id, UpdateAdminDTO updateAdminDTO) {
+
+    public AdminDTO updateAdminPassword(Long id, UpdateAdminPasswordDTO updateAdminPasswordDTO) {
         Admin admin = adminRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
-        if( updateAdminDTO.getRoles() !=null && !updateAdminDTO.getRoles().isEmpty()) {
-            if(admin.getRoles()==null) {
-                admin.setRoles(new HashSet<>());
-            }
-            Set<Role> roles = updateAdminDTO.getRoles();
-            admin.setRoles(roles);
-        }
-        AdminMapper.updateAdminFromDTO(updateAdminDTO, admin);
+ 
+        String password=updateAdminPasswordDTO.getPassword();
+        boolean hasUppercase = password.matches(".*[A-Z].*");
+        boolean hasLowercase = password.matches(".*[a-z].*");
+        boolean hasSymbol = password.matches(".*[^a-zA-Z0-9].*");
+
+        if(password.length() < 8 || !(hasUppercase && hasLowercase && hasSymbol)){
+            throw new PasswordDontFollowConstraints(password);
+        };
+
+
+        AdminMapper.updatePassAdminFromDTO(updateAdminPasswordDTO, admin);
+        admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+ 
         Admin updated = adminRepository.save(admin);
         return AdminMapper.toDTO(updated);
     }
+
 
     public void deleteAdmin(Long id) {
         if (adminRepository.existsById(id)) {
