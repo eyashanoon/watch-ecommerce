@@ -22,7 +22,6 @@ public class AdminMapper {
         );
     }
 
-    // Create new Admin entity from CreateAdminDTO
     public static Admin fromCreateDTO(CreateAdminDTO dto) {
         if (dto == null) return null;
 

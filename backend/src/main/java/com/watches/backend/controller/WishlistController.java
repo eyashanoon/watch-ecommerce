@@ -24,7 +24,7 @@ public class WishlistController {
     private final WishlistService service;
 
     @GetMapping("/customer/{customerUsername}")
-    @PreAuthorize("hasRole('CUSTOMER') || hasRole('ADMIN')")
+    @PreAuthorize("hasRole('CUSTOMER') || hasRole('OWNER') || hasRole('SEE_WISHLIST')")
     WishlistDto getWishlistByCustomerUsername(@Valid @PathVariable String customerUsername,
                                               @ModelAttribute ProductQueryObject productQueryObject) {
 
@@ -50,7 +50,6 @@ public class WishlistController {
     }
 
     @PutMapping("/add")
-    @PreAuthorize("hasRole('CUSTOMER') || hasRole('ADMIN')")
     WishlistDto addProduct(@Valid @RequestParam("item") List<Long> item){
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -66,7 +65,6 @@ public class WishlistController {
     }
 
     @PutMapping("/remove")
-    @PreAuthorize("hasRole('CUSTOMER') || hasRole('ADMIN')")
     WishlistDto removeProduct(@Valid @RequestParam("item") List<Long> item){
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

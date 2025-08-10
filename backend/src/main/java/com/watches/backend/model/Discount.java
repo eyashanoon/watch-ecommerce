@@ -32,7 +32,7 @@ public class Discount {
     @Column(nullable = false)
     private LocalDateTime endDate;
 
-    private boolean expired;
+    private boolean expired = false;
 
     public void addProduct(Product product) {
         for(Product p : products) {

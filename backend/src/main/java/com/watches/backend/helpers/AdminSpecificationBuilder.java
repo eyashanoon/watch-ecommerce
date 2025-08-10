@@ -16,6 +16,8 @@ public class AdminSpecificationBuilder {
         addStringSpec(filter.getEmail(), path("email"));
         addStringSpec(filter.getPhone(), path("phone"));
 
+        addBoolSpec(filter.isDeleted(), path("deleted"));
+
         return this;
     }
 
@@ -32,6 +34,17 @@ public class AdminSpecificationBuilder {
             String finalValue = Utils.normalizeString(value);
             specifications.add((root, query, cb) ->
                     cb.like(expressionProvider.apply(root, query, cb), finalValue)
+            );
+        }
+    }
+
+    private void addBoolSpec(Boolean value,
+                             AdminSpecificationBuilder.Function3<Root<Admin>, CriteriaQuery<?>, CriteriaBuilder, Expression<Boolean>> expressionProvider){
+
+        if(Utils.validBooleanValue(value)) {
+
+            specifications.add((root, query, cb) ->
+                    cb.equal(expressionProvider.apply(root, query, cb), value)
             );
         }
     }

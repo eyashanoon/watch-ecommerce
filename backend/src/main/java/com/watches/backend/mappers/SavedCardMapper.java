@@ -17,7 +17,7 @@ public class SavedCardMapper {
                 card.getCardNumber(),
                 card.getCardType(),
                 card.getCvv(),
-                card.isDefault(),
+                card.isDefaultCard(),
                 card.getCustomer() != null ? card.getCustomer().getId() : null
         );
     }
@@ -25,15 +25,17 @@ public class SavedCardMapper {
     public static SavedCard fromCreateDTO(CreateSavedCardDTO dto, Customer customer) {
         if (dto == null) return null;
 
-        SavedCard card = new SavedCard();
-         card.setCardHolderName(dto.getCardHolderName());
-        card.setCardNumber(dto.getCardNumber());
-        card.setExpiryDate(dto.getExpiryDate());
-        card.setCardType(dto.getCardType());
-        card.setCvv(dto.getCvv());
-        card.setDefault(dto.isDefault());
-        card.setCustomer(customer);
-        return card;
+        return new SavedCard(
+                dto.getCardHolderName(),
+                dto.getCardNumber(),
+                dto.getExpirationDate(),
+                dto.getCvv(),
+                dto.getBillingAddress(),
+                dto.getPostalCode(),
+                dto.getCardType(),
+                dto.isDefaultCard(),
+                customer
+        );
     }
 
     public static void updateEntityFromDTO(UpdateSavedCardDTO dto, SavedCard card) {
@@ -41,9 +43,11 @@ public class SavedCardMapper {
 
         card.setCardHolderName(dto.getCardHolderName());
         card.setCardNumber(dto.getCardNumber());
-        card.setExpiryDate(dto.getExpiryDate());
+        card.setExpirationDate(dto.getExpirationDate());
+        card.setCvv(dto.getCvv());
+        card.setBillingAddress(dto.getBillingAddress());
+        card.setPostalCode(dto.getPostalCode());
         card.setCardType(dto.getCardType());
-        card.setDefault(dto.isDefault());
-        // Do not change customer or ID in an update
+        card.setDefaultCard(dto.isDefaultCard());
     }
 }

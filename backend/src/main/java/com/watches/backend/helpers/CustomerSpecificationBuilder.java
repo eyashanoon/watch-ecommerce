@@ -1,6 +1,7 @@
 package com.watches.backend.helpers;
 
 import com.watches.backend.model.Customer;
+import com.watches.backend.model.Product;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
@@ -19,6 +20,8 @@ public class CustomerSpecificationBuilder {
         addStringSpec(filter.getEmail(), path("email"));
         addStringSpec(filter.getPhone(), path("phone"));
 
+        addBoolSpec(filter.isDeleted(), path("deleted"));
+
         return this;
     }
 
@@ -35,6 +38,17 @@ public class CustomerSpecificationBuilder {
             String finalValue = Utils.normalizeString(value);
             specifications.add((root, query, cb) ->
                     cb.like(expressionProvider.apply(root, query, cb), finalValue)
+            );
+        }
+    }
+
+    private void addBoolSpec(Boolean value,
+                             CustomerSpecificationBuilder.Function3<Root<Customer>, CriteriaQuery<?>, CriteriaBuilder, Expression<Boolean>> expressionProvider){
+
+        if(Utils.validBooleanValue(value)) {
+
+            specifications.add((root, query, cb) ->
+                    cb.equal(expressionProvider.apply(root, query, cb), value)
             );
         }
     }

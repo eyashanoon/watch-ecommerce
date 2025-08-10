@@ -6,8 +6,6 @@ import com.watches.backend.security.JwtUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,15 +37,17 @@ public class AuthController {
 
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             User user = userDetails.getUser();
+            if(user.getDeleted()){
+                throw new RuntimeException("User not found or has benn deleted");
+            }
             List<String> roles = userDetails.getAuthorities().stream()
                     .map(authority -> authority.getAuthority().replace("ROLE_", ""))
                     .collect(Collectors.toList());
-            System.out.println(roles);
 
              String token = jwtUtil.generateToken(user.getEmail(), roles);
  
  
-            return ResponseEntity.ok(new AuthResponse(token, roles));
+            return new AuthResponse(token);
  
          } catch (BadCredentialsException e) {
             throw new RuntimeException("Invalid username or password");

@@ -25,5 +25,5 @@ public class Image {
     @Column(name = "data", columnDefinition = "LONGTEXT")
     private byte[] data;
 
-    private boolean deleted;
+    private boolean deleted = false;
 }

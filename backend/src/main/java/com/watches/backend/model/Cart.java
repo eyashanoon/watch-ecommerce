@@ -24,7 +24,7 @@ public class Cart {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<ProductItem> items;
 
-    private Boolean deleted;
+    private Boolean deleted = false;
 
     public void addItem(ProductItem item){
         int exists = this.items.indexOf(item);

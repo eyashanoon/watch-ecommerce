@@ -7,6 +7,7 @@ import com.watches.backend.model.Cart;
 import com.watches.backend.service.CartService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class CartController {
     private final CartService service;
 
     @GetMapping("/{customerUsername}")
+    @PreAuthorize("hasRole('OWNER') || hasRole('SEE_CART')")
     CartDto getCart(@Valid @PathVariable String customerUsername){
         CompletableFuture<Cart> cart = service.findByCustomerUsername(customerUsername);
         return CartMapper.toCartDto(cart.join());
@@ -39,7 +41,6 @@ public class CartController {
 
     @PutMapping("/add")
     CartDto UpdateCart(@Valid @RequestBody List<CreateProductItemDto> item){
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -50,7 +51,6 @@ public class CartController {
 
     @PutMapping("/remove")
     CartDto deleteItem(@Valid @RequestBody List<CreateProductItemDto> item){
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 

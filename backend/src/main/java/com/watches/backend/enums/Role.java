@@ -35,6 +35,9 @@ public enum Role {
     UPDATE_PRODUCT,
     DELETE_PRODUCT,
 
-    // wishlist controller
-    SEE_WISHLIST
+    // wishlist controller permissions
+    SEE_WISHLIST,
+
+    // Card controller permissions
+    SEE_CARD
 }

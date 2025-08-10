@@ -9,8 +9,10 @@ import com.watches.backend.model.Product;
 import com.watches.backend.service.ProductService;
 import jakarta.validation.Valid;
 
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,28 +21,29 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @RequestMapping("/api/products")
 @EnableMethodSecurity
+@AllArgsConstructor
 public class ProductController {
 
     private final ProductService service;
 
-    public ProductController(ProductService productService) {
-        this.service = productService;
-    }
-
     @GetMapping
+    @PreAuthorize("hasRole('CUSTOMER') || hasRole('OWNER') || hasRole('SEE_PRODUCT')")
     Page<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
+
         return service.findAllAsync(query)
                 .thenApply(page -> page.map(ProductMapper::toDto))
                 .join();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('CUSTOMER') || hasRole('OWNER') || hasRole('SEE_PRODEUCT')")
     ProductDto getById(@PathVariable Long id){
         CompletableFuture<Product> product = service.findByIdAsync(id);
         return ProductMapper.toDto(product.join());
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('OWNER') || hasRole('CREATE_PRODUCT')")
     ProductDto create(@Valid @ModelAttribute CreateProductDto createProductDto){
 
         CompletableFuture<Product> product = service.createAsync(createProductDto);
@@ -49,6 +52,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('OWNER') || hasRole('UPDATE_PRODUCT')")
     ProductDto update(@Valid @RequestBody UpdateProductDto productDto,
                       @Valid @PathVariable Long id){
  
@@ -62,6 +66,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('OWNER') || hasRole('DELETE_PRODUCT')")
     void delete(@Valid @PathVariable Long id){
         service.deleteByIdAsync(id);
     }

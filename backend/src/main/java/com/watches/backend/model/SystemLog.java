@@ -19,9 +19,16 @@ public class SystemLog {
     private Long id;
 
     private String action;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User performedBy;
     private LocalDateTime performedAt;
-    private boolean deleted;
+
+    public SystemLog(String action, User performedBy){
+        this.action = action;
+        this.performedBy = performedBy;
+        performedAt = LocalDateTime.now();
+    }
+
 }

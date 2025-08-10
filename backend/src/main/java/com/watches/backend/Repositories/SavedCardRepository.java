@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface SavedCardRepository extends JpaRepository<SavedCard,Long> {
 
     SavedCard findByCustomer(Customer customer);
+
+    void deleteByCustomer(Customer customer);
 }

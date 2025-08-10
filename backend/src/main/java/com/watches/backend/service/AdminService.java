@@ -6,6 +6,7 @@ import com.watches.backend.Dto.AdminDTO;
 import com.watches.backend.enums.Role;
 import com.watches.backend.helpers.AdminQueryObject;
 import com.watches.backend.helpers.AdminSpecificationBuilder;
+import com.watches.backend.helpers.Utils;
 import com.watches.backend.mappers.AdminMapper;
 import com.watches.backend.model.Admin;
 import com.watches.backend.Repositories.AdminRepository;
@@ -13,89 +14,61 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @Service
 public class AdminService {
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthService authService;
 
-    public AdminService(AdminRepository adminRepository, PasswordEncoder passwordEncoder, AuthService authService) {
+    public AdminService(AdminRepository adminRepository, PasswordEncoder passwordEncoder) {
         this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
-        this.authService = authService;
     }
 
-    public AdminDTO createAdmin(CreateAdminDTO createAdminDTO) {
+    public Admin createAdmin(CreateAdminDTO createAdminDTO) {
         Admin admin = AdminMapper.fromCreateDTO(createAdminDTO);
 
-        admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+        setPassword(admin);
+        validateAndSetRoles(admin, createAdminDTO.getRoles());
 
-        if( createAdminDTO.getRoles()!=null && !createAdminDTO.getRoles().isEmpty()) {
-            if(admin.getRoles()==null) {
-                admin.setRoles(new HashSet<>());
-             }
-            Set<Role> roles = createAdminDTO.getRoles();
-           roles.add(Role.ADMIN);
-            admin.setRoles(roles);
-        }
-        Admin saved = adminRepository.save(admin);
-        return AdminMapper.toDTO(saved);
+        return adminRepository.save(admin);
     }
 
-    public AdminDTO getAdminById(Long id) {
-        Admin admin = adminRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
-        return AdminMapper.toDTO(admin);
-    }
+    public Page<Admin> getAllAdmins(AdminQueryObject queryObject) {
 
-    @Async
-    public CompletableFuture<Page<Admin>> getAllAdmins(AdminQueryObject queryObject) {
+        Specification<Admin> spec = new AdminSpecificationBuilder()
+                .withFilter(queryObject)
+                .build();
 
-        Specification<Admin> spec = new AdminSpecificationBuilder().withFilter(queryObject).build();
-
-        Page<Admin> res = adminRepository.findAll(spec,
+        return adminRepository.findAll(spec,
                 PageRequest.of(queryObject.getPageNumber() - 1, queryObject.getPageSize())
         );
-        return CompletableFuture.completedFuture(res);
     }
 
-    public List<AdminDTO> getAllAdminsWithoutTheSingedInAdmin() {
-        Long adminId = authService.getCurrentUserId();
-        return adminRepository.findAll()
-                .stream()
-                .map(AdminMapper::toDTO)
-                .toList().stream().filter(admin -> !admin.getId().equals(adminId)).collect(Collectors.toList());
-    }
-
-
-    public AdminDTO updateAdmin(Long id, UpdateAdminDTO updateAdminDTO) {
-        Admin admin = adminRepository.findById(id)
+    public Admin findById(Long id) {
+        return adminRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
-        if( updateAdminDTO.getRoles() !=null && !updateAdminDTO.getRoles().isEmpty()) {
-            if(admin.getRoles()==null) {
-                admin.setRoles(new HashSet<>());
-            }
-            Set<Role> roles = updateAdminDTO.getRoles();
-             admin.setRoles(roles);
-        }
-        AdminMapper.updateAdminFromDTO(updateAdminDTO, admin);
-        Admin updated = adminRepository.save(admin);
-        return AdminMapper.toDTO(updated);
     }
+
+    public Admin updateAdmin(Long id, UpdateAdminDTO updateAdminDTO) {
+        Admin admin = findById(id);
+
+        admin.setUsername(updateAdminDTO.getUsername());
+        admin.setEmail(updateAdminDTO.getEmail());
+        admin.setPhone(updateAdminDTO.getPhone());
+        validateAndSetRoles(admin, updateAdminDTO.getRoles());
+
+        return adminRepository.save(admin);
+    }
+
     public AdminDTO updateAdminPassword(Long id, UpdateAdminDTO updateAdminDTO) {
-        Admin admin = adminRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
-        if( updateAdminDTO.getRoles() !=null && !updateAdminDTO.getRoles().isEmpty()) {
+        Admin admin = findById(id);
+        if(!Utils.isNullOrEmpty(updateAdminDTO.getRoles())) {
             if(admin.getRoles()==null) {
                 admin.setRoles(new HashSet<>());
             }
@@ -108,11 +81,9 @@ public class AdminService {
     }
 
     public void deleteAdmin(Long id) {
-        if (adminRepository.existsById(id)) {
-            adminRepository.deleteById(id);
-        } else {
-            throw new EntityNotFoundException("Admin not found with id: " + id);
-        }
+        Admin admin = findById(id);
+        admin.setDeleted(true);
+        adminRepository.save(admin);
     }
     public AdminDTO addRoleToAdmin(Long id, Role role) {
         Admin admin = adminRepository.findById(id)
@@ -130,6 +101,20 @@ public class AdminService {
         }
 
         return AdminMapper.toDTO(admin);
+    }
+
+    private void setPassword(Admin admin){
+        admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+    }
+
+    private void validateAndSetRoles(Admin admin, Set<Role> roles){
+        if(!Utils.isNullOrEmpty(roles)) {
+            if(roles.contains(Role.OWNER)) {
+                throw new RuntimeException("Admins cannot have OWNER role");
+            }
+            roles.add(Role.ADMIN);
+            admin.setRoles(roles);
+        }
     }
 
 }

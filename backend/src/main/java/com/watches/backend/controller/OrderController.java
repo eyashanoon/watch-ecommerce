@@ -7,7 +7,7 @@ import com.watches.backend.model.Order;
 import com.watches.backend.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -42,28 +42,32 @@ public class OrderController {
     }
 
     @GetMapping("/customer/{id}")
+    @PreAuthorize("hasRole('OWNER') || hasRole('SEE_ORDER')")
     List<OrderDTO> getOrdersByCustomer(@PathVariable Long id) {
         List<Order> orders = orderService.getAllById(id).join();
         return orders.stream().map(OrderMapper::toDTO).toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrderDTO> getOrderById(@PathVariable Long id) {
-        OrderDTO order = orderService.getOrderById(id);
-        return ResponseEntity.ok(order);
+    @PreAuthorize("hasRole('OWNER') || hasRole('SEE_ORDER')")
+    OrderDTO getOrderById(@PathVariable Long id) {
+        Order order = orderService.getOrderById(id).join();
+        return OrderMapper.toDTO(order);
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderDTO>> getAllOrders() {
-        List<OrderDTO> orders = orderService.getAllOrders();
-        return ResponseEntity.ok(orders);
+    @PreAuthorize("hasRole('OWNER') || hasRole('SEE_ORDER')")
+    List<OrderDTO> getAllOrders() {
+        List<Order> order = orderService.getAllOrders().join();
+        return order.stream().map(OrderMapper::toDTO).toList();
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<OrderDTO> updateOrderStatus(@PathVariable Long id,
+    @PreAuthorize("hasRole('OWNER') || hasRole('UPDATE_ORDER')")
+    OrderDTO updateOrderStatus(@PathVariable Long id,
                                                       @Valid @RequestBody OrderStatus status) {
-        OrderDTO updatedOrder = orderService.updateOrderStatus(id, status);
-        return ResponseEntity.ok(updatedOrder);
+        Order order = orderService.updateOrderStatus(id, status).join();
+        return OrderMapper.toDTO(order);
     }
 
 }

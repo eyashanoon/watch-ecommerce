@@ -30,7 +30,7 @@ public class Wishlist {
     )
     private List<Product> products = new ArrayList<>();
 
-    private boolean deleted;
+    private boolean deleted = false;
 
     public Wishlist(Customer customer, List<Product> products) {
         this.customer = customer;
