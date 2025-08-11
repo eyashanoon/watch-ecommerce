@@ -3,7 +3,7 @@ package com.watches.backend.controller;
 import com.watches.backend.Dto.CreateCustomerDTO;
 import com.watches.backend.Dto.UpdateCustomerDTO;
 import com.watches.backend.Dto.CustomerDTO;
-import com.watches.backend.helpers.CustomerQueryObject;
+import com.watches.backend.helpers.query.UserQueryObject;
 import com.watches.backend.mappers.CustomerMapper;
 import com.watches.backend.model.Customer;
 import com.watches.backend.service.CustomerService;
@@ -38,7 +38,7 @@ public class CustomerController {
 
     @GetMapping
     @PreAuthorize("hasRole('OWNER') || hasRole('SEE_CUSTOMER')")
-    Page<CustomerDTO> getAllCustomers(@RequestBody CustomerQueryObject queryObject) {
+    Page<CustomerDTO> getAllCustomers(@ModelAttribute UserQueryObject queryObject) {
        Page<Customer> customer = customerService.getAllCustomers(queryObject).join();
        return customer.map(CustomerMapper::toDTO);
     }

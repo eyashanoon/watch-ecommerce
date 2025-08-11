@@ -2,6 +2,7 @@ package com.watches.backend.service.productFeatures;
 
 import com.watches.backend.Repositories.productFeaturesRepositories.NumberingFormatRepository;
 import com.watches.backend.helpers.Utils;
+import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.productFeatures.NumberingFormat;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class NumberingFormatService {
     public CompletableFuture<String> findByProductId(Long productId){
         String res = repository.findByProductId(productId);
         if(Utils.isNullOrWhiteSpace(res)){
-            throw new RuntimeException("Either product does not exist or product does not have a numbering format");
+            throw CException.notFound(NumberingFormat.class, "productId", productId);
         }
         return CompletableFuture.completedFuture(res);
     }

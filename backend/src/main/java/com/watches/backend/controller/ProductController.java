@@ -3,7 +3,7 @@ package com.watches.backend.controller;
 import com.watches.backend.Dto.ProductDto.CreateProductDto;
 import com.watches.backend.Dto.ProductDto.ProductDto;
 import com.watches.backend.Dto.ProductDto.UpdateProductDto;
-import com.watches.backend.helpers.ProductQueryObject;
+import com.watches.backend.helpers.query.ProductQueryObject;
 import com.watches.backend.mappers.ProductMapper;
 import com.watches.backend.model.Product;
 import com.watches.backend.service.ProductService;

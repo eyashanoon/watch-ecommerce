@@ -1,20 +1,14 @@
 package com.watches.backend.service;
 
-import com.watches.backend.Dto.ProductDto.ProductDto;
-import com.watches.backend.Dto.WishlistDto.CreateWishlistDto;
 import com.watches.backend.Repositories.CustomerRepository;
 import com.watches.backend.Repositories.ProductRepository;
 import com.watches.backend.Repositories.WishlistRepository;
-import com.watches.backend.exceptions.CustomerNotFoundException;
-import com.watches.backend.exceptions.WishlistNotFoundException;
-import com.watches.backend.helpers.ProductQueryObject;
-import com.watches.backend.helpers.ProductSpecificationBuilder;
-import com.watches.backend.mappers.ProductMapper;
-import com.watches.backend.mappers.WishlistMapper;
+import com.watches.backend.helpers.exception.CException;
+import com.watches.backend.helpers.query.ProductQueryObject;
+import com.watches.backend.helpers.specification.SpecificationBuilder;
 import com.watches.backend.model.Customer;
 import com.watches.backend.model.Product;
 import com.watches.backend.model.Wishlist;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,9 +31,7 @@ public class WishlistService {
 
     public CompletableFuture<Wishlist> findByIdAsync(Long id) {
         Wishlist wishlist = wishlistRepository.findById(id)
-                .orElseThrow(() ->
-                        new WishlistNotFoundException(id)
-                );
+                .orElseThrow(() -> CException.notFound(Wishlist.class, "id", id));
         return CompletableFuture.completedFuture(wishlist);
     }
 
@@ -53,13 +45,11 @@ public class WishlistService {
      public CompletableFuture<Wishlist> findByCustomerIdAsync(String customerUsername, ProductQueryObject queryObject) {
 
         Customer customer = customerRepository.findByEmail(customerUsername)
-                .orElseThrow(() ->
-                        new CustomerNotFoundException(customerUsername)
-                );
+                .orElseThrow(() -> CException.notFound(Customer.class, "email", customerUsername));
         Wishlist wishlist = customer.getWishlist();
 
         if(wishlist == null) {
-            throw new RuntimeException("Wishlist not found");
+            throw CException.notFound(Wishlist.class, "Customer email", customerUsername);
         }
 
         if(queryObject == null) {
@@ -71,7 +61,7 @@ public class WishlistService {
                 .map(Product::getId)
                 .toList();
 
-        Specification<Product> spec = new ProductSpecificationBuilder()
+        Specification<Product> spec = new SpecificationBuilder<Product>()
                 .withFilter(queryObject)
                 .build();
 

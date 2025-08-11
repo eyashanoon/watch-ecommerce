@@ -1,4 +1,4 @@
-package com.watches.backend.helpers;
+package com.watches.backend.helpers.query;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,9 +7,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class AdminQueryObject {
+@AllArgsConstructor
+public class UserQueryObject implements Query {
     private String username = null;
     private String phone = null;
     private String email = null;

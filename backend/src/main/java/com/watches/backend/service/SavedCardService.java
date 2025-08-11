@@ -2,7 +2,6 @@ package com.watches.backend.service;
 
 import com.watches.backend.Dto.SavedCardDto.CreateSavedCardDTO;
 import com.watches.backend.Dto.SavedCardDto.UpdateSavedCardDTO;
-import com.watches.backend.exceptions.SavedCardNotFoundException;
 import com.watches.backend.mappers.SavedCardMapper;
 import com.watches.backend.model.Customer;
 import com.watches.backend.model.SavedCard;

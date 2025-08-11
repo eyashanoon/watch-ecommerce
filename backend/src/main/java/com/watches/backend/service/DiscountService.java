@@ -2,6 +2,7 @@ package com.watches.backend.service;
 
 import com.watches.backend.Dto.DiscountDto.CreateDiscountDto;
 import com.watches.backend.Repositories.DiscountRepository;
+import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.Discount;
 import com.watches.backend.model.Product;
 import lombok.AllArgsConstructor;
@@ -32,7 +33,7 @@ public class DiscountService {
         discount.setProducts(new HashSet<>());
         for(Product product : products){
             if(product.getDiscount() != null){
-                throw new RuntimeException("Product with id = " + product.getId() + " already has a discount");
+                throw CException.conflict("Product with id " + product.getId() + " already have a discount");
             }
             discount.addProduct(product);
         }
@@ -52,7 +53,7 @@ public class DiscountService {
     public CompletableFuture<Discount> findByProductIdAsync(Long productId){
         Product product = productService.findByIdAsync(productId).join();
         if(product.getDiscount() == null){
-            throw new RuntimeException("Product with id = " + productId + " does not have a discount");
+            throw CException.conflict("Product with id " + product.getId() + " does not have a discount");
         }
         return CompletableFuture.completedFuture(product.getDiscount());
     }
@@ -65,12 +66,12 @@ public class DiscountService {
 
         for(Product product : prod){
             if(product.getDiscount() == null){
-                throw new RuntimeException("Product with id = " + product.getId() + " does not have a discount");
+                throw CException.conflict("Product with id " + product.getId() + " does not have a discount");
             }
             Discount discount = product.getDiscount();
             boolean flag = discount.removeProduct(product);
             if(!flag){
-                throw new RuntimeException("Product with id = " + product.getId() + " does not have a discount");
+                throw CException.conflict("Product with id " + product.getId() + " does not have a discount");
             }
         }
 
@@ -84,7 +85,7 @@ public class DiscountService {
 
     public CompletableFuture<Discount> deleteByIdAsync(long id) {
         Discount discount = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Discount with id = " + id + " does not exist"));
+                .orElseThrow(() -> CException.notFound(Discount.class, "id", id));
 
         discount.setExpired(true);
         repository.save(discount);
@@ -98,7 +99,7 @@ public class DiscountService {
 
     public CompletableFuture<Discount> findById(Long id) {
         Discount discount = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Discount with id = " + id + " does not exist"));
+                .orElseThrow(() -> CException.notFound(Discount.class, "id", id));
         return CompletableFuture.completedFuture(discount);
     }
 }

@@ -1,5 +1,6 @@
 package com.watches.backend.controller;
 
+import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.User;
 import com.watches.backend.security.CustomUserDetails;
 import com.watches.backend.security.JwtUtil;
@@ -38,7 +39,7 @@ public class AuthController {
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             User user = userDetails.getUser();
             if(user.getDeleted()){
-                throw new RuntimeException("User not found or has benn deleted");
+                throw CException.notFound(User.class, "userDetails", userDetails);
             }
             List<String> roles = userDetails.getAuthorities().stream()
                     .map(authority -> authority.getAuthority().replace("ROLE_", ""))
@@ -50,7 +51,7 @@ public class AuthController {
             return new AuthResponse(token);
  
          } catch (BadCredentialsException e) {
-            throw new RuntimeException("Invalid username or password");
+            throw CException.badRequest(User.class, "Invalid username or password");
         }
     }
 

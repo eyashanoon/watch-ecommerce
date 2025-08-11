@@ -4,13 +4,13 @@ import com.watches.backend.Dto.CreateAdminDTO;
 import com.watches.backend.Dto.UpdateAdminDTO;
 import com.watches.backend.Dto.AdminDTO;
 import com.watches.backend.enums.Role;
-import com.watches.backend.helpers.AdminQueryObject;
-import com.watches.backend.helpers.AdminSpecificationBuilder;
+import com.watches.backend.helpers.exception.CException;
+import com.watches.backend.helpers.specification.SpecificationBuilder;
+import com.watches.backend.helpers.query.UserQueryObject;
 import com.watches.backend.helpers.Utils;
 import com.watches.backend.mappers.AdminMapper;
 import com.watches.backend.model.Admin;
 import com.watches.backend.Repositories.AdminRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -39,9 +39,9 @@ public class AdminService {
         return adminRepository.save(admin);
     }
 
-    public Page<Admin> getAllAdmins(AdminQueryObject queryObject) {
+    public Page<Admin> getAllAdmins(UserQueryObject queryObject) {
 
-        Specification<Admin> spec = new AdminSpecificationBuilder()
+        Specification<Admin> spec = new SpecificationBuilder<Admin>()
                 .withFilter(queryObject)
                 .build();
 
@@ -52,7 +52,7 @@ public class AdminService {
 
     public Admin findById(Long id) {
         return adminRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
+                .orElseThrow(() -> CException.notFound(Admin.class, "id", id));
     }
 
     public Admin updateAdmin(Long id, UpdateAdminDTO updateAdminDTO) {
@@ -87,7 +87,7 @@ public class AdminService {
     }
     public AdminDTO addRoleToAdmin(Long id, Role role) {
         Admin admin = adminRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Admin not found with id: " + id));
+                .orElseThrow(() -> CException.notFound(Admin.class, "id", id));
 
         // Ensure the roles collection is initialized
         if (admin.getRoles() == null) {
@@ -110,7 +110,7 @@ public class AdminService {
     private void validateAndSetRoles(Admin admin, Set<Role> roles){
         if(!Utils.isNullOrEmpty(roles)) {
             if(roles.contains(Role.OWNER)) {
-                throw new RuntimeException("Admins cannot have OWNER role");
+                throw CException.badRequest(Admin.class, "Admin cannot have OWNER role");
             }
             roles.add(Role.ADMIN);
             admin.setRoles(roles);

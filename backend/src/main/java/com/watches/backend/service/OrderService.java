@@ -3,7 +3,7 @@ package com.watches.backend.service;
 
 import com.watches.backend.Dto.PaymentDto.PaymentDTO;
 import com.watches.backend.enums.OrderStatus;
-import com.watches.backend.exceptions.*;
+import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.mappers.OrderMapper;
 import com.watches.backend.model.*;
 import com.watches.backend.Repositories.*;
@@ -54,7 +54,7 @@ public class OrderService {
 
     public CompletableFuture<Order> getOrderById(Long id) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new OrderNotFoundException(id));
+                .orElseThrow(() -> CException.notFound(Order.class, "id", id));
 
         return CompletableFuture.completedFuture(order);
     }
@@ -66,7 +66,7 @@ public class OrderService {
     @Transactional
     public CompletableFuture<Order> updateOrderStatus(Long id, OrderStatus status) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new   OrderNotFoundException(id));
+                .orElseThrow(() -> CException.notFound(Order.class, "id", id));
 
         OrderMapper.updateStatus(order, status);
         orderRepository.save(order);

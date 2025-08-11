@@ -2,8 +2,9 @@ package com.watches.backend.service;
 
 import com.watches.backend.Dto.CreateCustomerDTO;
 import com.watches.backend.Dto.UpdateCustomerDTO;
-import com.watches.backend.helpers.CustomerQueryObject;
-import com.watches.backend.helpers.CustomerSpecificationBuilder;
+import com.watches.backend.helpers.exception.CException;
+import com.watches.backend.helpers.specification.SpecificationBuilder;
+import com.watches.backend.helpers.query.UserQueryObject;
 import com.watches.backend.mappers.CustomerMapper;
 import com.watches.backend.model.Customer;
 import com.watches.backend.Repositories.CustomerRepository;
@@ -39,19 +40,19 @@ public class CustomerService {
 
      public CompletableFuture<Customer> getCustomerById(Long id) {
         Customer customer = customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found with id " + id));
+                .orElseThrow(() -> CException.notFound(Customer.class, "id", id));
         return CompletableFuture.completedFuture(customer);
     }
 
     public CompletableFuture<Customer> getCustomerByUsername(String username) {
         Customer customer = customerRepository.findByEmail(username)
-                .orElseThrow(() -> new RuntimeException("Customer not found with email " + username));
+                .orElseThrow(() -> CException.notFound(Customer.class, "email", username));
         return CompletableFuture.completedFuture(customer);
     }
 
-    public CompletableFuture<Page<Customer>> getAllCustomers(CustomerQueryObject queryObject) {
+    public CompletableFuture<Page<Customer>> getAllCustomers(UserQueryObject queryObject) {
 
-        Specification<Customer> spec = new CustomerSpecificationBuilder().withFilter(queryObject).build();
+        Specification<Customer> spec = new SpecificationBuilder<Customer>().withFilter(queryObject).build();
 
         Page<Customer> res = customerRepository.findAll(spec,
                  PageRequest.of(queryObject.getPageNumber() - 1, queryObject.getPageSize())
@@ -62,7 +63,7 @@ public class CustomerService {
 
      public CompletableFuture<Customer> updateCustomer(String username, UpdateCustomerDTO updateCustomerDTO) {
         Customer customer = customerRepository.findByEmail(username)
-                .orElseThrow(() -> new RuntimeException("Customer not found { username = " + username + " }"));
+                .orElseThrow(() -> CException.notFound(Customer.class, "email", username));
 
         customer.setUsername(username);
         customer.setEmail(updateCustomerDTO.getEmail());

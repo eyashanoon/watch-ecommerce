@@ -1,7 +1,7 @@
 package com.watches.backend.controller;
 
 import com.watches.backend.Dto.WishlistDto.WishlistDto;
-import com.watches.backend.helpers.ProductQueryObject;
+import com.watches.backend.helpers.query.ProductQueryObject;
 import com.watches.backend.mappers.WishlistMapper;
 import com.watches.backend.model.Wishlist;
 import com.watches.backend.service.WishlistService;

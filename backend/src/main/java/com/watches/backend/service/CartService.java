@@ -1,25 +1,19 @@
 package com.watches.backend.service;
 
-import com.watches.backend.Dto.CartDto.CreateCartDto;
+
 import com.watches.backend.Dto.productItemDto.CreateProductItemDto;
 import com.watches.backend.Repositories.CartRepository;
 import com.watches.backend.Repositories.CustomerRepository;
-import com.watches.backend.Repositories.ProductRepository;
-import com.watches.backend.exceptions.CartNotFoundException;
-import com.watches.backend.exceptions.CustomerNotFoundException;
-import com.watches.backend.exceptions.ProductNotFoundException;
-import com.watches.backend.mappers.CartMapper;
+import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.Cart;
 import com.watches.backend.model.Customer;
 import com.watches.backend.model.Product;
 import com.watches.backend.model.ProductItem;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -39,19 +33,8 @@ public class CartService {
 
     public CompletableFuture<Cart> findByIdAsync(Long id){
         return CompletableFuture.completedFuture(repository.findById(id)
-                .orElseThrow(() ->
-                        new CartNotFoundException(id)
-                )
+                .orElseThrow(() -> CException.notFound(Cart.class, "id", id))
         );
-    }
-
-    public void deleteByIdAsync(Long id){
-        CompletableFuture<Cart> cart =  findByIdAsync(id);
-
-        cart.thenAccept(
-                repository::delete
-        );
-
     }
 
     public CompletableFuture<Cart> addItemAsync(String username, List<CreateProductItemDto> items){
@@ -81,7 +64,7 @@ public class CartService {
 
     public CompletableFuture<Cart> findByCustomerUsername(String customerUsername) {
         Customer customer = customerRepository.findByEmail(customerUsername)
-                .orElseThrow(() -> new CustomerNotFoundException(customerUsername));
+                .orElseThrow(() -> CException.notFound(Customer.class, "email", customerUsername));
         return CompletableFuture.completedFuture(customer.getCart());
     }
 

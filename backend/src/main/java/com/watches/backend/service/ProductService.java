@@ -2,10 +2,10 @@ package com.watches.backend.service;
 
 import com.watches.backend.Dto.ProductDto.CreateProductDto;
 import com.watches.backend.Dto.ProductDto.UpdateProductDto;
-import com.watches.backend.helpers.ProductQueryObject;
+import com.watches.backend.helpers.exception.CException;
+import com.watches.backend.helpers.query.ProductQueryObject;
 import com.watches.backend.Repositories.ProductRepository;
-import com.watches.backend.exceptions.ProductNotFoundException;
-import com.watches.backend.helpers.ProductSpecificationBuilder;
+import com.watches.backend.helpers.specification.SpecificationBuilder;
 import com.watches.backend.mappers.ProductMapper;
 import com.watches.backend.model.Image;
 import com.watches.backend.model.Product;
@@ -113,7 +113,7 @@ public class ProductService {
     }
 
     public CompletableFuture<Product> updateAsync(UpdateProductDto createProductDto, Long id) {
-        CompletableFuture<Product> product = this.findByIdAsync(id);
+        CompletableFuture<Product> product = findByIdAsync(id);
 
         product = product.thenApply(p -> {
             p.setName(createProductDto.getName());
@@ -146,14 +146,14 @@ public class ProductService {
         return CompletableFuture.completedFuture(
                 repository.findById(id)
                 .orElseThrow(() ->
-                        new ProductNotFoundException(id)
+                        CException.notFound(Product.class, "id", id)
                 )
         );
     }
 
     public CompletableFuture<Page<Product>> findAllAsync(ProductQueryObject queryObject) {
 
-       Specification<Product> spec = new ProductSpecificationBuilder()
+       Specification<Product> spec = new SpecificationBuilder<Product>()
                .withFilter(queryObject)
                .build();
 

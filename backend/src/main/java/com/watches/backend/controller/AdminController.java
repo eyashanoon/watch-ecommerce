@@ -1,7 +1,7 @@
 package com.watches.backend.controller;
 
 import com.watches.backend.Dto.*;
-import com.watches.backend.helpers.AdminQueryObject;
+import com.watches.backend.helpers.query.UserQueryObject;
 import com.watches.backend.mappers.AdminMapper;
 import com.watches.backend.model.Admin;
 import com.watches.backend.service.AdminService;
@@ -33,7 +33,7 @@ public class AdminController {
 
     @GetMapping
     @PreAuthorize("hasRole('OWNER') || hasRole('SEE_ADMIN')")
-    public Page<AdminDTO> getAllAdmin(@RequestBody AdminQueryObject queryObject){
+    public Page<AdminDTO> getAllAdmin(@ModelAttribute UserQueryObject queryObject){
         Page<Admin> admins = adminService.getAllAdmins(queryObject);
         return admins.map(AdminMapper::toDTO);
     }

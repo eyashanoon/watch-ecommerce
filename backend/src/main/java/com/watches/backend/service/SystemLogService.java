@@ -1,9 +1,7 @@
 package com.watches.backend.service;
 
-import com.watches.backend.Dto.SystemLogDto.CreateSystemLogDto;
 import com.watches.backend.Repositories.SystemLogRepository;
-import com.watches.backend.exceptions.SystemLogNotFoundException;
-import com.watches.backend.mappers.SystemLogMapper;
+import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.SystemLog;
 import com.watches.backend.model.User;
 import lombok.AllArgsConstructor;
@@ -32,9 +30,7 @@ public class SystemLogService {
     public CompletableFuture<SystemLog> findByIdAsync(Long id){
         return CompletableFuture.completedFuture(
                 repository.findById(id)
-                .orElseThrow(() ->
-                        new SystemLogNotFoundException(id)
-                )
+                .orElseThrow(() -> CException.notFound(SystemLog.class, "id", id))
         );
     }
 

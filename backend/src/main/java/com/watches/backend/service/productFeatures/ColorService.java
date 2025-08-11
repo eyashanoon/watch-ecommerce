@@ -2,12 +2,11 @@ package com.watches.backend.service.productFeatures;
 
 import com.watches.backend.Repositories.productFeaturesRepositories.ColorRepository;
 import com.watches.backend.helpers.Utils;
+import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.productFeatures.Color;
-import com.watches.backend.service.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -37,7 +36,7 @@ public class ColorService {
                 ));
 
         if(res.isEmpty()) {
-            throw new RuntimeException("Either product does not exist or product does not have colors { product Id = " + productId + " }");
+            throw CException.notFound(Color.class, "productId", productId);
         }
         return CompletableFuture.completedFuture(res);
     }
