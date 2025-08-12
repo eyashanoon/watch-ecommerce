@@ -30,7 +30,10 @@ public class AuthController {
 
     @PostMapping("/login")
     public AuthResponse login(@RequestBody AuthRequest authRequest) {
-          System.out.println(authRequest.getUsername()+" "+authRequest.getPassword());
+
+        System.out.println("0000000000000000000000000000000000000000000000000000000000000000000");
+
+        System.out.println(authRequest.getUsername()+" "+authRequest.getPassword());
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
@@ -51,11 +54,10 @@ public class AuthController {
              String token = jwtUtil.generateToken(user.getEmail(), roles);
              System.out.println("id= "+id);
  
-             return ResponseEntity.ok(new AuthResponse(token, roles,id));
+
  
- 
-            return new AuthResponse(token);
- 
+            return new AuthResponse(token, roles,id);
+
          } catch (BadCredentialsException e) {
             throw CException.badRequest(User.class, "Invalid username or password");
         }
@@ -80,12 +82,6 @@ public class AuthController {
         private List<String> roles;
 
         private Long id;
-
-        public AuthResponse(String token, List<String> roles , Long id) {
-            this.token = token;
-            this.roles = roles;
-            this.id = id;
-        }
 
     }
 
