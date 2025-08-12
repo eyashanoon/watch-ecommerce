@@ -38,17 +38,38 @@ public class OrderService {
     public CompletableFuture<Order> createOrder(String username, Map<Long, Integer> items) {
         Order order = new Order();
         List<OrderItem> orderItems = new ArrayList<>();
+        Customer customer = customerService.getCustomerByUsername(username).join();
+        SavedCard card = customer.getSavedCard();
+        if(card == null){
+            throw CException.badRequest(Order.class, "Please fill your card info before ordering");
+        }
         for(Map.Entry<Long, Integer> entry : items.entrySet()) {
             Product product = productService.findByIdAsync(entry.getKey()).join();
-            OrderItem orderItem = new OrderItem(product, order, entry.getValue());
-            orderItems.add(orderItem);
-            order.addItem(orderItem);
+            if(product.getQuantity() >= entry.getValue()) {
+                OrderItem orderItem = new OrderItem(product, order, entry.getValue());
+                orderItems.add(orderItem);
+                order.addItem(orderItem);
+                product.setQuantity(product.getQuantity() - entry.getValue());
+                productService.saveAfterDiscount(product);
+            }else{
+                throw CException.badRequest(Order.class, "Product with id " + entry.getKey() + " does not have enough quantity");
+            }
         }
-        Customer customer = customerService.getCustomerByUsername(username).join();
         customer.addOrder(order);
         orderRepository.save(order);
         orderItemRepository.saveAll(orderItems);
         customerService.save(customer);
+        makePayment(new PaymentDTO(
+                card.getCardNumber(),
+                order.getTotalPrice(),
+                card.getExpirationDate(),
+                card.getCvv(),
+                card.getBillingAddress(),
+                card.getPostalCode(),
+                card.getCardType(),
+                customer.getId(),
+                "La-Royal"
+        )).join();
         return CompletableFuture.completedFuture(order);
     }
 
@@ -74,18 +95,17 @@ public class OrderService {
         return CompletableFuture.completedFuture(order);
     }
 
-    public ResponseEntity<String> makePayment(PaymentDTO paymentDTO) {
+    public CompletableFuture<ResponseEntity<String>> makePayment(PaymentDTO paymentDTO) {
         String paymentServerUrl = "http://localhost:9091/api/payment/make";
 
         try {
-            return restTemplate.postForEntity(
+            return CompletableFuture.completedFuture(restTemplate.postForEntity(
                     paymentServerUrl,
                     paymentDTO,
                     String.class
-            );
+            ));
         } catch (Exception ex) {
-            System.err.println("Payment server error: " + ex.getMessage());
-            throw new RuntimeException("Failed to connect to payment server", ex);
+            throw CException.unexpected(ex);
         }
     }
 

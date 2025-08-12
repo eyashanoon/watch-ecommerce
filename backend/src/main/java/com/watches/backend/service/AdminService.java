@@ -31,11 +31,15 @@ public class AdminService {
     }
 
     public Admin createAdmin(CreateAdminDTO createAdminDTO) {
-        Admin admin = AdminMapper.fromCreateDTO(createAdminDTO);
-
+        Admin admin = adminRepository.findByEmail(createAdminDTO.getEmail());
+        if(admin != null){
+            admin.setDeleted(false);
+            admin.setPassword(createAdminDTO.getPassword());
+        }else {
+            admin = AdminMapper.fromCreateDTO(createAdminDTO);
+        }
         setPassword(admin);
         validateAndSetRoles(admin, createAdminDTO.getRoles());
-
         return adminRepository.save(admin);
     }
 

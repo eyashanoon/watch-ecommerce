@@ -6,8 +6,11 @@ import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.helpers.specification.SpecificationBuilder;
 import com.watches.backend.helpers.query.UserQueryObject;
 import com.watches.backend.mappers.CustomerMapper;
+import com.watches.backend.model.Cart;
 import com.watches.backend.model.Customer;
 import com.watches.backend.Repositories.CustomerRepository;
+import com.watches.backend.model.Wishlist;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,13 +32,18 @@ public class CustomerService {
 
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public CompletableFuture<Customer> createCustomer(CreateCustomerDTO createCustomerDTO) {
+
         Customer customer = CustomerMapper.fromCreateDTO(createCustomerDTO);
+        Cart cart = cartService.createAsync().join();
+        Wishlist wishlist = wishlistService.createAsync().join();
+
+        customer.setWishlist(wishlist);
+        customer.setCart(cart);
         customer.setPassword(passwordEncoder.encode(createCustomerDTO.getPassword()));
-        customer.setWishlist(wishlistService.createAsync().join());
-        customer.setCart(cartService.createAsync().join());
-        Customer saved = customerRepository.save(customer);
-        return CompletableFuture.completedFuture(saved);
+        customerRepository.save(customer);
+        return CompletableFuture.completedFuture(customer);
     }
 
      public CompletableFuture<Customer> getCustomerById(Long id) {

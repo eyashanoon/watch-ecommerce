@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,7 +23,7 @@ public class Cart {
     private Customer customer;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    private List<ProductItem> items;
+    private List<ProductItem> items = new ArrayList<>();
 
     private Boolean deleted = false;
 
