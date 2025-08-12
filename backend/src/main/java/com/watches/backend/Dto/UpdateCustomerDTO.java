@@ -2,7 +2,15 @@ package com.watches.backend.Dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UpdateCustomerDTO {
 
     @NotBlank(message = "Username is required")
@@ -14,39 +22,7 @@ public class UpdateCustomerDTO {
 
     private String phone;
 
-    // Constructors
+    private String oldPassword;
+    private String newPassword;
 
-    public UpdateCustomerDTO() {}
-
-    public UpdateCustomerDTO(String username, String email, String phone) {
-        this.username = username;
-        this.email = email;
-        this.phone = phone;
-    }
-
-    // Getters and setters
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
 }

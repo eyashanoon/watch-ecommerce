@@ -1,7 +1,9 @@
 package com.watches.backend.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -9,33 +11,30 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne(mappedBy = "cart", cascade = CascadeType.ALL)
-     private Customer customer;
+    private Customer customer;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<ProductItem> items;
 
-    public Cart() {
-    }
-
-    public Cart(Customer customer, List<ProductItem> items) {
-        this.customer = customer;
-        customer.setCart(this);
-        this.items = items;
-    }
+    private Boolean deleted = false;
 
     public void addItem(ProductItem item){
         int exists = this.items.indexOf(item);
         if(exists > -1){
             this.items.get(exists)
                     .setQuantity(
-                            this.items.indexOf(item) + item.getQuantity()
+                            this.items.get(exists).getQuantity() + item.getQuantity()
                     );
+            this.items.get(exists)
+                    .setPrice(this.items.get(exists).getProduct().getPrice() * item.getQuantity());
         }else{
             this.items.add(item);
         }

@@ -1,12 +1,16 @@
 package com.watches.backend.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,15 +24,7 @@ public class Image {
 
     @Lob
     @Column(name = "data", columnDefinition = "LONGTEXT")
-    private String data; // encoded using base64
+    private byte[] data;
 
-    public Image() {
-    }
-
-    public Image(Long id, String filename, Product product, String data) {
-        this.id = id;
-        this.filename = filename;
-        this.product = product;
-        this.data = data;
-    }
+    private boolean deleted = false;
 }

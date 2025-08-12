@@ -32,6 +32,8 @@ public class ProductDto {
     private Boolean changeableBand;
     private Double size;
     private Double weight;
-    private Double price;
+    private Double originalPrice;
+    private Double discountPrice;
+    private Double discount;
     private Integer quantity;
 }

@@ -2,6 +2,7 @@ package com.watches.backend.service.productFeatures;
 
 import com.watches.backend.Repositories.productFeaturesRepositories.BandRepository;
 import com.watches.backend.helpers.Utils;
+import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.productFeatures.Band;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class BandService {
     }
 
     public CompletableFuture<Band> create(String bandMaterial) {
+        bandMaterial = Utils.normalizeString(bandMaterial);
         Band band = getByMaterial(bandMaterial);
         if(band == null){
             band = new Band(bandMaterial);
@@ -47,7 +49,7 @@ public class BandService {
     public CompletableFuture<String> findByProductId(Long productId){
         String res = repository.findByProductId(productId);
         if(Utils.isNullOrWhiteSpace(res)){
-            throw new RuntimeException("Either Product does not exist or product does not have a band material");
+            throw CException.notFound(Band.class, "productId", productId);
         }
         return CompletableFuture.completedFuture(res);
     }

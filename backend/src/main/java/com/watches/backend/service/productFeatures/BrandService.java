@@ -2,6 +2,7 @@ package com.watches.backend.service.productFeatures;
 
 import com.watches.backend.Repositories.productFeaturesRepositories.BrandRepository;
 import com.watches.backend.helpers.Utils;
+import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.productFeatures.Brand;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class BrandService {
     }
 
     public CompletableFuture<Brand> create(String brand) {
+        brand = Utils.normalizeString(brand);
         Brand b = getByBrand(brand);
         if (b == null) {
             b = new Brand(brand);
@@ -48,7 +50,7 @@ public class BrandService {
     public CompletableFuture<String> getByProductId(Long id) {
         String res = repository.findByProductId(id);
         if(Utils.isNullOrWhiteSpace(res)) {
-            throw new RuntimeException("Either Product does not exist or product does not have a brand");
+            throw CException.notFound(Brand.class, "productId", id);
         }
         return CompletableFuture.completedFuture(res);
     }

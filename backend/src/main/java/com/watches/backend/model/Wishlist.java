@@ -2,6 +2,7 @@ package com.watches.backend.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @Table(name = "wishlist")
 public class Wishlist {
 
@@ -28,7 +30,7 @@ public class Wishlist {
     )
     private List<Product> products = new ArrayList<>();
 
-    public Wishlist() {}
+    private boolean deleted = false;
 
     public Wishlist(Customer customer, List<Product> products) {
         this.customer = customer;
@@ -38,13 +40,28 @@ public class Wishlist {
     }
 
     public void addItem(Product product) {
-        if (!this.products.contains(product)) {
+        boolean contains = false;
+
+        for(Product p : products){
+            if(p.getId().equals(product.getId())){
+                contains = true;
+                break;
+            }
+        }
+
+        if (!contains) {
             this.products.add(product);
         }
     }
 
     public void removeItem(Product product) {
-        this.products.remove(product);
+
+        for(Product p : products){
+            if(p.getId().equals(product.getId())){
+                products.remove(p);
+                break;
+            }
+        }
     }
 
     @Override

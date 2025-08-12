@@ -2,15 +2,18 @@ package com.watches.backend.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import  com.watches.backend.enums.OrderStatus;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "orders")
 public class Order {
 
@@ -39,7 +42,7 @@ public class Order {
         items.forEach(this::addItem);
         this.customer=customer;
     }
-    public Order(){}
+
     @PrePersist
     public void prePersist() {
         placedAt = LocalDateTime.now();
@@ -51,12 +54,6 @@ public class Order {
             updatedAt = LocalDateTime.now();
         }
     }
-    public List<OrderItem> getItems() {
-        return items;
-    }
-    public void setItems(List<OrderItem> items) {
-        this.items = items;
-    }
 
      public void addItem(OrderItem item) {
         items.add(item);
@@ -67,48 +64,9 @@ public class Order {
         items.remove(item);
         item.setOrder(null);
     }
-    public LocalDateTime getPlacedAt(){
-        return placedAt;
-    }
-    public LocalDateTime getUpdatedAt(){
-        return updatedAt;
-    }
+
     public double getTotalPrice(){
-
-        return items.stream().mapToDouble(item->item.getPriceAtPurchase()* item.getQuantity()).sum();
-
-
-    }
-    public OrderStatus getStatus() {
-        return status;
+        return items.stream().mapToDouble(item->item.getPriceAtPurchase() * item.getQuantity()).sum();
     }
 
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-
-    public Payment getPayment() {
-        return payment;
-    }
-
-    public void setPayment(Payment payment) {
-        this.payment = payment;
-    }
 }

@@ -4,6 +4,7 @@ import com.watches.backend.model.productFeatures.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.Objects;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Product {
     private @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +32,7 @@ public class Product {
     private Boolean includesDate;
     private Boolean hasFullNumerals;
     private Boolean changeableBand;
+    private Boolean deleted = false;
 
     @ManyToOne
     @JoinColumn(name = "numbering_format_id", referencedColumnName = "id")
@@ -71,8 +74,6 @@ public class Product {
 
     @PositiveOrZero
     private Integer quantity;
-
-    public Product() {}
 
     public Product(String name,
                    String description,

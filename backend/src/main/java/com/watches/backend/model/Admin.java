@@ -4,6 +4,7 @@ import com.watches.backend.enums.Role;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -12,12 +13,12 @@ import java.util.Set;
 public class Admin extends User {
 
     public Admin() {
-        super();
+        this.setRoles(new HashSet<>());
     }
 
     public Admin(String userName, String email, String password, String phone) {
         super(userName, email, password, phone);
-        this.setRoles(Set.of(Role.ADMIN));
+        this.setRoles(new HashSet<>());
     }
 
 
