@@ -24,8 +24,8 @@ public class Product {
 
     private String description;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private Image image;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Image> image;
 
     private Boolean waterProof;
     private Boolean hasTickingSound;
@@ -77,7 +77,7 @@ public class Product {
 
     public Product(String name,
                    String description,
-                   Image image,
+                   List<Image> image,
                    Boolean waterProof,
                    Boolean hasTickingSound,
                    Boolean includesDate,

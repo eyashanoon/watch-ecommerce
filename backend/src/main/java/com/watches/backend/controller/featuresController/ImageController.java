@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
@@ -36,17 +37,17 @@ public class ImageController {
     }
 
     @GetMapping("/product/{productId}")
-    ImageDto getImageByProductId(@PathVariable Long productId){
-        CompletableFuture<Image> image = imageService.getImageByProductId(productId);
-        return FeaturesMapper.imageToDto(image.join());
+    List<ImageDto> getImageByProductId(@PathVariable Long productId){
+        CompletableFuture<List<Image>> image = imageService.getImageByProductId(productId);
+        return image.join().stream().map(FeaturesMapper::imageToDto).toList();
     }
-
+/*
     @PutMapping
     @PreAuthorize("hasRole('ADMIN')")
     ImageDto updateImage(@Valid @RequestParam("productId") Long productId, @Valid @RequestParam("image") MultipartFile file){
         CompletableFuture<Image> image = imageService.update(productId, file);
         return FeaturesMapper.imageToDto(image.join());
-    }
+    }*/
 
     @DeleteMapping("/{productId}")
     //@PreAuthorize("hasRole('ADMIN')")
