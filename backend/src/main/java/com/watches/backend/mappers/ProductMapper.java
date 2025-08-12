@@ -13,7 +13,7 @@ public class ProductMapper {
                 product.getId(),
                 product.getName(),
                 product.getDescription(),
-                (product.getImage() == null ? null : product.getImage().getId()),
+                (product.getImage() == null ? null : product.getImage().stream().map(i->i.getId()).toList()),
                 product.getBrand().getName(),
                 product.getColors()
                         .get(0)

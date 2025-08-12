@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Base64;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -47,7 +48,7 @@ public class ImageService {
         return CompletableFuture.completedFuture(image);
     }
 
-    public CompletableFuture<Image> getImageByProductId(Long productId) {
+    public CompletableFuture<List<Image>>getImageByProductId(Long productId) {
         return CompletableFuture.completedFuture(
                 service.findByIdAsync(productId)
                         .join()
@@ -55,7 +56,7 @@ public class ImageService {
         );
     }
 
-    public CompletableFuture<Image> update(Long productId, MultipartFile image) {
+   /* public CompletableFuture<Image> update(Long productId, MultipartFile image) {
         try {
             Image img = getImageByProductId(productId).join();
             img.setFilename(image.getOriginalFilename());
@@ -64,12 +65,12 @@ public class ImageService {
         }catch (Exception e){
             throw new RuntimeException("There was an exception while updating the image");
         }
-    }
+    }*/
 
-    public void delete(Long productId){
-        CompletableFuture<Image> image = getImageByProductId(productId);
-        image.thenAccept(repository::delete);
-        image.join();
+    public void delete(Long productId) {
+        CompletableFuture<List<Image>> imagesFuture = getImageByProductId(productId);
+        imagesFuture.thenAccept(repository::deleteAll);
+        imagesFuture.join();
     }
 
 }

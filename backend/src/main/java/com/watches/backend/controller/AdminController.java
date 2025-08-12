@@ -22,6 +22,7 @@ public class AdminController {
     public ResponseEntity<AdminDTO> CreateAdmin(@RequestBody CreateAdminDTO  createAdminDTO){
         return ResponseEntity.status(HttpStatus.CREATED).body(adminService.createAdmin(createAdminDTO));
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<AdminDTO> getAdmin(@PathVariable Long id){
          return ResponseEntity.status(HttpStatus.OK).body(adminService.getAdminById(id));

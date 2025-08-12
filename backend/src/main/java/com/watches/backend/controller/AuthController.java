@@ -44,12 +44,15 @@ public class AuthController {
             List<String> roles = userDetails.getAuthorities().stream()
                     .map(authority -> authority.getAuthority().replace("ROLE_", ""))
                     .collect(Collectors.toList());
+
+            Long id=user.getId();
             System.out.println(roles);
 
             // Generate token with username (email) and roles
              String token = jwtUtil.generateToken(user.getEmail(), roles);
+             System.out.println("id= "+id);
  
-            return ResponseEntity.ok(new AuthResponse(token, roles));
+            return ResponseEntity.ok(new AuthResponse(token, roles,id));
  
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
@@ -72,18 +75,14 @@ public class AuthController {
  
         private List<String> roles;
 
-        public AuthResponse(String token, List<String> roles) {
+        private Long id;
+
+        public AuthResponse(String token, List<String> roles , Long id) {
             this.token = token;
             this.roles = roles;
+            this.id = id;
         }
 
-        public String getToken() {
-            return token;
-        }
-
-        public List<String> getRoles() {
-            return roles;
-        }
-     }
+    }
 
 }
