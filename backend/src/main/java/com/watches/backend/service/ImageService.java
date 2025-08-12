@@ -62,12 +62,12 @@ public class ImageService {
         return CompletableFuture.completedFuture(image);
     }
  
-    public CompletableFuture<Image> getImageByProductId(Long productId) {
+    public CompletableFuture<List<Image>> getImageByProductId(Long productId) {
         Product product = service.findByIdAsync(productId).join();
         if(product == null){
             throw CException.notFound(Product.class, "id", productId);
         }
-        Image img = product.getImage();
+        List<Image> img = product.getImage();
         if (img == null) {
             throw CException.notFound(Image.class, "Product id", productId);
         }
