@@ -9,8 +9,11 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
+ import java.util.Base64;
+import java.util.List;
+ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+ 
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -58,7 +61,7 @@ public class ImageService {
                 .orElseThrow(() -> CException.notFound(Image.class, "id", imageId));
         return CompletableFuture.completedFuture(image);
     }
-
+ 
     public CompletableFuture<Image> getImageByProductId(Long productId) {
         Product product = service.findByIdAsync(productId).join();
         if(product == null){
@@ -69,9 +72,9 @@ public class ImageService {
             throw CException.notFound(Image.class, "Product id", productId);
         }
         return CompletableFuture.completedFuture(img);
-    }
+     }
 
-    public CompletableFuture<Image> update(Long productId, MultipartFile image) {
+   /* public CompletableFuture<Image> update(Long productId, MultipartFile image) {
         try {
             if(validImage(image)){
                 throw CException.badRequest(Image.class, "Provided file is not an image");
@@ -83,12 +86,12 @@ public class ImageService {
         }catch (Exception e){
             throw CException.unexpected(e);
         }
-    }
+    }*/
 
-    public void delete(Long productId){
-        CompletableFuture<Image> image = getImageByProductId(productId);
-        image.thenAccept(repository::delete);
-        image.join();
+    public void delete(Long productId) {
+        CompletableFuture<List<Image>> imagesFuture = getImageByProductId(productId);
+        imagesFuture.thenAccept(repository::deleteAll);
+        imagesFuture.join();
     }
 
 }

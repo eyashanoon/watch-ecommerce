@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -165,7 +166,10 @@ public class ProductService {
     }
 
     public void setImage(Product product, Image image){
-        product.setImage(image);
+        if(product.getImage()==null)product.setImage(new ArrayList<>());
+        List<Image> images=product.getImage();
+        images.add(image);
+        product.setImage(images);
         repository.save(product);
     }
 

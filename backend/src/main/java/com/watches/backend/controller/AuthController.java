@@ -44,8 +44,14 @@ public class AuthController {
             List<String> roles = userDetails.getAuthorities().stream()
                     .map(authority -> authority.getAuthority().replace("ROLE_", ""))
                     .collect(Collectors.toList());
+ 
+            Long id=user.getId();
+ 
 
              String token = jwtUtil.generateToken(user.getEmail(), roles);
+             System.out.println("id= "+id);
+ 
+             return ResponseEntity.ok(new AuthResponse(token, roles,id));
  
  
             return new AuthResponse(token);
@@ -70,5 +76,18 @@ public class AuthController {
     @AllArgsConstructor
     public static class AuthResponse {
         private String token;
+  
+        private List<String> roles;
+
+        private Long id;
+
+        public AuthResponse(String token, List<String> roles , Long id) {
+            this.token = token;
+            this.roles = roles;
+            this.id = id;
+        }
+
     }
+
+ 
 }
