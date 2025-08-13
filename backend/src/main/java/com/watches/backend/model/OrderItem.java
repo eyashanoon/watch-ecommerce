@@ -1,8 +1,14 @@
 package com.watches.backend.model;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "order_items")
 public class OrderItem {
 
@@ -18,7 +24,6 @@ public class OrderItem {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-
     private Integer quantity;
 
     private Double priceAtPurchase=0.0;
@@ -27,37 +32,19 @@ public class OrderItem {
         this.product = product;
         this.order = order;
         this.quantity = quantity;
-     }
-    public OrderItem() {}
-
-    public Product getProduct(){
-        return this.product;
-    }
-    public double getPriceAtPurchase(){
-        return this.priceAtPurchase;
+        setPrice();
     }
 
-    public Order getOrder() {
-        return order;
+    private void setPrice(){
+        Double price = product.getPrice() * (product.getDiscount() == null ? 1 : product.getDiscount().getDiscount());
+        this.priceAtPurchase = price * quantity;
     }
-    public int getQuantity(){
-        return quantity;
-    }
-    public void setProduct(Product product){
-        this.product=product;
-    }
-    public void setOrder(Order order){
-        this.order=order;
-    }
+
     @PrePersist
     public void prePersist() {
         if ((priceAtPurchase == 0 || priceAtPurchase < 0) && product != null) {
             this.priceAtPurchase = product.getPrice();
         }
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 }
 

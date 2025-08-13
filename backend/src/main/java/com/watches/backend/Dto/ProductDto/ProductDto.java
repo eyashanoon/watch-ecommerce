@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Setter
 @Getter
 @NoArgsConstructor
@@ -13,7 +15,7 @@ public class ProductDto {
     private Long id;
     private String name;
     private String description;
-    private Long imageId;
+    private List<Long> imageId;
     private String brand;
     private String handsColor;
     private String backgroundColor;
@@ -30,6 +32,8 @@ public class ProductDto {
     private Boolean changeableBand;
     private Double size;
     private Double weight;
-    private Double price;
+    private Double originalPrice;
+    private Double discountPrice;
+    private Double discount;
     private Integer quantity;
 }

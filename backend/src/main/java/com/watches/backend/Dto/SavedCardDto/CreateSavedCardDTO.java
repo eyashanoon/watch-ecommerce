@@ -3,89 +3,30 @@ package com.watches.backend.Dto.SavedCardDto;
 import com.watches.backend.enums.CardType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateSavedCardDTO {
-
-    @NotBlank
-    private String cardHolderName;
-    @NotBlank
-    private String cardNumber;
-    @NotBlank
-    private String expiryDate;
-    @NotNull
+    @NotNull(message = "Card type is required")
     private CardType cardType;
-    @NotBlank
+    @NotBlank(message = "Card holder name is required")
+    private String cardHolderName;
+    @NotBlank(message = "Card number is required")
+    private String cardNumber;
+    @NotBlank(message = "Card expiration date is required")
+    private String expirationDate;
+    @NotBlank(message = "Card CVV/CVC code is required")
     private String cvv;
-    private boolean isDefault = false;
-    private Long customerID;
+    @NotBlank(message = "Card billing address is required")
+    private String billingAddress;
+    @NotBlank(message = "Card postal/ZIP code is required")
+    private String postalCode;
 
-
-    public CreateSavedCardDTO(Long customerID) {
-        this.customerID = customerID;
-    }
-    public CreateSavedCardDTO(  String cardHolderName, String cardNumber, CardType cardType, String cvv, boolean isDefault, Long customerID) {
-         this.cardHolderName = cardHolderName;
-        this.cardNumber = cardNumber;
-        this.cardType = cardType;
-        this.cvv = cvv;
-        this.isDefault = isDefault;
-        this.customerID = customerID;
-    }
-
-
-    public String getCardHolderName() {
-        return cardHolderName;
-    }
-
-    public void setCardHolderName(String cardHolderName) {
-        this.cardHolderName = cardHolderName;
-    }
-
-    public String getCardNumber() {
-        return cardNumber;
-    }
-
-    public void setCardNumber(String cardNumber) {
-        this.cardNumber = cardNumber;
-    }
-
-    public String getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(String expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
-    public CardType getCardType() {
-        return cardType;
-    }
-
-    public void setCardType(CardType cardType) {
-        this.cardType = cardType;
-    }
-
-    public boolean isDefault() {
-        return isDefault;
-    }
-
-    public void setDefault(boolean aDefault) {
-        isDefault = aDefault;
-    }
-
-    public String getCvv() {
-        return cvv;
-    }
-
-    public void setCvv(String cvv) {
-        this.cvv = cvv;
-    }
-
-    public Long getCustomerID() {
-        return customerID;
-    }
-
-    public void setCustomerID(Long customerID) {
-        this.customerID = customerID;
-    }
+    private boolean defaultCard = false;
 }

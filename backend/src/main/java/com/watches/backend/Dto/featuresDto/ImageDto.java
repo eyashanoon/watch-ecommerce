@@ -13,6 +13,6 @@ public class ImageDto {
 
     private Long productId;
     private String imageFileName;
-    private String data;
+    private byte[] data;
 
 }

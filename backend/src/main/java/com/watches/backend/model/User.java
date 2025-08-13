@@ -30,6 +30,7 @@ public class User {
     @Column(nullable = false)
     private String password;
     private String phone;
+    private Boolean deleted = false;
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();

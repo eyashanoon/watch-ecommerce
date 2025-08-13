@@ -2,7 +2,15 @@ package com.watches.backend.Dto.OrderDto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateOrderItemDTO {
 
     @NotNull(message = "Product ID is required")
@@ -10,29 +18,5 @@ public class CreateOrderItemDTO {
 
     @Min(value = 1, message = "Quantity must be at least 1")
     private int quantity;
-
-    public CreateOrderItemDTO() {}
-
-    public CreateOrderItemDTO(Long productId, int quantity) {
-        this.productId = productId;
-        this.quantity = quantity;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Long productId) {
-        this.productId = productId;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
 
 }

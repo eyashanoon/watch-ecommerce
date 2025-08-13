@@ -1,32 +1,18 @@
 package com.watches.backend.Dto.CartDto;
 
-import com.watches.backend.model.Customer;
-import com.watches.backend.model.ProductItem;
+import com.watches.backend.Dto.productItemDto.ProductItemDto;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CartDto {
-    private Customer customer;
-    private List<ProductItem> items;
-
-    public CartDto(Customer customer, List<ProductItem> items) {
-        this.customer = customer;
-        this.items = items;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomerName(Customer customer) {
-        this.customer = customer;
-    }
-
-    public List<ProductItem> getItems() {
-        return items;
-    }
-
-    public void setItems(List<ProductItem> items) {
-        this.items = items;
-    }
-
+    private String customerUsername;
+    private List<ProductItemDto> items;
 }

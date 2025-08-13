@@ -6,7 +6,6 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 @Setter
 @Getter
@@ -33,31 +32,30 @@ public class CreateProductDto {
     private String handsColor;
 
     @NotBlank(message = "Product background color is required")
-    @NotNull
+
     private String backgroundColor;
 
     @NotBlank(message = "Product band color is required")
-    @NotNull
+
     private String bandColor;
 
     @NotBlank(message = "Product numbering format is required")
-    @NotNull
+
     private String numberingFormat;
 
     @NotBlank(message = "Product band material is required")
-    @NotNull
-    private String bandMaterial;
+     private String bandMaterial;
 
     @NotBlank(message = "Product case material is required")
-    @NotNull
+
     private String caseMaterial;
 
     @NotBlank(message = "Product Display type is required")
-    @NotNull
-    private String DisplayType;
+
+    private String displayType;
 
     @NotBlank(message = "Product shape is required")
-    @NotNull
+
     private String shape;
 
     @NotNull

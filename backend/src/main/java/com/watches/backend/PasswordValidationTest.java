@@ -8,8 +8,8 @@ public class PasswordValidationTest {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
         // Example raw password and hashed password from DB
-        String rawPassword = "000000*/7";
-        String hashedPassword = "$2a$10$VjI/m.dbWKpj39nX/.YBhu1NVaDwfBuvqyJbHT31S6BUiCrb7AjTq";  // From DB
+        String rawPassword = "123456/*7Aa";
+        String hashedPassword = "$2a$10$EuV8aOPrzMyo20z9Aj6/Ye2NuRXhRTOFSkS2H2du9hQlZcg.ULFSK";  // From DB
 
         boolean isMatch = passwordEncoder.matches(rawPassword, hashedPassword);
 

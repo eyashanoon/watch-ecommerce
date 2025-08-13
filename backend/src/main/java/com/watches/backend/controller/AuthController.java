@@ -1,12 +1,12 @@
 package com.watches.backend.controller;
 
+import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.User;
 import com.watches.backend.security.CustomUserDetails;
 import com.watches.backend.security.JwtUtil;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,30 +29,35 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) {
+    public AuthResponse login(@RequestBody AuthRequest authRequest) {
           System.out.println(authRequest.getUsername()+" "+authRequest.getPassword());
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
             );
 
-            // Cast principal to your CustomUserDetails
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
             User user = userDetails.getUser();
-
-            // Extract roles as simple strings (without "ROLE_" prefix)
+            if(user.getDeleted()){
+                throw CException.notFound(User.class, "userDetails", userDetails);
+            }
             List<String> roles = userDetails.getAuthorities().stream()
                     .map(authority -> authority.getAuthority().replace("ROLE_", ""))
                     .collect(Collectors.toList());
-            System.out.println(roles);
+ 
+            Long id=user.getId();
+ 
 
-            // Generate token with username (email) and roles
              String token = jwtUtil.generateToken(user.getEmail(), roles);
+             System.out.println("id= "+id);
  
-            return ResponseEntity.ok(new AuthResponse(token, roles));
+             return ResponseEntity.ok(new AuthResponse(token, roles,id));
  
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+ 
+            return new AuthResponse(token);
+ 
+         } catch (BadCredentialsException e) {
+            throw CException.badRequest(User.class, "Invalid username or password");
         }
     }
 
@@ -60,6 +65,7 @@ public class AuthController {
 
     @Getter
     @Setter
+    @AllArgsConstructor
     public static class AuthRequest {
         private String username;
         private String password;
@@ -67,23 +73,21 @@ public class AuthController {
 
     @Getter
     @Setter
+    @AllArgsConstructor
     public static class AuthResponse {
         private String token;
- 
+  
         private List<String> roles;
 
-        public AuthResponse(String token, List<String> roles) {
+        private Long id;
+
+        public AuthResponse(String token, List<String> roles , Long id) {
             this.token = token;
             this.roles = roles;
+            this.id = id;
         }
 
-        public String getToken() {
-            return token;
-        }
+    }
 
-        public List<String> getRoles() {
-            return roles;
-        }
-     }
-
+ 
 }

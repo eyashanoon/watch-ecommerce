@@ -1,76 +1,65 @@
 package com.watches.backend.controller;
 
 import com.watches.backend.Dto.DiscountDto.CreateDiscountDto;
+import com.watches.backend.Dto.DiscountDto.DiscountDto;
+import com.watches.backend.mappers.DiscountMapper;
 import com.watches.backend.model.Discount;
 import com.watches.backend.service.DiscountService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
-@RequestMapping("/api/discounts")
-@Async
+@RequestMapping("/api/product/discount")
+@AllArgsConstructor
 public class DiscountController {
 
     private final DiscountService service;
 
-    public DiscountController(DiscountService service) {
-        this.service = service;
+    @PostMapping
+    @PreAuthorize("hasRole('OWNER') || hasRole('ADD_DISCOUNT')")
+    List<Long> addDiscount(@Valid @RequestBody CreateDiscountDto dto) {
+        Discount discount = service.createAsync(dto).join();
+        return discount.getProductsId();
     }
 
     @GetMapping
-    public CompletableFuture<ResponseEntity<List<Discount>>> getAll(){
-        CompletableFuture<List<Discount>> discounts = service.findAllAsync();
-
-        return discounts.thenApply(d ->
-                ResponseEntity.ok()
-                        .body(d)
-        );
+    @PreAuthorize("hasRole('OWNER') || hasRole('SEE_DISCOUNT')")
+    List<DiscountDto> getAllDiscounts(){
+        List<Discount> discounts = service.findAllAsync().join();
+        return discounts.stream().map(DiscountMapper::toDiscountDto).toList();
     }
 
     @GetMapping("/{id}")
-    public CompletableFuture<ResponseEntity<Discount>> getById(@Valid @PathVariable Long id){
-        CompletableFuture<Discount> discount = service.findByIdAsync(id);
-        return discount.thenApply(d ->
-                ResponseEntity.ok()
-                        .body(d)
-        );
+    @PreAuthorize("hasRole('OWNER') || hasRole('SEE_DISCOUNT')")
+    DiscountDto getDiscountById(@PathVariable Long id){
+        Discount discount = service.findById(id).join();
+        return DiscountMapper.toDiscountDto(discount);
     }
 
-//    @GetMapping("/product/{id}")
-//    public CompletableFuture<ResponseEntity<Discount>> getByProductId(@PathVariable Long id){
-//        CompletableFuture<Discount> discount = service.findByProductIdAsync(id);
-//        return discount.thenApply(d ->
-//                ResponseEntity.ok()
-//                        .body(d)
-//        );
-//    }
+    @GetMapping("/by_product/{productId}")
+    @PreAuthorize("hasRole('OWNER') || hasRole('SEE_DISCOUNT')")
+    DiscountDto getDiscountByProductId(@PathVariable Long productId) {
+        Discount discount = service.findByProductIdAsync(productId).join();
+        return DiscountMapper.toDiscountDto(discount);
+    }
 
-    @PostMapping
-    public CompletableFuture<ResponseEntity<Discount>> create(@Valid @RequestBody CreateDiscountDto discountDto){
-        CompletableFuture<Discount> discount = service.createAsync(discountDto);
-        return discount.thenApply(d ->
-                ResponseEntity.status(HttpStatus.CREATED)
-                        .body(d)
-        );
+    @PutMapping("/remove")
+    @PreAuthorize("hasRole('OWNER') || hasRole('REMOVE_DISCOUNT')")
+    ResponseEntity<?> removeDiscountFromProduct(@RequestBody List<Long> products) {
+        service.removeProductsAsync(products);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public CompletableFuture<ResponseEntity<Discount>> deleteById(@Valid @PathVariable Long id){
-        service.deleteByIdAsync(id);
-        return CompletableFuture.completedFuture(ResponseEntity.noContent().build());
+    @PreAuthorize("hasRole('OWNER') || hasRole('REMOVE_DISCOUNT')")
+    DiscountDto deleteDiscount(@PathVariable Long id) {
+        Discount discount = service.deleteByIdAsync(id).join();
+        return DiscountMapper.toDiscountDto(discount);
     }
-
-//    @DeleteMapping("/product/{id}")
-//    public CompletableFuture<ResponseEntity<Discount>> deleteByProductId(@PathVariable Long id){
-//        service.deleteByProductIdAsync(id);
-//        return CompletableFuture.completedFuture(ResponseEntity.noContent().build());
-//    }
 
 }

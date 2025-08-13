@@ -2,41 +2,64 @@ package com.watches.backend.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Discount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "discount")
     private Set<Product> products;
 
     @Positive
+    @Column(nullable = false)
     private Double discount;
 
-    private LocalDateTime EndDate;
+    @Column(nullable = false)
+    private LocalDateTime endDate;
 
-    public Discount() {}
+    private boolean expired = false;
 
-    public Discount(Set<Product> product, Double discount, LocalDateTime endDate) {
-        this.products = product;
-        this.discount = discount;
-        EndDate = endDate;
+    public void addProduct(Product product) {
+        for(Product p : products) {
+            if(p.getId().equals(product.getId())) {
+                return;
+            }
+        }
+
+        products.add(product);
     }
 
-    public Set<Product> getProduct() {
-        return products;
+    public boolean removeProduct(Product product) {
+        for(Product p : products) {
+            if(p.getId().equals(product.getId())) {
+                products.remove(p);
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void setProduct(Set<Product> product) {
-        this.products = product;
+    public List<Long> getProductsId(){
+        List<Long> res = new ArrayList<>();
+        for(Product p : products) {
+            res.add(p.getId());
+        }
+        return res;
     }
+
 }

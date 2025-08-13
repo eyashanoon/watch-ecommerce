@@ -1,8 +1,16 @@
 package com.watches.backend.model;
 
-import jakarta.persistence.*;
 import com.watches.backend.enums.CardType;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "saved_cards")
 public class SavedCard {
@@ -11,94 +19,49 @@ public class SavedCard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String cardHolderName;
 
+    @Column(nullable = false)
     private String cardNumber;
 
-    private String expiryDate;
+    @Column(nullable = false)
+    private String expirationDate;
 
-    private String cvv; // ⚠️ Consider encrypting or tokenizing this
+    @Column(nullable = false)
+    private String cvv;
+    @Column(nullable = false)
+    private String billingAddress;
+    @Column(nullable = false)
+    private String postalCode;
 
     @Enumerated(EnumType.STRING)
-    private CardType cardType; // VISA, MASTERCARD, etc.
+    @Column(nullable = false)
+    private CardType cardType;
 
-    private boolean isDefault = false;
+    private boolean defaultCard = false;
 
     @OneToOne(mappedBy = "savedCard", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(nullable = false)
     private Customer customer;
 
-    // Constructors
-    public SavedCard() {}
-
-    public SavedCard(String cardHolderName, String cardNumber, String expiryDate,
-                     String cvv, CardType cardType, Customer customer) {
+    public SavedCard(String cardHolderName,
+                     String cardNumber,
+                     String expirationDate,
+                     String cvv,
+                     String billingAddress,
+                     String postalCode,
+                     CardType cardType,
+                     boolean defaultCard,
+                     Customer customer) {
         this.cardHolderName = cardHolderName;
         this.cardNumber = cardNumber;
-        this.expiryDate = expiryDate;
+        this.expirationDate = expirationDate;
         this.cvv = cvv;
+        this.billingAddress = billingAddress;
+        this.postalCode = postalCode;
         this.cardType = cardType;
-        this.customer = customer;
-    }
-
-    // Getters and Setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getCardHolderName() {
-        return cardHolderName;
-    }
-
-    public void setCardHolderName(String cardHolderName) {
-        this.cardHolderName = cardHolderName;
-    }
-
-    public String getCardNumber() {
-        return cardNumber;
-    }
-
-    public void setCardNumber(String cardNumber) {
-        this.cardNumber = cardNumber;
-    }
-
-    public String getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(String expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
-    public String getCvv() {
-        return cvv;
-    }
-
-    public void setCvv(String cvv) {
-        this.cvv = cvv;
-    }
-
-    public CardType getCardType() {
-        return cardType;
-    }
-
-    public void setCardType(CardType cardType) {
-        this.cardType = cardType;
-    }
-
-    public boolean isDefault() {
-        return isDefault;
-    }
-
-    public void setDefault(boolean aDefault) {
-        isDefault = aDefault;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
+        this.defaultCard = defaultCard;
         this.customer = customer;
     }
 }
