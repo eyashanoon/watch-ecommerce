@@ -18,8 +18,12 @@ public class SystemLogService {
 
     private final SystemLogRepository repository;
 
-    public void createAsync(String action, User performedBy, List<Object> param){
-        SystemLog systemLog = new SystemLog(action, performedBy);
+    public void createAsync(User performedBy, String request, String response) {
+        SystemLog systemLog = new SystemLog();
+        systemLog.setPerformedBy(performedBy);
+        systemLog.setRequest(request);
+        systemLog.setResponse(response);
+
         repository.save(systemLog);
     }
 
@@ -33,13 +37,4 @@ public class SystemLogService {
                 .orElseThrow(() -> CException.notFound(SystemLog.class, "id", id))
         );
     }
-
-    public void deleteByIdAsync(Long id){
-        CompletableFuture<SystemLog> systemLog = this.findByIdAsync(id);
-
-        systemLog.thenAccept(
-                repository::delete
-        );
-    }
-
 }

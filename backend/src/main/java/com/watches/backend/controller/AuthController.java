@@ -31,14 +31,13 @@ public class AuthController {
 
     @PostMapping("/login")
     public AuthResponse login(@RequestBody AuthRequest authRequest) {
-          System.out.println(authRequest.getUsername()+" "+authRequest.getPassword());
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
             );
 
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            User user = userDetails.getUser();
+            User user = userDetails.user();
             if(user.getDeleted()){
                 throw CException.notFound(User.class, "userDetails", userDetails);
             }
@@ -54,7 +53,6 @@ public class AuthController {
             throw CException.badRequest(User.class, "Invalid username or password");
         }
     }
-
 
 
     @Getter
