@@ -1,9 +1,10 @@
 package com.watches.backend.service.productFeatures;
 
-import com.watches.backend.Repositories.productFeaturesRepositories.CaseRepository;
+import com.watches.backend.Repositories.DynamicQueryRepository;
 import com.watches.backend.helpers.Utils;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.productFeatures.Case;
+import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +13,10 @@ import java.util.Set;
 
 @Service
 @Async
+@AllArgsConstructor
 public class CaseService {
 
-    private final CaseRepository repository;
-
-    public CaseService(CaseRepository repository) {
-        this.repository = repository;
-    }
+    private final DynamicQueryRepository<Case> repository;
 
     public CompletableFuture<Case> create(String caseMaterial) {
         caseMaterial = Utils.normalizeString(caseMaterial);
@@ -31,7 +29,7 @@ public class CaseService {
     }
 
     private Case getByMaterial(String material) {
-        return repository.findAll()
+        return repository.findAll(Case.class)
                 .stream()
                 .filter(c ->
                         c.getMaterial()
@@ -42,12 +40,12 @@ public class CaseService {
     }
 
     public CompletableFuture<Set<String>> findAll(){
-        Set<String> res = repository.findAllDistinctCases();
+        Set<String> res = repository.getDistinctValues(Case.class, "material");
         return CompletableFuture.completedFuture(res);
     }
 
     public CompletableFuture<String> findByProductId(Long productId){
-        String res = repository.findByProductId(productId);
+        String res = repository.findByProductId("aCase", "material" , productId);
         if(Utils.isNullOrWhiteSpace(res)){
             throw CException.notFound(Case.class, "productId", productId);
         }

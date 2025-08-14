@@ -29,20 +29,17 @@ public class OrderService {
     private final CustomerService customerService;
     private final ProductService productService;
     private final OrderItemRepository orderItemRepository;
-    private final CartRepository cartRepository;
-    private final  AuthService authService;
-    private final SavedCardRepository savedCardRepository;
     private final RestTemplate restTemplate;
 
     @Transactional
     public CompletableFuture<Order> createOrder(String username, Map<Long, Integer> items) {
-        Order order = new Order();
-        List<OrderItem> orderItems = new ArrayList<>();
         Customer customer = customerService.getCustomerByUsername(username).join();
         SavedCard card = customer.getSavedCard();
         if(card == null){
             throw CException.badRequest(Order.class, "Please fill your card info before ordering");
         }
+        Order order = new Order();
+        List<OrderItem> orderItems = new ArrayList<>();
         for(Map.Entry<Long, Integer> entry : items.entrySet()) {
             Product product = productService.findByIdAsync(entry.getKey()).join();
             if(product.getQuantity() >= entry.getValue()) {

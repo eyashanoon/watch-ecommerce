@@ -1,6 +1,6 @@
 package com.watches.backend.service.productFeatures;
 
-import com.watches.backend.Repositories.productFeaturesRepositories.ColorRepository;
+import com.watches.backend.Repositories.DynamicQueryRepository;
 import com.watches.backend.helpers.Utils;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.productFeatures.Color;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ColorService {
 
-    private final ColorRepository repository;
+    private final DynamicQueryRepository<Color> repository;
 
     public CompletableFuture<Color> create(String part, String handsColor) {
         handsColor = Utils.normalizeString(handsColor);
@@ -27,7 +27,7 @@ public class ColorService {
     }
 
     public CompletableFuture<Map<String, String>> getByProductId(Long productId) {
-        Map<String, String> res = repository.findAll()
+        Map<String, String> res = repository.findAll(Color.class)
                 .stream()
                 .filter(c -> c.getProduct() != null && c.getProduct().getId().equals(productId))
                 .collect(Collectors.toMap(
@@ -42,7 +42,7 @@ public class ColorService {
     }
 
     public CompletableFuture<Map<String, Set<String>>> getAllColors(){
-        Map<String, Set<String>> res = repository.findAll()
+        Map<String, Set<String>> res = repository.findAll(Color.class)
                 .stream()
                 .filter(c -> c.getColor() != null && c.getWatchPart() != null)
                 .collect(Collectors.groupingBy(

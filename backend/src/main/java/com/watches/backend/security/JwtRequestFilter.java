@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import javax.print.DocFlavor;
-
 @Component
 @AllArgsConstructor
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -90,17 +88,16 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private String getData(HttpServletRequest request) {
 
         return "RequestId: " + UUID.randomUUID() +
-                ",Method: " + request.getMethod() +
-                ",URI: " + request.getRequestURI() +
-                ",Query String: " + request.getQueryString() +
-                ",Remote Address: " + request.getRemoteAddr() +
-                ",User Agent: " + request.getHeader("User-Agent");
+                ", Method: " + request.getMethod() +
+                ", URI: " + request.getRequestURI() +
+                ", Remote Address: " + request.getRemoteAddr() +
+                ", User Agent: " + request.getHeader("User-Agent");
     }
 
     private String getData(HttpServletResponse response) {
 
         return "Response Status: " + response.getStatus() +
-                ",Response Message: " + HttpStatus.valueOf(response.getStatus()).getReasonPhrase();
+                ", Response Message: " + HttpStatus.valueOf(response.getStatus()).getReasonPhrase();
     }
 
 }

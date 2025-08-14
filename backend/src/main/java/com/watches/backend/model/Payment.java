@@ -5,10 +5,13 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import  com.watches.backend.enums.PaymentStatus;
 import  com.watches.backend.enums.PaymentMethod;
+import lombok.Getter;
+import lombok.Setter;
 
 
+@Getter
+@Setter
 @Entity
-@Table(name = "payments")
 public class Payment {
 
     @Id
@@ -24,7 +27,6 @@ public class Payment {
 
     @Enumerated(EnumType.STRING)
     private PaymentMethod method;
-
 
     @OneToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
@@ -42,25 +44,4 @@ public class Payment {
         this.status = PaymentStatus.PENDING;
     }
 
-    // Getters and setters...
-
-    public Long getId() { return id; }
-
-    public Double getAmount() { return amount; }
-
-    public void setAmount(Double amount) { this.amount = amount; }
-
-    public LocalDateTime getPaymentDate() { return paymentDate; }
-
-    public PaymentStatus getStatus() { return status; }
-
-    public void setStatus(PaymentStatus status) { this.status = status; }
-
-    public PaymentMethod getMethod() { return method; }
-
-    public void setMethod(PaymentMethod method) { this.method = method; }
-
-    public Order getOrder() { return order; }
-
-    public void setOrder(Order order) { this.order = order; }
 }
