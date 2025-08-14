@@ -21,6 +21,9 @@ public class SpecificationBuilder<T> {
         JOIN_PATH_MAP.put("bandMaterial", new JoinPath("band", "material"));
         JOIN_PATH_MAP.put("caseMaterial", new JoinPath("aCase", "material"));
         JOIN_PATH_MAP.put("displayType", new JoinPath("displayType", "type"));
+        JOIN_PATH_MAP.put("minPrice", new JoinPath("price", null));
+        JOIN_PATH_MAP.put("minSize", new JoinPath("size", null));
+        JOIN_PATH_MAP.put("minWeight", new JoinPath("weight", null));
     }
 
     public SpecificationBuilder<T> withFilter(Query filter) {
@@ -38,7 +41,9 @@ public class SpecificationBuilder<T> {
                 if(Objects.isNull(value)) continue;
 
                 String fieldName = field.getName();
-
+                if(fieldName.contains("Color")){
+                    continue;
+                }
                 switch(field.getType().getName()){
                     case "java.lang.String":
                         addStringSpec((String) value, getExpressionProvider(fieldName));
@@ -52,7 +57,7 @@ public class SpecificationBuilder<T> {
                             Field maxField = filter.getClass().getDeclaredField(maxFieldName);
                             maxField.setAccessible(true);
                             Double maxValue = (Double) maxField.get(filter);
-                            addRangeSpec((Double) value, maxValue, path(fieldName));
+                            addRangeSpec((Double) value, maxValue, path(JOIN_PATH_MAP.get(fieldName).joinField()));
                         }
                         break;
                     default:
@@ -130,8 +135,4 @@ public class SpecificationBuilder<T> {
             else return cb.lessThanOrEqualTo(path, maxValue);
         });
     }
-
-
-
-
 }

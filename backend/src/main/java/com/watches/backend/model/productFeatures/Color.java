@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @Entity
 @Getter
 @Setter
@@ -24,4 +26,15 @@ public class Color extends BaseFeatureEntity {
         this.color = color;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Color color1 = (Color) o;
+        return Objects.equals(getWatchPart(), color1.getWatchPart()) && Objects.equals(getColor(), color1.getColor()) && Objects.equals(getProduct(), color1.getProduct());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getWatchPart(), getColor(), getProduct());
+    }
 }
