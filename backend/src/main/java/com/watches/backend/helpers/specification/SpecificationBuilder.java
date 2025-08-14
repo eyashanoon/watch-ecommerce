@@ -1,0 +1,137 @@
+package com.watches.backend.helpers.specification;
+
+import com.watches.backend.helpers.Utils;
+import com.watches.backend.helpers.query.Query;
+import com.watches.backend.model.Product;
+import jakarta.persistence.criteria.*;
+import org.springframework.data.jpa.domain.Specification;
+
+import java.lang.reflect.Field;
+import java.util.*;
+
+public class SpecificationBuilder<T> {
+
+    private final List<Specification<T>> specifications = new ArrayList<>();
+    private static final Map<String, JoinPath> JOIN_PATH_MAP = new HashMap<>();
+
+    static {
+        JOIN_PATH_MAP.put("brand", new JoinPath("brand", "name"));
+        JOIN_PATH_MAP.put("shape", new JoinPath("shape", "name"));
+        JOIN_PATH_MAP.put("numberingFormat", new JoinPath("numberingFormat", "format"));
+        JOIN_PATH_MAP.put("bandMaterial", new JoinPath("band", "material"));
+        JOIN_PATH_MAP.put("caseMaterial", new JoinPath("aCase", "material"));
+        JOIN_PATH_MAP.put("displayType", new JoinPath("displayType", "type"));
+    }
+
+    public SpecificationBuilder<T> withFilter(Query filter) {
+
+        if(filter == null) return this;
+
+        Field[] fields = filter.getClass().getDeclaredFields();
+
+        for(Field field : fields){
+            field.setAccessible(true);
+
+            try{
+                Object value = field.get(filter);
+
+                if(Objects.isNull(value)) continue;
+
+                String fieldName = field.getName();
+
+                switch(field.getType().getName()){
+                    case "java.lang.String":
+                        addStringSpec((String) value, getExpressionProvider(fieldName));
+                        break;
+                    case "java.lang.Boolean":
+                        addBoolSpec((Boolean) value, path(fieldName));
+                        break;
+                    case "java.lang.Double":
+                        if(fieldName.startsWith("min")){
+                            String maxFieldName = "max" + fieldName.substring(3);
+                            Field maxField = filter.getClass().getDeclaredField(maxFieldName);
+                            maxField.setAccessible(true);
+                            Double maxValue = (Double) maxField.get(filter);
+                            addRangeSpec((Double) value, maxValue, path(fieldName));
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+            }catch(IllegalAccessException | NoSuchFieldException e){
+                System.out.println(e.getMessage());
+            }
+
+        }
+
+        return this;
+    }
+
+    public Specification<T> build() {
+        return specifications.stream()
+                .reduce(Specification::and)
+                .orElse((root, query, cb) -> cb.conjunction());
+    }
+
+    private Function3<Root<T>, CriteriaQuery<?>, CriteriaBuilder, Expression<String>> getExpressionProvider(String fieldName) {
+        if(JOIN_PATH_MAP.containsKey(fieldName)){
+            return joinAndGet(JOIN_PATH_MAP.get(fieldName).joinField(),JOIN_PATH_MAP.get(fieldName).getField());
+        }else{
+            return path(fieldName);
+        }
+    }
+
+    private <J> Function3<Root<T>, CriteriaQuery<?>, CriteriaBuilder, Expression<J>> path(String fieldName) {
+        return (root, query, cb) -> root.get(fieldName);
+    }
+
+    private <J> Function3<Root<T>, CriteriaQuery<?>, CriteriaBuilder, Expression<J>> joinAndGet(
+            String joinField,
+            String getField
+    ) {
+        return (root, query, cb) -> {
+            Join<Product, J> join = root.join(joinField);
+            return join.get(getField);
+        };
+    }
+
+    private void addStringSpec(String value,
+                               Function3<Root<T>, CriteriaQuery<?>, CriteriaBuilder, Expression<String>> expressionProvider){
+
+        if(!Utils.isNullOrWhiteSpace(value)) {
+            String finalValue = Utils.normalizeString(value);
+            specifications.add((root, query, cb) ->
+                    cb.like(expressionProvider.apply(root, query, cb), finalValue)
+            );
+        }
+    }
+
+    private void addBoolSpec(Boolean value,
+                             Function3<Root<T>, CriteriaQuery<?>, CriteriaBuilder, Expression<Boolean>> expressionProvider){
+
+        if(Utils.validBooleanValue(value)) {
+            specifications.add((root, query, cb) ->
+                    cb.equal(expressionProvider.apply(root, query, cb), value)
+            );
+        }
+    }
+
+    private void addRangeSpec(Double minValue, Double maxValue,
+                              Function3<Root<T>, CriteriaQuery<?>, CriteriaBuilder, Expression<Double>> expressionProvider){
+        Boolean hasMin = !Objects.equals(minValue, -1.0);
+        Boolean hasMax = !Objects.equals(maxValue, Double.MAX_VALUE);
+        if(!hasMin && !hasMax) return;
+
+        specifications.add((root, query, cb) -> {
+            Expression<Double> path = expressionProvider.apply(root, query, cb);
+            if(hasMin && hasMax) return cb.between(path, minValue, maxValue);
+            else if(hasMin) return cb.greaterThanOrEqualTo(path, minValue);
+            else return cb.lessThanOrEqualTo(path, maxValue);
+        });
+    }
+
+
+
+
+}

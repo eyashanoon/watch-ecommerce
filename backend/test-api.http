@@ -1,0 +1,11 @@
+### Create Admin
+POST http://localhost:8080/api/admins
+Authorization: Basic YWRtaW46MTIzNDU2
+Content-Type: application/json
+
+{
+  "userName": "admin1",
+  "email": "admin1@example.com",
+  "password": "123456",
+  "phone": "1234567890"
+}

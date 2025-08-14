@@ -1,0 +1,49 @@
+<div class="chat-container">
+
+  <!-- Sender ID Setup -->
+  <div *ngIf="!isSenderSet" class="sender-setup">
+    <input
+      type="number"
+      [(ngModel)]="senderId"
+      placeholder="Enter your user ID"
+      style="width: 150px; margin-right: 10px;"
+    />
+    <button (click)="confirmSender()">Start Chat</button>
+  </div>
+
+  <!-- Chat UI -->
+  <div *ngIf="isSenderSet">
+    <div class="messages">
+      <div
+        *ngFor="let msg of messages"
+        [ngClass]="{ sent: msg.senderId === senderId, received: msg.senderId !== senderId }"
+      >
+        <span class="message-content">{{ msg.content }}</span>
+        <span class="message-meta">
+          {{ msg.senderId === senderId ? 'You' : 'Them' }}
+        </span>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <!-- Input for Recipient ID -->
+      <input
+        type="number"
+        [(ngModel)]="recipientId"
+        placeholder="Recipient ID"
+        style="width: 100px; margin-right: 10px;"
+      />
+
+      <!-- Message Text -->
+      <input
+        [(ngModel)]="newMessage"
+        (keyup.enter)="sendMessage()"
+        placeholder="Type your message here..."
+        style="flex: 1; margin-right: 10px;"
+      />
+
+      <button (click)="sendMessage()">Send</button>
+    </div>
+  </div>
+
+</div>

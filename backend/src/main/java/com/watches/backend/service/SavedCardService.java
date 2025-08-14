@@ -1,0 +1,55 @@
+package com.watches.backend.service;
+
+import com.watches.backend.Dto.SavedCardDto.CreateSavedCardDTO;
+import com.watches.backend.Dto.SavedCardDto.UpdateSavedCardDTO;
+import com.watches.backend.mappers.SavedCardMapper;
+import com.watches.backend.model.Customer;
+import com.watches.backend.model.SavedCard;
+import com.watches.backend.Repositories.*;
+import lombok.AllArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
+import java.util.concurrent.CompletableFuture;
+
+@Service
+@Async
+@AllArgsConstructor
+public class SavedCardService {
+
+    private final SavedCardRepository savedCardRepository;
+    private final CustomerService customerService;
+
+    public CompletableFuture<SavedCard> createCard(String username, CreateSavedCardDTO dto) {
+        Customer customer = customerService.getCustomerByUsername(username).join();
+        SavedCard card = SavedCardMapper.fromCreateDTO(dto,customer);
+        return CompletableFuture.completedFuture(savedCardRepository.save(card));
+    }
+
+    private SavedCard findByCustomer(Customer customer) {
+        return savedCardRepository.findByCustomer(customer);
+    }
+
+    public CompletableFuture<SavedCard> getCardByCustomerID(Long customerId) {
+        Customer customer = customerService.getCustomerById(customerId).join();
+        return CompletableFuture.completedFuture(findByCustomer(customer));
+    }
+
+    public CompletableFuture<SavedCard> updateCard(String username, UpdateSavedCardDTO dto) {
+        Customer customer = customerService.getCustomerByUsername(username).join();
+        SavedCard card = findByCustomer(customer);
+
+        SavedCardMapper.updateEntityFromDTO(dto,card);
+        return CompletableFuture.completedFuture(savedCardRepository.save(card));
+    }
+
+    public void deleteCard(String username) {
+        Customer customer = customerService.getCustomerByUsername(username).join();
+        savedCardRepository.deleteByCustomer(customer);
+    }
+
+    public CompletableFuture<SavedCard> getByUsername(String username) {
+        Customer customer = customerService.getCustomerByUsername(username).join();
+        return CompletableFuture.completedFuture(savedCardRepository.findByCustomer(customer));
+    }
+}
