@@ -9,9 +9,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
- import java.util.Base64;
 import java.util.List;
- import javax.imageio.ImageIO;
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
  
 import java.util.concurrent.CompletableFuture;
@@ -23,6 +22,7 @@ public class ImageService {
 
     private final ImageRepository repository;
     private final ProductService service;
+    private final ImageRepository imageRepository;
 
     private static Image createImageObject(String fileName, byte[] fileContent) {
         Image image = new Image();
@@ -87,6 +87,10 @@ public class ImageService {
             throw CException.unexpected(e);
         }
     }*/
+
+    public void deleteById(Long id){
+        repository.deleteById(id);
+    }
 
     public void delete(Long productId) {
         CompletableFuture<List<Image>> imagesFuture = getImageByProductId(productId);
