@@ -1,7 +1,5 @@
 package com.watches.backend.helpers;
 
-import org.antlr.v4.runtime.misc.ObjectEqualityComparator;
-
 import java.util.Collection;
 
 public class Utils {
@@ -19,14 +17,8 @@ public class Utils {
     }
 
     public static String normalizeString(String input) {
-        if (input == null || input.isBlank()) return "";
+        if (isNullOrWhiteSpace(input)) return "";
 
-        String noSpaces = input.replaceAll("\\s+", "");
-
-        if (noSpaces.length() == 1) {
-            return noSpaces.toUpperCase();
-        }
-
-        return noSpaces.substring(0, 1).toUpperCase() + noSpaces.substring(1).toLowerCase();
+        return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
     }
 }

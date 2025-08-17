@@ -15,15 +15,18 @@ public class SpecificationBuilder<T> {
     private static final Map<String, JoinPath> JOIN_PATH_MAP = new HashMap<>();
 
     static {
-        JOIN_PATH_MAP.put("brand", new JoinPath("brand", "name"));
-        JOIN_PATH_MAP.put("shape", new JoinPath("shape", "name"));
+        JOIN_PATH_MAP.put("brand",           new JoinPath("brand", "name"));
+        JOIN_PATH_MAP.put("shape",           new JoinPath("shape", "name"));
         JOIN_PATH_MAP.put("numberingFormat", new JoinPath("numberingFormat", "format"));
-        JOIN_PATH_MAP.put("bandMaterial", new JoinPath("band", "material"));
-        JOIN_PATH_MAP.put("caseMaterial", new JoinPath("aCase", "material"));
-        JOIN_PATH_MAP.put("displayType", new JoinPath("displayType", "type"));
-        JOIN_PATH_MAP.put("minPrice", new JoinPath("price", null));
-        JOIN_PATH_MAP.put("minSize", new JoinPath("size", null));
-        JOIN_PATH_MAP.put("minWeight", new JoinPath("weight", null));
+        JOIN_PATH_MAP.put("bandMaterial",    new JoinPath("band", "material"));
+        JOIN_PATH_MAP.put("caseMaterial",    new JoinPath("aCase", "material"));
+        JOIN_PATH_MAP.put("displayType",     new JoinPath("displayType", "type"));
+        JOIN_PATH_MAP.put("handsColor",      new JoinPath("colors", "hands,color"));
+        JOIN_PATH_MAP.put("backgroundColor", new JoinPath("colors", "background,color"));
+        JOIN_PATH_MAP.put("bandColor",       new JoinPath("colors", "band,color"));
+        JOIN_PATH_MAP.put("minPrice",        new JoinPath("price", null));
+        JOIN_PATH_MAP.put("minSize",         new JoinPath("size", null));
+        JOIN_PATH_MAP.put("minWeight",       new JoinPath("weight", null));
     }
 
     public SpecificationBuilder<T> withFilter(Query filter) {
@@ -42,6 +45,7 @@ public class SpecificationBuilder<T> {
 
                 String fieldName = field.getName();
                 if(fieldName.contains("Color")){
+                    addColorSpec(JOIN_PATH_MAP.get(fieldName), (String) value);
                     continue;
                 }
                 switch(field.getType().getName()){
@@ -63,13 +67,10 @@ public class SpecificationBuilder<T> {
                     default:
                         break;
                 }
-
             }catch(IllegalAccessException | NoSuchFieldException e){
                 System.out.println(e.getMessage());
             }
-
         }
-
         return this;
     }
 
@@ -107,7 +108,7 @@ public class SpecificationBuilder<T> {
         if(!Utils.isNullOrWhiteSpace(value)) {
             String finalValue = Utils.normalizeString(value);
             specifications.add((root, query, cb) ->
-                    cb.like(expressionProvider.apply(root, query, cb), finalValue)
+                    cb.like(expressionProvider.apply(root, query, cb), "%" + finalValue + "%")
             );
         }
     }
@@ -133,6 +134,21 @@ public class SpecificationBuilder<T> {
             if(hasMin && hasMax) return cb.between(path, minValue, maxValue);
             else if(hasMin) return cb.greaterThanOrEqualTo(path, minValue);
             else return cb.lessThanOrEqualTo(path, maxValue);
+        });
+    }
+
+    private void addColorSpec(JoinPath path, String value){
+        String[] splits = path.getField().split(",");
+        specifications.add((root, query, cb) -> {
+            Join<T, ?> join = root.join(path.joinField());
+            List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(cb.equal(join.get("watchPart"), splits[0]));
+            if(!Utils.isNullOrWhiteSpace(value)){
+                String finalValue = Utils.normalizeString(value);
+                predicates.add(cb.equal(join.get("color"), finalValue));
+            }
+            return cb.and(predicates.toArray(new Predicate[0]));
         });
     }
 }
