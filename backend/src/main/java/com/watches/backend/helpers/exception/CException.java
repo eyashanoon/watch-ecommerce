@@ -29,4 +29,8 @@ public class CException extends RuntimeException{
         return new CException(HttpStatus.NOT_FOUND,clazz.getSimpleName()+" with "+field+" "+value+" not found");
     }
 
+    public static CException unauthorized(String message) {
+        return new CException(HttpStatus.UNAUTHORIZED, message);
+    }
+
 }

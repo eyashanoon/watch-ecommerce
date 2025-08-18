@@ -11,6 +11,7 @@ import com.watches.backend.model.Image;
 import com.watches.backend.model.Product;
 import com.watches.backend.model.productFeatures.*;
 import com.watches.backend.service.productFeatures.*;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -97,7 +98,7 @@ public class ProductService {
     }
 
 
-
+    @Transactional
     public CompletableFuture<Product> createAsync(CreateProductDto productDto){
 
         Product product = ProductMapper.createToProduct(productDto);
@@ -161,7 +162,7 @@ public class ProductService {
        Page<Product> products = repository.findAll(spec,
                PageRequest.of(queryObject.getPage() - 1, queryObject.getPageSize())
        );
-
+       System.out.println(products.getTotalElements());
        return CompletableFuture.completedFuture(products);
     }
 

@@ -1,9 +1,10 @@
 package com.watches.backend.service.productFeatures;
 
-import com.watches.backend.Repositories.productFeaturesRepositories.NumberingFormatRepository;
+import com.watches.backend.Repositories.DynamicQueryRepository;
 import com.watches.backend.helpers.Utils;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.productFeatures.NumberingFormat;
+import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +13,11 @@ import java.util.Set;
 
 @Service
 @Async
+@AllArgsConstructor
 public class NumberingFormatService {
 
-    private final NumberingFormatRepository repository;
+    private final DynamicQueryRepository<NumberingFormat> repository;
 
-    public NumberingFormatService(NumberingFormatRepository repository) {
-        this.repository = repository;
-    }
 
     public CompletableFuture<NumberingFormat> create(String numberingFormat) {
         numberingFormat = Utils.normalizeString(numberingFormat);
@@ -31,7 +30,7 @@ public class NumberingFormatService {
     }
 
     private NumberingFormat getByFormat(String Format) {
-        return repository.findAll()
+        return repository.findAll(NumberingFormat.class)
                 .stream()
                 .filter(n ->
                         n.getFormat()
@@ -42,12 +41,12 @@ public class NumberingFormatService {
     }
 
     public CompletableFuture<Set<String>> findAll(){
-        Set<String> res = repository.findAllDistinctFormats();
+        Set<String> res = repository.getDistinctValues(NumberingFormat.class, "format");
         return CompletableFuture.completedFuture(res);
     }
 
     public CompletableFuture<String> findByProductId(Long productId){
-        String res = repository.findByProductId(productId);
+        String res = repository.findByProductId("numberingFormat", "format", productId);
         if(Utils.isNullOrWhiteSpace(res)){
             throw CException.notFound(NumberingFormat.class, "productId", productId);
         }

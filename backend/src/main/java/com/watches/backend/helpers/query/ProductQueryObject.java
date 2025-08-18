@@ -14,6 +14,9 @@ public class ProductQueryObject implements Query {
     private String caseMaterial;
     private String displayType;
     private String shape;
+    private String handsColor;
+    private String backgroundColor;
+    private String bandColor;
     private Boolean includesDate = null;
     private Boolean hasFullNumerals = null;
     private Boolean hasTickingSound = null;

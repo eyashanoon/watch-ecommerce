@@ -27,11 +27,17 @@ public class ProductController {
     private final ProductService service;
 
     @GetMapping
-     Page<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
-
-        return service.findAllAsync(query)
+    @PreAuthorize("hasRole('CUSTOMER') || hasRole('OWNER') || hasRole('SEE_PRODUCT')")
+    Page<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
+        Page<ProductDto> pageG =service.findAllAsync(query)
                 .thenApply(page -> page.map(ProductMapper::toDto))
                 .join();
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+        System.out.println(pageG.getTotalPages());
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+        return pageG;
     }
 
     @GetMapping("/{id}")
@@ -42,9 +48,8 @@ public class ProductController {
     }
 
     @PostMapping
-     @PreAuthorize("hasRole('ADMIN') || hasRole('OWNER')")
+    @PreAuthorize("hasRole('OWNER') || hasRole('CREATE_PRODUCT')")
     ProductDto create(@RequestBody  CreateProductDto createProductDto){
-  
 
         CompletableFuture<Product> product = service.createAsync(createProductDto);
 

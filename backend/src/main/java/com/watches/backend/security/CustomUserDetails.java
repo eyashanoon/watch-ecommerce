@@ -1,7 +1,6 @@
 package com.watches.backend.security;
 
 import com.watches.backend.model.User;
-import com.watches.backend.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,13 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public class CustomUserDetails implements UserDetails {
-
-    private final User user;
-
-    public CustomUserDetails(User user) {
-        this.user = user;
-    }
+public record CustomUserDetails(User user) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -26,35 +19,32 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword(); // hashed password from DB
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail(); // using email as username
+        return user.getEmail();
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; // or your logic
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true; // or your logic
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; // or your logic
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return true; // or your logic
+        return true;
     }
 
-    public User getUser(){
-        return user;
-    }
 }

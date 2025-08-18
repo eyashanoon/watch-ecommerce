@@ -1,24 +1,39 @@
 package com.payment.paymentServer;
 
+
 public class PaymentDTO {
      private String cardNumber;
      private Double amount;
 
-    private String expiryDate;
+    private String expirationDate;
 
-    private String cvv; // ⚠️ Consider encrypting or tokenizing this
+    private String cvv;
+    private String billingAddress;
+    private String postalCode;
 
      private CardType cardType;
      private Long userId;
      private String companyName;
 
-     public PaymentDTO(  String cardNumber, Double amount, String expiryDate, String cvv) {
-          this.cardNumber = cardNumber;
-         this.amount = amount;
-         this.expiryDate = expiryDate;
-         this.cvv = cvv;
-     }
-
+    public PaymentDTO(String cardNumber,
+                      Double amount,
+                      String expirationDate,
+                      String cvv,
+                      String billingAddress,
+                      String postalCode,
+                      CardType cardType,
+                      Long userId,
+                      String companyName) {
+        this.cardNumber = cardNumber;
+        this.amount = amount;
+        this.expirationDate = expirationDate;
+        this.cvv = cvv;
+        this.billingAddress = billingAddress;
+        this.postalCode = postalCode;
+        this.cardType = cardType;
+        this.userId = userId;
+        this.companyName = companyName;
+    }
 
     public String getCardNumber() {
         return cardNumber;
@@ -28,12 +43,12 @@ public class PaymentDTO {
         this.cardNumber = cardNumber;
     }
 
-    public String getExpiryDate() {
-        return expiryDate;
+    public String getExpirationDate() {
+        return expirationDate;
     }
 
-    public void setExpiryDate(String expiryDate) {
-        this.expiryDate = expiryDate;
+    public void setExpirationDate(String expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
     public String getCvv() {
@@ -42,6 +57,22 @@ public class PaymentDTO {
 
     public void setCvv(String cvv) {
         this.cvv = cvv;
+    }
+
+    public String getBillingAddress() {
+        return billingAddress;
+    }
+
+    public void setBillingAddress(String billingAddress) {
+        this.billingAddress = billingAddress;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
     public CardType getCardType() {
@@ -80,7 +111,7 @@ public class PaymentDTO {
         return "PaymentDTO{" +
                 "cardNumber='" + cardNumber + '\'' +
                 ", amount=" + amount +
-                ", expiryDate='" + expiryDate + '\'' +
+                ", expiryDate='" + expirationDate + '\'' +
                 ", cvv='" + cvv + '\'' +
                 ", cardType=" + cardType +
                 ", userId=" + userId +

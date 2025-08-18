@@ -1,9 +1,10 @@
 package com.watches.backend.service.productFeatures;
 
-import com.watches.backend.Repositories.productFeaturesRepositories.ShapeRepository;
+import com.watches.backend.Repositories.DynamicQueryRepository;
 import com.watches.backend.helpers.Utils;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.productFeatures.Shape;
+import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +13,10 @@ import java.util.Set;
 
 @Service
 @Async
+@AllArgsConstructor
 public class ShapeService {
 
-    private final ShapeRepository repository;
-
-    public ShapeService(ShapeRepository repository) {
-        this.repository = repository;
-    }
+    private final DynamicQueryRepository<Shape> repository;
 
     public CompletableFuture<Shape> create(String shape) {
         shape = Utils.normalizeString(shape);
@@ -31,7 +29,7 @@ public class ShapeService {
     }
 
     private Shape getByShape(String shape) {
-        return repository.findAll()
+        return repository.findAll(Shape.class)
                 .stream()
                 .filter(s ->
                         s.getName()
@@ -42,12 +40,12 @@ public class ShapeService {
     }
 
     public CompletableFuture<Set<String>> findAll(){
-        Set<String> res = repository.findAllDistinctShapes();
+        Set<String> res = repository.getDistinctValues(Shape.class, "name");
         return CompletableFuture.completedFuture(res);
     }
 
     public CompletableFuture<String> findByProductId(Long productId){
-        String res = repository.findByProductId(productId);
+        String res = repository.findByProductId("shape", "name", productId);
         if(Utils.isNullOrWhiteSpace(res)){
             throw CException.notFound(Shape.class, "productId", productId);
         }

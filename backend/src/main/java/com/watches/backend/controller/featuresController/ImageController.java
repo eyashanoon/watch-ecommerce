@@ -5,6 +5,7 @@ import com.watches.backend.mappers.FeaturesMapper;
 import com.watches.backend.model.Image;
 import com.watches.backend.service.ImageService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +16,13 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/product/image")
+@AllArgsConstructor
 public class ImageController {
 
     private final ImageService imageService;
 
-    public ImageController(ImageService imageService) {
-        this.imageService = imageService;
-    }
-
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-   // @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('OWNER') || hasRole('CREATE_PRODUCT')")
     ImageDto addImage(@Valid @RequestParam("ProductId") Long productId, @RequestParam("image") MultipartFile file) {
         CompletableFuture<Image> image = imageService.create(productId, file);
         return FeaturesMapper.imageToDto(image.join());
@@ -41,18 +39,16 @@ public class ImageController {
         CompletableFuture<List<Image>> image = imageService.getImageByProductId(productId);
         return image.join().stream().map(FeaturesMapper::imageToDto).toList();
     }
-/*
-    @PutMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    ImageDto updateImage(@Valid @RequestParam("productId") Long productId, @Valid @RequestParam("image") MultipartFile file){
-        CompletableFuture<Image> image = imageService.update(productId, file);
-        return FeaturesMapper.imageToDto(image.join());
-    }*/
 
-    @DeleteMapping("/{productId}")
-    //@PreAuthorize("hasRole('ADMIN')")
-    void delete(@Valid @PathVariable("productId") Long productId){
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('OWNER') || hasRole('DELETE_PRODUCT')")
+    void deleteId(@Valid @PathVariable Long id){
+        imageService.deleteById(id);
+    }
 
+    @DeleteMapping("/product/{productId}")
+    @PreAuthorize("hasRole('OWNER') || hasRole('DELETE_PRODUCT')")
+    void delete(@Valid @PathVariable Long productId){
         imageService.delete(productId);
     }
 

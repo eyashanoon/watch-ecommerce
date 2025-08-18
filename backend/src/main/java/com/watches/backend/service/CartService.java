@@ -9,6 +9,7 @@ import com.watches.backend.model.Cart;
 import com.watches.backend.model.Customer;
 import com.watches.backend.model.Product;
 import com.watches.backend.model.ProductItem;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -25,16 +26,10 @@ public class CartService {
     private final CustomerRepository customerRepository;
     private final ProductService productService;
 
+    @Transactional
     public CompletableFuture<Cart> createAsync(){
         Cart cart = new Cart();
-        repository.save(cart);
-        return CompletableFuture.completedFuture(cart);
-    }
-
-    public CompletableFuture<Cart> findByIdAsync(Long id){
-        return CompletableFuture.completedFuture(repository.findById(id)
-                .orElseThrow(() -> CException.notFound(Cart.class, "id", id))
-        );
+        return CompletableFuture.completedFuture(repository.save(cart));
     }
 
     public CompletableFuture<Cart> addItemAsync(String username, List<CreateProductItemDto> items){
@@ -72,4 +67,6 @@ public class CartService {
         cart.setDeleted(true);
         repository.save(cart);
     }
+
+
 }
