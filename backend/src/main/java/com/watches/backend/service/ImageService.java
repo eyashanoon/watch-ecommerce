@@ -43,7 +43,7 @@ public class ImageService {
 
     public CompletableFuture<Image> create(Long productId, MultipartFile image){
         try {
-            if(!validImage(image)){
+            if(validImage(image)){
                 throw CException.badRequest(Image.class, "Provided file is not an image");
             }
             Image newImage = createImageObject(image.getOriginalFilename(), image.getBytes());

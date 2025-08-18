@@ -27,8 +27,7 @@ public class ProductController {
     private final ProductService service;
 
     @GetMapping
-    @PreAuthorize("hasRole('CUSTOMER') || hasRole('OWNER') || hasRole('SEE_PRODUCT')")
-    Page<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
+     Page<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
 
         return service.findAllAsync(query)
                 .thenApply(page -> page.map(ProductMapper::toDto))
@@ -43,7 +42,7 @@ public class ProductController {
     }
 
     @PostMapping
-     @PreAuthorize("hasRole('ADMIN')")
+     @PreAuthorize("hasRole('ADMIN') || hasRole('OWNER')")
     ProductDto create(@RequestBody  CreateProductDto createProductDto){
   
 
