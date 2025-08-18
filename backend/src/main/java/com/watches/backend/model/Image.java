@@ -18,13 +18,12 @@ public class Image {
 
     private String filename;
 
-    @ManyToOne  (cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
     @Lob
-    @Column(name = "data", columnDefinition = "LONGTEXT")
-    private byte[] data;
+     private byte[] data;
 
     private boolean deleted = false;
 }

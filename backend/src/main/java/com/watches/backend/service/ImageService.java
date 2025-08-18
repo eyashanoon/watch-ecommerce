@@ -9,7 +9,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+ 
+import java.util.ArrayList;
+import java.util.Base64;
+ import java.util.List;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
  
@@ -47,6 +50,10 @@ public class ImageService {
             Image newImage = createImageObject(image.getOriginalFilename(), image.getBytes());
             Product product = service.findByIdAsync(productId).get();
             newImage.setProduct(product);
+            if (product.getImage() == null) {
+                product.setImage(new ArrayList<>());
+            }
+            product.getImage().add(newImage);
             repository.save(newImage);
             service.setImage(product, newImage);
             return CompletableFuture.completedFuture(newImage);
@@ -61,13 +68,15 @@ public class ImageService {
         return CompletableFuture.completedFuture(image);
     }
  
-    public CompletableFuture<List<Image>> getImageByProductId(Long productId) {
-        Product product = service.findByIdAsync(productId).join();
+ 
+    public CompletableFuture<List <Image>> getImageByProductId(Long productId) {
+         Product product = service.findByIdAsync(productId).join();
         if(product == null){
             throw CException.notFound(Product.class, "id", productId);
         }
-        List<Image> img = product.getImage();
-        if (img == null) {
+ 
+        List <Image> img = product.getImage();
+         if (img == null) {
             throw CException.notFound(Image.class, "Product id", productId);
         }
         return CompletableFuture.completedFuture(img);
