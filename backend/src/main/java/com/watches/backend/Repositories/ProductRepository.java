@@ -18,5 +18,6 @@ public interface ProductRepository extends JpaSpecificationExecutor<Product>, Jp
     List<Product> findByNumberingFormat(NumberingFormat format);
     List<Product> findByShape(Shape brand);
 
+    List<Product> findAllByName(String name);
 }
  

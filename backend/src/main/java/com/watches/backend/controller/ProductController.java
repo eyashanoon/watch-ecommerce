@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
@@ -38,12 +39,11 @@ public class ProductController {
 
         return pageG;
     }
-    /*@GetMapping("/{name}")
     @PreAuthorize("hasRole('CUSTOMER') || hasRole('OWNER') || hasRole('SEE_PRODUCT')")
-    public CompletableFuture<Page<ProductDto>> getAllWithProductName(@PathVariable String name) {
-        return service.findAllWithProductNameAsync(name)
-                .thenApply(page -> page.map(ProductMapper::toDto));
-    }*/
+    @GetMapping("/products/name/{name}")
+    public  List<ProductDto> getAllWithProductName(@PathVariable String name) {
+        return service.findAllByNameAsync(name).join();
+    }
 
 
     @GetMapping("/{id}")

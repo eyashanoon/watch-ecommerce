@@ -1,6 +1,7 @@
 package com.watches.backend.service;
 
 import com.watches.backend.Dto.ProductDto.CreateProductDto;
+import com.watches.backend.Dto.ProductDto.ProductDto;
 import com.watches.backend.Dto.ProductDto.UpdateProductDto;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.helpers.query.ProductQueryObject;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -169,7 +171,13 @@ public class ProductService {
     }
 
 
-
+     public CompletableFuture<List<ProductDto>> findAllByNameAsync(String name) {
+        List<ProductDto> products = repository.findAllByName(name)
+                .stream()
+                .map(ProductMapper::toDto)
+                .collect(Collectors.toList());
+        return CompletableFuture.completedFuture(products);
+    }
     public void setImage(Product product, Image image){
         if(product.getImage()==null)product.setImage(new ArrayList<>());
         List<Image> images=product.getImage();

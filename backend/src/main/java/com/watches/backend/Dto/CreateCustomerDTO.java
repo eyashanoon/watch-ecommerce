@@ -23,10 +23,10 @@ public class CreateCustomerDTO {
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Pattern(
+   /* @Pattern(
             regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,}$",
             message = "Password must be at least 8 characters and include a number, an uppercase letter, and a symbol"
-    )
+    )*/
     private String password;
     private String phone;
 
