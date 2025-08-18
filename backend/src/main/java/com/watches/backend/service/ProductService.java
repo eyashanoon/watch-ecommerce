@@ -162,7 +162,7 @@ public class ProductService {
        Page<Product> products = repository.findAll(spec,
                PageRequest.of(queryObject.getPage() - 1, queryObject.getPageSize())
        );
-
+       System.out.println(products.getTotalElements());
        return CompletableFuture.completedFuture(products);
     }
 

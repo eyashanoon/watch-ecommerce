@@ -29,10 +29,15 @@ public class ProductController {
     @GetMapping
     @PreAuthorize("hasRole('CUSTOMER') || hasRole('OWNER') || hasRole('SEE_PRODUCT')")
     Page<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
-
-        return service.findAllAsync(query)
+        Page<ProductDto> pageG =service.findAllAsync(query)
                 .thenApply(page -> page.map(ProductMapper::toDto))
                 .join();
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+        System.out.println(pageG.getTotalPages());
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+        return pageG;
     }
 
     @GetMapping("/{id}")

@@ -61,7 +61,19 @@ public class SpecificationBuilder<T> {
                             Field maxField = filter.getClass().getDeclaredField(maxFieldName);
                             maxField.setAccessible(true);
                             Double maxValue = (Double) maxField.get(filter);
-                            addRangeSpec((Double) value, maxValue, path(JOIN_PATH_MAP.get(fieldName).joinField()));
+                             addRangeSpec((Double) value, maxValue, path(JOIN_PATH_MAP.get(fieldName).joinField()));
+ 
+
+                       /*     // Map minSize -> size, minWeight -> weight, minPrice -> price
+                            String entityField = switch(fieldName) {
+                                case "minSize" -> "size";
+                                case "minWeight" -> "weight";
+                                case "minPrice" -> "price";
+                                default -> fieldName.substring(3,4).toLowerCase() + fieldName.substring(4);
+                            };
+
+                            addRangeSpec((Double) value, maxValue, path(entityField));*/
+ 
                         }
                         break;
                     default:
