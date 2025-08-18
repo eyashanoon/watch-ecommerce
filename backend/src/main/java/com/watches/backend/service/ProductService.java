@@ -117,7 +117,7 @@ public class ProductService {
     public CompletableFuture<Product> updateAsync(UpdateProductDto createProductDto, Long id) {
         CompletableFuture<Product> product = findByIdAsync(id);
 
-        product = product.thenApply(p -> {
+         product = product.thenApply(p -> {
             p.setName(createProductDto.getName());
             p.setDescription(createProductDto.getDescription());
             p.setPrice(createProductDto.getPrice());
@@ -153,6 +153,7 @@ public class ProductService {
         );
     }
 
+
     public CompletableFuture<Page<Product>> findAllAsync(ProductQueryObject queryObject) {
 
        Specification<Product> spec = new SpecificationBuilder<Product>()
@@ -165,6 +166,8 @@ public class ProductService {
        System.out.println(products.getTotalElements());
        return CompletableFuture.completedFuture(products);
     }
+
+
 
     public void setImage(Product product, Image image){
         if(product.getImage()==null)product.setImage(new ArrayList<>());
