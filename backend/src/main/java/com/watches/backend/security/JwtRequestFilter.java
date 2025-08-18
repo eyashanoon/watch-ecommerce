@@ -1,9 +1,16 @@
 package com.watches.backend.security;
 
+import com.watches.backend.helpers.exception.CException;
+import com.watches.backend.model.User;
+import com.watches.backend.service.SystemLogService;
+import com.watches.backend.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,64 +20,47 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Component
+@AllArgsConstructor
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
+    private final SystemLogService systemLogService;
+    private final UserService userService;
     private final JwtUtil jwtUtil;
 
-    public JwtRequestFilter(UserDetailsService userDetailsService, JwtUtil jwtUtil) {
-        this.userDetailsService = userDetailsService;
-        this.jwtUtil = jwtUtil;
-    }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain)
             throws ServletException, IOException {
-        System.out.println("🔹 Method: " + request.getMethod());
-        System.out.println("🔹 URI: " + request.getRequestURI());
 
-        // 🟡 Print all headers
-        System.out.println("🔹 Headers:");
-        request.getHeaderNames().asIterator()
-                .forEachRemaining(headerName -> {
-                    String headerValue = request.getHeader(headerName);
-                    System.out.println("   " + headerName + ": " + headerValue);
-                });
-
-        // 🟡 Print query parameters
-        System.out.println("🔹 Query Parameters:");
-        request.getParameterMap().forEach((key, values) -> {
-            for (String value : values) {
-                System.out.println("   " + key + " = " + value);
-            }
-        });
         final String authorizationHeader = request.getHeader("Authorization");
-
         String username = null;
         String jwt = null;
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
+            if(!jwtUtil.validateToken(jwt)){
+                response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid token");
+                return;
+            }
             try {
                 username = jwtUtil.extractUsername(jwt);
             } catch (Exception e) {
-                // Invalid token
+                throw CException.unauthorized("Invalid Token");
             }
         }
 
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            System.out.println(",mmmm"+jwtUtil.extractRoles(jwt));
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
-                List<String> roles = jwtUtil.extractRoles(jwt); // Extract roles from token
+                List<String> roles = jwtUtil.extractRoles(jwt);
                 List<SimpleGrantedAuthority> authorities = roles.stream()
                         .map(role -> "ROLE_" + role)
                         .map(SimpleGrantedAuthority::new)
@@ -87,5 +77,27 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         chain.doFilter(request, response);
+        if(!Objects.equals(request.getMethod(), "GET")) {
+            if(username != null) {
+                User user = userService.findByUsername(username);
+                systemLogService.createAsync(user, getData(request), getData(response));
+            }
+        }
     }
+
+    private String getData(HttpServletRequest request) {
+
+        return "RequestId: " + UUID.randomUUID() +
+                ", Method: " + request.getMethod() +
+                ", URI: " + request.getRequestURI() +
+                ", Remote Address: " + request.getRemoteAddr() +
+                ", User Agent: " + request.getHeader("User-Agent");
+    }
+
+    private String getData(HttpServletResponse response) {
+
+        return "Response Status: " + response.getStatus() +
+                ", Response Message: " + HttpStatus.valueOf(response.getStatus()).getReasonPhrase();
+    }
+
 }

@@ -14,18 +14,18 @@ public class PaymentController {
     }
 
     @PostMapping("/make")
-    public ResponseEntity<?> makePayment(@RequestBody PaymentDTO paymentDTO) {
+    public String makePayment(@RequestBody PaymentDTO paymentDTO) {
         System.out.println(paymentDTO);
         boolean result = paymentService.makePayment(paymentDTO);
         if (result) {
-            return ResponseEntity.ok().body("Payment successful");
+            return "Payment successful";
         } else {
-            return ResponseEntity.badRequest().body("Payment failed");
+            return "Payment failed";
         }
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addPayment(@RequestBody PaymentDTO paymentDTO) {
+    public ResponseEntity<String> addPayment(@RequestBody PaymentDTO paymentDTO) {
         boolean result = paymentService.addPayment(paymentDTO);
         if (result) {
             return ResponseEntity.ok().body("Card added successfully");

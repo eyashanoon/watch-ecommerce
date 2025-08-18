@@ -1,9 +1,10 @@
 package com.watches.backend.service.productFeatures;
 
-import com.watches.backend.Repositories.productFeaturesRepositories.BrandRepository;
+import com.watches.backend.Repositories.DynamicQueryRepository;
 import com.watches.backend.helpers.Utils;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.productFeatures.Brand;
+import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +13,10 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @Async
+@AllArgsConstructor
 public class BrandService {
 
-    private final BrandRepository repository;
-
-    public BrandService(BrandRepository repository) {
-        this.repository = repository;
-    }
+    private final DynamicQueryRepository<Brand> repository;
 
     public CompletableFuture<Brand> create(String brand) {
         brand = Utils.normalizeString(brand);
@@ -31,7 +29,7 @@ public class BrandService {
     }
 
     private Brand getByBrand(String brand) {
-        return repository.findAll()
+        return repository.findAll(Brand.class)
                 .stream()
                 .filter(b ->
                         b.getName()
@@ -42,13 +40,13 @@ public class BrandService {
     }
 
     public CompletableFuture<Set<String>> getAll() {
-        Set<String> res = repository.findAllDistinctBrands();
+        Set<String> res = repository.getDistinctValues(Brand.class, "name");
 
         return CompletableFuture.completedFuture(res);
     }
 
     public CompletableFuture<String> getByProductId(Long id) {
-        String res = repository.findByProductId(id);
+        String res = repository.findByProductId("brand", "name",id);
         if(Utils.isNullOrWhiteSpace(res)) {
             throw CException.notFound(Brand.class, "productId", id);
         }

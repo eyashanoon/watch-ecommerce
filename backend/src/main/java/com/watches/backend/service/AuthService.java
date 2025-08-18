@@ -11,6 +11,6 @@ public class AuthService {
     public Long getCurrentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
-        return userDetails.getUser().getId();
+        return userDetails.user().getId();
     }
 }

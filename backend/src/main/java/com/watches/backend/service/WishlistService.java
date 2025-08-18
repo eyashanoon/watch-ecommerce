@@ -9,6 +9,7 @@ import com.watches.backend.helpers.specification.SpecificationBuilder;
 import com.watches.backend.model.Customer;
 import com.watches.backend.model.Product;
 import com.watches.backend.model.Wishlist;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,17 +30,10 @@ public class WishlistService {
     private final ProductRepository productRepository;
     private final ProductService productService;
 
-    public CompletableFuture<Wishlist> findByIdAsync(Long id) {
-        Wishlist wishlist = wishlistRepository.findById(id)
-                .orElseThrow(() -> CException.notFound(Wishlist.class, "id", id));
-        return CompletableFuture.completedFuture(wishlist);
-    }
-
-     public CompletableFuture<Wishlist> createAsync(){
+    @Transactional
+    public CompletableFuture<Wishlist> createAsync(){
         Wishlist wishlist = new Wishlist();
- 
-        wishlistRepository.save(wishlist);
-        return CompletableFuture.completedFuture(wishlist);
+        return CompletableFuture.completedFuture(wishlistRepository.save(wishlist));
     }
 
      public CompletableFuture<Wishlist> findByCustomerIdAsync(String customerUsername, ProductQueryObject queryObject) {
@@ -116,4 +110,5 @@ public class WishlistService {
         wishlist.setDeleted(true);
         wishlistRepository.save(wishlist);
     }
+
 }

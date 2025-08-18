@@ -48,9 +48,8 @@ public class ProductController {
     }
 
     @PostMapping
-     @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('OWNER') || hasRole('CREATE_PRODUCT')")
     ProductDto create(@RequestBody  CreateProductDto createProductDto){
-  
 
         CompletableFuture<Product> product = service.createAsync(createProductDto);
 

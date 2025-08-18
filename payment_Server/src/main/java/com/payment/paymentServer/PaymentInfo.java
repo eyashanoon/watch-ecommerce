@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
+
 public class PaymentInfo {
 
     @Id
@@ -14,10 +15,11 @@ public class PaymentInfo {
     private Double balance;
     private String cardNumber;
 
-    private String expiryDate;
+    private String expirationDate;
 
     private String cvv; // ⚠️ Consider encrypting or tokenizing this
-
+    private String billingAddress;
+    private String postalCode;
     @Enumerated(EnumType.STRING)
     private CardType cardType;
     @OneToMany(mappedBy = "paymentInfo", cascade = CascadeType.ALL)
@@ -25,13 +27,26 @@ public class PaymentInfo {
 
     private boolean isDefault = false;
 
-    public PaymentInfo(Double balance, String cardNumber, String expiryDate, String cvv, CardType cardType, List<UsedIn> usedIn) {
+    public PaymentInfo(Long id,
+                       Double balance,
+                       String cardNumber,
+                       String expirationDate,
+                       String cvv,
+                       String billingAddress,
+                       String postalCode,
+                       CardType cardType,
+                       List<UsedIn> usedIn,
+                       boolean isDefault) {
+        this.id = id;
         this.balance = balance;
         this.cardNumber = cardNumber;
-        this.expiryDate = expiryDate;
+        this.expirationDate = expirationDate;
         this.cvv = cvv;
+        this.billingAddress = billingAddress;
+        this.postalCode = postalCode;
         this.cardType = cardType;
         this.usedIn = usedIn;
+        this.isDefault = isDefault;
     }
 
     public PaymentInfo() {
@@ -78,6 +93,30 @@ public class PaymentInfo {
         this.cvv = cvv;
     }
 
+    public String getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(String expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public String getBillingAddress() {
+        return billingAddress;
+    }
+
+    public void setBillingAddress(String billingAddress) {
+        this.billingAddress = billingAddress;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
     public String getCardNumber() {
         return cardNumber;
     }
@@ -94,20 +133,13 @@ public class PaymentInfo {
         this.balance = balance;
     }
 
-    public String getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(String expiryDate) {
-        this.expiryDate = expiryDate;
-    }
     @Override
     public String toString() {
         return "PaymentInfo{" +
                 "id=" + id +
                 ", balance=" + balance +
                 ", cardNumber" + cardNumber +
-                ", expiryDate='" + expiryDate + '\'' +
+                ", expiryDate='" + expirationDate + '\'' +
                 ", cvv='***'" +
                 ", cardType=" + cardType +
                 ", usedIn=" + (usedIn != null ? usedIn.size() + " records" : "null") +
