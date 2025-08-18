@@ -6,7 +6,6 @@ import com.watches.backend.mappers.SavedCardMapper;
 import com.watches.backend.model.Customer;
 import com.watches.backend.model.SavedCard;
 import com.watches.backend.Repositories.*;
-import jakarta.websocket.Encoder;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,10 @@ public class SavedCardService {
     public CompletableFuture<SavedCard> createCard(String username, CreateSavedCardDTO dto) {
         Customer customer = customerService.getCustomerByUsername(username).join();
         SavedCard card = SavedCardMapper.fromCreateDTO(dto,customer);
-        return CompletableFuture.completedFuture(savedCardRepository.save(card));
+        savedCardRepository.save(card);
+        customer.setSavedCard(card);
+        customerService.save(customer);
+        return CompletableFuture.completedFuture(card);
     }
 
     private SavedCard findByCustomer(Customer customer) {

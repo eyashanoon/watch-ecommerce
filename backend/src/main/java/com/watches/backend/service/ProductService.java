@@ -114,6 +114,7 @@ public class ProductService {
         return CompletableFuture.completedFuture(product);
     }
 
+    @Transactional
     public CompletableFuture<Product> updateAsync(UpdateProductDto createProductDto, Long id) {
         CompletableFuture<Product> product = findByIdAsync(id);
 
