@@ -4,6 +4,7 @@ import com.watches.backend.Repositories.DynamicQueryRepository;
 import com.watches.backend.helpers.Utils;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.productFeatures.Case;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,13 @@ public class CaseService {
 
     private final DynamicQueryRepository<Case> repository;
 
+    @Transactional
     public CompletableFuture<Case> create(String caseMaterial) {
         caseMaterial = Utils.normalizeString(caseMaterial);
         Case c = getByMaterial(caseMaterial);
         if(c==null){
             c = new Case(caseMaterial);
-            repository.save(c);
+            c = repository.save(c);
         }
         return CompletableFuture.completedFuture(c);
     }

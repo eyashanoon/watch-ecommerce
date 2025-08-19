@@ -1,6 +1,8 @@
 package com.watches.backend.service;
 
 import com.watches.backend.Repositories.CustomerRepository;
+import com.watches.backend.Repositories.UserRepository;
+
 import com.watches.backend.Repositories.ProductRepository;
 import com.watches.backend.Repositories.WishlistRepository;
 import com.watches.backend.helpers.exception.CException;
@@ -27,6 +29,8 @@ public class WishlistService {
 
     private final WishlistRepository wishlistRepository;
     private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
+
     private final ProductRepository productRepository;
     private final ProductService productService;
 

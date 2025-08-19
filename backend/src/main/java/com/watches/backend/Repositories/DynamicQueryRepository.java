@@ -2,6 +2,7 @@ package com.watches.backend.Repositories;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
@@ -14,6 +15,7 @@ public class DynamicQueryRepository<T>{
     @PersistenceContext
     private EntityManager em;
 
+    @Transactional
     public T save(T entity){
         return em.merge(entity);
     }

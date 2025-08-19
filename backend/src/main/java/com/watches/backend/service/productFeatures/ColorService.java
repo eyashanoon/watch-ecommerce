@@ -4,6 +4,7 @@ import com.watches.backend.Repositories.DynamicQueryRepository;
 import com.watches.backend.helpers.Utils;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.productFeatures.Color;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,11 +19,12 @@ public class ColorService {
 
     private final DynamicQueryRepository<Color> repository;
 
+    @Transactional
     public CompletableFuture<Color> create(String part, String handsColor) {
         handsColor = Utils.normalizeString(handsColor);
         part = Utils.normalizeString(part);
         Color color = new Color(part, handsColor);
-        repository.save(color);
+        color = repository.save(color);
         return CompletableFuture.completedFuture(color);
     }
 
@@ -52,7 +54,7 @@ public class ColorService {
         return CompletableFuture.completedFuture(res);
     }
 
-
+    @Transactional
     public void update(Color color) {
         repository.save(color);
     }

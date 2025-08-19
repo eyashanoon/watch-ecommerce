@@ -4,6 +4,7 @@ import com.watches.backend.Repositories.DynamicQueryRepository;
 import com.watches.backend.helpers.Utils;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.productFeatures.Shape;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,13 @@ public class ShapeService {
 
     private final DynamicQueryRepository<Shape> repository;
 
+    @Transactional
     public CompletableFuture<Shape> create(String shape) {
         shape = Utils.normalizeString(shape);
         Shape s = getByShape(shape);
         if(s == null){
             s = new Shape(shape);
-            repository.save(s);
+            s = repository.save(s);
         }
         return CompletableFuture.completedFuture(s);
     }

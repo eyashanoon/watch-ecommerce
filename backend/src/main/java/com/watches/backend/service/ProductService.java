@@ -50,22 +50,17 @@ public class ProductService {
         );
 
         allFutures.join();
+        System.out.println(product.getColors());
+        if(product.getColors().size() == 3){
+            product.getColors().get(0).setColor(handsColor);
+            product.getColors().get(1).setColor(backgroundColor);
+            product.getColors().get(2).setColor(bandColor);
+        }else {
 
-        List<CompletableFuture<Color>> colorFutures = List.of(
-                colorService.create("hands", handsColor),
-                colorService.create("background", backgroundColor),
-                colorService.create("band", bandColor)
-        );
-
-        CompletableFuture<Void> allColorFutures = CompletableFuture.allOf(
-                colorFutures.stream()
-                        .map(future ->
-                                future.thenAccept(
-                                        product.getColors()::add)
-                        )
-                        .toArray(CompletableFuture[]::new)
-        );
-        allColorFutures.join();
+            colorService.create("hands", handsColor).thenAccept(product.getColors()::add);
+            colorService.create("background", backgroundColor).thenAccept(product.getColors()::add);
+            colorService.create("band", bandColor).thenAccept(product.getColors()::add);
+        }
     }
 
     private void setFeatures(Product product, CreateProductDto dto) {
@@ -114,6 +109,7 @@ public class ProductService {
         return CompletableFuture.completedFuture(product);
     }
 
+    @Transactional
     public CompletableFuture<Product> updateAsync(UpdateProductDto createProductDto, Long id) {
         CompletableFuture<Product> product = findByIdAsync(id);
 
@@ -131,6 +127,11 @@ public class ProductService {
             p.setWaterProof(createProductDto.getWaterProof());
 
             updateFeatures(p, createProductDto);
+
+            for(int i = 0;i < p.getColors().size();i++){
+                p.getColors().get(i).setProduct(p);
+                colorService.update(p.getColors().get(i));
+            }
 
             return repository.save(p);
         });
