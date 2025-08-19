@@ -4,6 +4,7 @@ import com.watches.backend.Repositories.DynamicQueryRepository;
 import com.watches.backend.helpers.Utils;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.productFeatures.Band;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,13 @@ public class BandService {
 
     private final DynamicQueryRepository<Band> repository;
 
+    @Transactional
     public CompletableFuture<Band> create(String bandMaterial) {
         bandMaterial = Utils.normalizeString(bandMaterial);
         Band band = getByMaterial(bandMaterial);
         if(band == null){
             band = new Band(bandMaterial);
-            repository.save(band);
+            band = repository.save(band);
         }
         return CompletableFuture.completedFuture(band);
     }

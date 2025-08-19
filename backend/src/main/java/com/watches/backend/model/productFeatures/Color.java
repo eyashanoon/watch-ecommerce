@@ -18,7 +18,7 @@ public class Color extends BaseFeatureEntity {
     private String color;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     public Color(String watchPart, String color) {

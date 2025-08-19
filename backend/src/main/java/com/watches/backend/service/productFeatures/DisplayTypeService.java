@@ -4,6 +4,7 @@ import com.watches.backend.Repositories.DynamicQueryRepository;
 import com.watches.backend.helpers.Utils;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.productFeatures.DisplayType;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,13 @@ public class DisplayTypeService {
 
     private final DynamicQueryRepository<DisplayType> repository;
 
-
+    @Transactional
     public CompletableFuture<DisplayType> create(String displayType) {
         displayType = Utils.normalizeString(displayType);
         DisplayType dto = getByType(displayType);
         if(dto == null) {
             dto = new DisplayType(displayType);
-            repository.save(dto);
+            dto = repository.save(dto);
         }
         return  CompletableFuture.completedFuture(dto);
     }

@@ -4,6 +4,7 @@ import com.watches.backend.Repositories.DynamicQueryRepository;
 import com.watches.backend.helpers.Utils;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.productFeatures.NumberingFormat;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,13 @@ public class NumberingFormatService {
 
     private final DynamicQueryRepository<NumberingFormat> repository;
 
-
+    @Transactional
     public CompletableFuture<NumberingFormat> create(String numberingFormat) {
         numberingFormat = Utils.normalizeString(numberingFormat);
         NumberingFormat nf = getByFormat(numberingFormat);
         if(nf == null){
             nf = new NumberingFormat(numberingFormat);
-            repository.save(nf);
+            nf = repository.save(nf);
         }
         return CompletableFuture.completedFuture(nf);
     }

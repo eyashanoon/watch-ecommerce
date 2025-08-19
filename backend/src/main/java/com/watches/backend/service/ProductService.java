@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -53,14 +52,14 @@ public class ProductService {
 
         allFutures.join();
 
-        List<CompletableFuture<Color>> colorFutures = List.of(
-                colorService.create("hands", handsColor),
-                colorService.create("background", backgroundColor),
-                colorService.create("band", bandColor)
-        );
-
-        for(int i = 0;i < 3;i++){
-            product.getColors().set(i, colorFutures.get(i).join());
+        if(product.getColors().size() == 3){
+            product.getColors().get(0).setColor(handsColor);
+            product.getColors().get(1).setColor(backgroundColor);
+            product.getColors().get(2).setColor(bandColor);
+        }else {
+            colorService.create("hands", handsColor).thenAccept(product.getColors()::add);
+            colorService.create("background", backgroundColor).thenAccept(product.getColors()::add);
+            colorService.create("band", bandColor).thenAccept(product.getColors()::add);
         }
     }
 
@@ -129,6 +128,11 @@ public class ProductService {
 
             updateFeatures(p, createProductDto);
 
+            for(Color color : p.getColors()){
+                color.setProduct(p);
+                colorService.update(color);
+            }
+
             return repository.save(p);
         });
 
@@ -165,13 +169,7 @@ public class ProductService {
     }
 
 
-     public CompletableFuture<List<ProductDto>> findAllByNameAsync(String name) {
-        List<ProductDto> products = repository.findAllByName(name)
-                .stream()
-                .map(ProductMapper::toDto)
-                .collect(Collectors.toList());
-        return CompletableFuture.completedFuture(products);
-    }
+
     public void setImage(Product product, Image image){
         if(product.getImage()==null)product.setImage(new ArrayList<>());
         List<Image> images=product.getImage();
@@ -184,4 +182,10 @@ public class ProductService {
         repository.save(product);
     }
 
+    public CompletableFuture<List<ProductDto>> findAllByNameAsync(String name) {
+        List<ProductDto> products = repository.findAllByName(name).stream()
+                .map(ProductMapper::toDto)
+                .toList();
+        return CompletableFuture.completedFuture(products);
+    }
 }

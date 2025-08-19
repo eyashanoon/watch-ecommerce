@@ -4,6 +4,7 @@ import com.watches.backend.Repositories.DynamicQueryRepository;
 import com.watches.backend.helpers.Utils;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.productFeatures.Brand;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,13 @@ public class BrandService {
 
     private final DynamicQueryRepository<Brand> repository;
 
+    @Transactional
     public CompletableFuture<Brand> create(String brand) {
         brand = Utils.normalizeString(brand);
         Brand b = getByBrand(brand);
         if (b == null) {
             b = new Brand(brand);
-            repository.save(b);
+            b = repository.save(b);
         }
         return CompletableFuture.completedFuture(b);
     }

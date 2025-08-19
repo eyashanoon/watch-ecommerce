@@ -75,11 +75,9 @@ public class AdminController {
         adminService.deleteAdmin(id);
     }
 
-    @GetMapping("roles")
+    @GetMapping("/roles")
     @PreAuthorize("hasRole('OWNER')   || hasRole('UPDATE_ADMIN')  ")
-
     public List<String> getAllRoles() {
-        // Convert enum values to list of strings
         return Arrays.stream(Role.values())
                 .map(Enum::name)
                 .toList();

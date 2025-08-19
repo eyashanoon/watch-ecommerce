@@ -27,6 +27,7 @@ public class SpecificationBuilder<T> {
         JOIN_PATH_MAP.put("minPrice",        new JoinPath("price", null));
         JOIN_PATH_MAP.put("minSize",         new JoinPath("size", null));
         JOIN_PATH_MAP.put("minWeight",       new JoinPath("weight", null));
+        JOIN_PATH_MAP.put("minQuantity",       new JoinPath("quantity", null));
     }
 
     public SpecificationBuilder<T> withFilter(Query filter) {
@@ -62,18 +63,6 @@ public class SpecificationBuilder<T> {
                             maxField.setAccessible(true);
                             Double maxValue = (Double) maxField.get(filter);
                              addRangeSpec((Double) value, maxValue, path(JOIN_PATH_MAP.get(fieldName).joinField()));
- 
-
-                       /*     // Map minSize -> size, minWeight -> weight, minPrice -> price
-                            String entityField = switch(fieldName) {
-                                case "minSize" -> "size";
-                                case "minWeight" -> "weight";
-                                case "minPrice" -> "price";
-                                default -> fieldName.substring(3,4).toLowerCase() + fieldName.substring(4);
-                            };
-
-                            addRangeSpec((Double) value, maxValue, path(entityField));*/
- 
                         }
                         break;
                     default:
