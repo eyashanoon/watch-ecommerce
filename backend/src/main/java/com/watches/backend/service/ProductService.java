@@ -59,15 +59,9 @@ public class ProductService {
                 colorService.create("band", bandColor)
         );
 
-        CompletableFuture<Void> allColorFutures = CompletableFuture.allOf(
-                colorFutures.stream()
-                        .map(future ->
-                                future.thenAccept(
-                                        product.getColors()::add)
-                        )
-                        .toArray(CompletableFuture[]::new)
-        );
-        allColorFutures.join();
+        for(int i = 0;i < 3;i++){
+            product.getColors().set(i, colorFutures.get(i).join());
+        }
     }
 
     private void setFeatures(Product product, CreateProductDto dto) {
