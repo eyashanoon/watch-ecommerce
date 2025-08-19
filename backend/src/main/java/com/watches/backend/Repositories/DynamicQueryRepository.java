@@ -21,6 +21,8 @@ public class DynamicQueryRepository<T>{
         return em.merge(entity);
     }
 
+    public void delete(T entity){em.remove(entity);}
+
     public List<T> findAll(Class<T> entityClass){
         String sql = "FROM "+entityClass.getSimpleName();
         return em.createQuery(sql, entityClass).getResultList();

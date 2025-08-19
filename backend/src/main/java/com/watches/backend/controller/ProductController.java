@@ -28,17 +28,12 @@ public class ProductController {
     private final ProductService service;
 
     @GetMapping
-     Page<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
-        Page<ProductDto> pageG =service.findAllAsync(query)
+    Page<ProductDto> getAll(@Valid @ModelAttribute ProductQueryObject query){
+        return service.findAllAsync(query)
                 .thenApply(page -> page.map(ProductMapper::toDto))
                 .join();
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
-        System.out.println(pageG.getTotalPages());
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
-        return pageG;
     }
+
     @PreAuthorize("hasRole('CUSTOMER') || hasRole('OWNER') || hasRole('SEE_PRODUCT')")
     @GetMapping("/products/name/{name}")
     public  List<ProductDto> getAllWithProductName(@PathVariable String name) {

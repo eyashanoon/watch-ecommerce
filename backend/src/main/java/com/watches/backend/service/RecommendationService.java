@@ -27,14 +27,17 @@ public class RecommendationService {
         List<Order> orders = customer.getOrders();
         List<Map<String, Integer>> indices = getFeaturesIndices();
         List<Double[]> pv = new ArrayList<>();
+        Set<Long> visited = new HashSet<>();
         for(Order order : orders){
             for(OrderItem item : order.getItems()){
                 Product product = item.getProduct();
+                visited.add(product.getId());
                 pv.add(getVector(product, indices));
             }
         }
         Wishlist wishlist = customer.getWishlist();
         for(Product product : wishlist.getProducts()){
+            visited.add(product.getId());
             pv.add(getVector(product, indices));
         }
         if(pv.isEmpty()){
@@ -44,10 +47,10 @@ public class RecommendationService {
 
         return productRepository.findAll().stream()
                 .sorted((p1, p2) -> {
-                    if(p1.getDeleted()){
+                    if(visited.contains(p1.getId()) || p1.getDeleted()){
                         return 1;
                     }
-                    if(p2.getDeleted()){
+                    if(visited.contains(p2.getId()) || p2.getDeleted()){
                         return -1;
                     }
                     Double cos1 = cosineSimilarity(baseVector, getVector(p1, indices));

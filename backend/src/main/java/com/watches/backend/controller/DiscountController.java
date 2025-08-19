@@ -20,7 +20,7 @@ public class DiscountController {
 
     private final DiscountService service;
 
-    @PostMapping
+            @PostMapping
     @PreAuthorize("hasRole('OWNER') || hasRole('ADD_DISCOUNT')")
     List<Long> addDiscount(@Valid @RequestBody CreateDiscountDto dto) {
         Discount discount = service.createAsync(dto).join();
