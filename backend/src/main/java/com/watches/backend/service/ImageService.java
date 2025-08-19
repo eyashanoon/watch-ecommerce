@@ -25,7 +25,6 @@ public class ImageService {
 
     private final ImageRepository repository;
     private final ProductService service;
-    private final ImageRepository imageRepository;
 
     private static Image createImageObject(String fileName, byte[] fileContent) {
         Image image = new Image();
@@ -82,20 +81,6 @@ public class ImageService {
         }
         return CompletableFuture.completedFuture(img);
      }
-
-   /* public CompletableFuture<Image> update(Long productId, MultipartFile image) {
-        try {
-            if(validImage(image)){
-                throw CException.badRequest(Image.class, "Provided file is not an image");
-            }
-            Image img = getImageByProductId(productId).join();
-            img.setFilename(image.getOriginalFilename());
-            img.setData(image.getBytes());
-            return CompletableFuture.completedFuture(repository.save(img));
-        }catch (Exception e){
-            throw CException.unexpected(e);
-        }
-    }*/
 
     public void deleteById(Long id){
         repository.deleteById(id);

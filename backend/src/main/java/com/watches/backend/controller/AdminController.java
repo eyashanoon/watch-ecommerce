@@ -1,14 +1,19 @@
 package com.watches.backend.controller;
 
 import com.watches.backend.Dto.*;
+import com.watches.backend.enums.Role;
 import com.watches.backend.helpers.query.UserQueryObject;
 import com.watches.backend.mappers.AdminMapper;
 import com.watches.backend.model.Admin;
 import com.watches.backend.service.AdminService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 
 @RestController
@@ -25,18 +30,31 @@ public class AdminController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('OWNER') || hasRole('SEE_ADMIN')")
+    @PreAuthorize("hasRole('OWNER') || hasRole('SEE_ADMIN') || hasRole('UPDATE_ADMIN') ||  hasRole('REMOVE_ADMIN')")
     public AdminDTO getAdmin(@PathVariable Long id){
          Admin admin = adminService.findById(id);
          return AdminMapper.toDTO(admin);
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('OWNER') || hasRole('SEE_ADMIN')")
-    public Page<AdminDTO> getAllAdmin(@ModelAttribute UserQueryObject queryObject){
+    @PreAuthorize("hasRole('OWNER') || hasRole('SEE_ADMIN') || hasRole('UPDATE_ADMIN') || hasRole('REMOVE_ADMIN')")
+    public Page<AdminDTO> getAllAdmin(@ModelAttribute UserQueryObject queryObject) {
         Page<Admin> admins = adminService.getAllAdmins(queryObject);
-        return admins.map(AdminMapper::toDTO);
+
+        // Convert Page<Admin> → List<AdminDTO> with filtering
+        List<AdminDTO> filteredList = admins.getContent().stream()
+                .filter(a -> !a.getDeleted()) // filter out deleted admins
+                .map(AdminMapper::toDTO)      // map to DTO
+                .toList();
+
+        // Return as Page<AdminDTO>, preserving pagination info
+        return new PageImpl<>(
+                filteredList,
+                admins.getPageable(),
+                admins.getTotalElements() // ⚠️ still includes deleted count
+        );
     }
+
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('OWNER') || hasRole('UPDATE_ADMIN')")
@@ -44,10 +62,26 @@ public class AdminController {
         Admin admin = adminService.updateAdmin(id, updateAdminDTO);
         return AdminMapper.toDTO(admin);
     }
+    @PutMapping("/changePassword/{id}")
+    @PreAuthorize("hasRole('OWNER') ")
+    public AdminDTO updateAdminPassword(@PathVariable Long id, @RequestBody UpdateAdminPasswordDTO updateAdminPasswordDTO) {
+        AdminDTO admin = adminService.updateAdminPassword(id, updateAdminPasswordDTO);
+        return admin ;
+    }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('OWNER') || hasRole('REMOVE_ADMIN')")
     public void deleteAdmin(@PathVariable Long id){
         adminService.deleteAdmin(id);
+    }
+
+    @GetMapping("roles")
+    @PreAuthorize("hasRole('OWNER')   || hasRole('UPDATE_ADMIN')  ")
+
+    public List<String> getAllRoles() {
+        // Convert enum values to list of strings
+        return Arrays.stream(Role.values())
+                .map(Enum::name)
+                .toList();
     }
 }

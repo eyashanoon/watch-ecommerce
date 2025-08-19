@@ -3,6 +3,7 @@ package com.watches.backend.service;
 import com.watches.backend.Dto.CreateAdminDTO;
 import com.watches.backend.Dto.UpdateAdminDTO;
 import com.watches.backend.Dto.AdminDTO;
+import com.watches.backend.Dto.UpdateAdminPasswordDTO;
 import com.watches.backend.enums.Role;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.helpers.specification.SpecificationBuilder;
@@ -70,17 +71,14 @@ public class AdminService {
         return adminRepository.save(admin);
     }
 
-    public AdminDTO updateAdminPassword(Long id, UpdateAdminDTO updateAdminDTO) {
+    public AdminDTO updateAdminPassword(Long id, UpdateAdminPasswordDTO updateAdminPasswordDTO) {
         Admin admin = findById(id);
-        if(!Utils.isNullOrEmpty(updateAdminDTO.getRoles())) {
-            if(admin.getRoles()==null) {
-                admin.setRoles(new HashSet<>());
-            }
-            Set<Role> roles = updateAdminDTO.getRoles();
-            admin.setRoles(roles);
-        }
-        AdminMapper.updateAdminFromDTO(updateAdminDTO, admin);
+
+
+        AdminMapper.updatePassAdminFromDTO(updateAdminPasswordDTO, admin);
+        setPassword(admin);
         Admin updated = adminRepository.save(admin);
+
         return AdminMapper.toDTO(updated);
     }
 
