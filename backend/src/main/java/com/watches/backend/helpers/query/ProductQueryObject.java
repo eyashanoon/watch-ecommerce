@@ -32,5 +32,5 @@ public class ProductQueryObject implements Query {
     private Double maxQuantity = Double.MAX_VALUE;
     private Double minQuantity = -1.0;
     private Integer page = 1;
-    private Integer pageSize = 50;
+    private Integer pageSize = 25;
 }

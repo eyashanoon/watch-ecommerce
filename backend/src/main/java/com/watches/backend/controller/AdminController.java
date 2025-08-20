@@ -4,12 +4,16 @@ import com.watches.backend.Dto.*;
 import com.watches.backend.enums.Role;
 import com.watches.backend.helpers.query.UserQueryObject;
 import com.watches.backend.mappers.AdminMapper;
+import com.watches.backend.mappers.CustomerMapper;
 import com.watches.backend.model.Admin;
+import com.watches.backend.model.Customer;
 import com.watches.backend.service.AdminService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -57,16 +61,26 @@ public class AdminController {
 
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('OWNER') || hasRole('UPDATE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public AdminDTO updateAdmin(@PathVariable Long id, @RequestBody UpdateAdminDTO updateAdminDTO) {
         Admin admin = adminService.updateAdmin(id, updateAdminDTO);
         return AdminMapper.toDTO(admin);
     }
     @PutMapping("/changePassword/{id}")
-    @PreAuthorize("hasRole('OWNER') ")
+    @PreAuthorize("hasRole('ADMIN') ")
     public AdminDTO updateAdminPassword(@PathVariable Long id, @RequestBody UpdateAdminPasswordDTO updateAdminPasswordDTO) {
         AdminDTO admin = adminService.updateAdminPassword(id, updateAdminPasswordDTO);
         return admin ;
+    }
+
+    @PutMapping("/gg")
+    AdminDTO updateAdmin2(@RequestBody UpdateCustomerDTO updateCustomerDTO) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Admin admin = adminService.updateAdmin2(username, updateCustomerDTO).join();
+        return AdminMapper.toDTO(admin);
     }
 
     @DeleteMapping("/{id}")

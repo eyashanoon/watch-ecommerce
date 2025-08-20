@@ -73,10 +73,10 @@ public class CustomerService {
         Customer customer = customerRepository.findByEmail(username)
                 .orElseThrow(() -> CException.notFound(Customer.class, "email", username));
 
-        customer.setUsername(updateCustomerDTO.getUsername());
+         customer.setUsername(updateCustomerDTO.getUsername());
         customer.setEmail(username);
         customer.setPhone(updateCustomerDTO.getPhone());
-        if(updateCustomerDTO.getNewPassword() != null) {
+        if(updateCustomerDTO.getNewPassword() != null && !updateCustomerDTO.getNewPassword().isEmpty()) {
             customer.setPassword(passwordEncoder.encode(updateCustomerDTO.getNewPassword()));
         }
         return CompletableFuture.completedFuture(customerRepository.save(customer));
