@@ -46,13 +46,12 @@ public class Order {
     @PrePersist
     public void prePersist() {
         placedAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
         status = OrderStatus.REQUESTED;
     }
     @PreUpdate
     public void onUpdate() {
-        if (this.status==OrderStatus.REQUESTED){
-            updatedAt = LocalDateTime.now();
-        }
+        updatedAt = LocalDateTime.now();
     }
 
      public void addItem(OrderItem item) {
@@ -60,7 +59,7 @@ public class Order {
         item.setOrder(this);
     }
 
-     public void removeItem(OrderItem item) {
+    public void removeItem(OrderItem item) {
         items.remove(item);
         item.setOrder(null);
     }

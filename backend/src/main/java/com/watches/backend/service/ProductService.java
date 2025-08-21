@@ -157,14 +157,13 @@ public class ProductService {
 
     public CompletableFuture<Page<Product>> findAllAsync(ProductQueryObject queryObject) {
 
-       Specification<Product> spec = new SpecificationBuilder<Product>()
+       Specification<Product> spec = new SpecificationBuilder<>(Product.class)
                .withFilter(queryObject)
                .build();
 
        Page<Product> products = repository.findAll(spec,
                PageRequest.of(queryObject.getPage() - 1, queryObject.getPageSize())
        );
-       System.out.println(products.getTotalElements());
        return CompletableFuture.completedFuture(products);
     }
 

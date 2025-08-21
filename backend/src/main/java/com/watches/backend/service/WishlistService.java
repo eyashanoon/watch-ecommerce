@@ -59,7 +59,7 @@ public class WishlistService {
                 .map(Product::getId)
                 .toList();
 
-        Specification<Product> spec = new SpecificationBuilder<Product>()
+        Specification<Product> spec = new SpecificationBuilder<>(Product.class)
                 .withFilter(queryObject)
                 .build();
 

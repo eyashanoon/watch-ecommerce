@@ -60,7 +60,9 @@ public class CustomerService {
 
     public CompletableFuture<Page<Customer>> getAllCustomers(UserQueryObject queryObject) {
 
-        Specification<Customer> spec = new SpecificationBuilder<Customer>().withFilter(queryObject).build();
+        Specification<Customer> spec = new SpecificationBuilder<>(Customer.class)
+                .withFilter(queryObject)
+                .build();
 
         Page<Customer> res = customerRepository.findAll(spec,
                  PageRequest.of(queryObject.getPageNumber() - 1, queryObject.getPageSize())

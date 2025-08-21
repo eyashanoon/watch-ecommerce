@@ -46,7 +46,7 @@ public class AdminService {
 
     public Page<Admin> getAllAdmins(UserQueryObject queryObject) {
 
-        Specification<Admin> spec = new SpecificationBuilder<Admin>()
+        Specification<Admin> spec = new SpecificationBuilder<>(Admin.class)
                 .withFilter(queryObject)
                 .build();
 
