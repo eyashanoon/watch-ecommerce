@@ -1,6 +1,6 @@
 package com.watches.backend.Repositories;
 
-import com.watches.backend.Dto.report.IReport;
+import com.watches.backend.Dto.report.ReportDto;
 import com.watches.backend.model.Customer;
 import com.watches.backend.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,24 +13,25 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order,Long> {
      Optional<Order> findByCustomer(Customer customer);
 
-     @Query("SELECT new com.watches.backend.Dto.report.YearReportDto(YEAR(o.placedAt), COUNT(o)) " +
+     @Query("SELECT new com.watches.backend.Dto.report.ReportDto(YEAR(o.placedAt), COUNT(o)) " +
              "FROM Order o " +
+             "WHERE YEAR(o.placedAt) <= :year AND YEAR(o.placedAt) >= :year - 5 " +
              "GROUP BY YEAR(o.placedAt)" +
              "ORDER BY YEAR(o.placedAt)")
-     List<IReport> countOrderGroupedByYear();
+     List<ReportDto<Integer>> countOrderGroupedByYear(@Param("year") int year);
 
-     @Query("SELECT new com.watches.backend.Dto.report.MonthReportDto(MONTH(o.placedAt), COUNT(o)) " +
+     @Query("SELECT new com.watches.backend.Dto.report.ReportDto(MONTH(o.placedAt), COUNT(o)) " +
              "FROM Order o " +
              "WHERE YEAR(o.placedAt) = :year " +
              "GROUP BY MONTH(o.placedAt) " +
              "ORDER BY MONTH(o.placedAt)")
-     List<IReport> countOrderMonthGroupedByMonth(@Param("year") String year);
+     List<ReportDto<Integer>> countOrderMonthGroupedByMonth(@Param("year") int year);
 
-     @Query("SELECT new com.watches.backend.Dto.report.DayReportDto(DAY(o.placedAt), COUNT(o)) " +
+     @Query("SELECT new com.watches.backend.Dto.report.ReportDto(DAY(o.placedAt), COUNT(o)) " +
              "FROM Order o " +
              "WHERE YEAR(o.placedAt) = :year AND MONTH(o.placedAt) = :month " +
              "GROUP BY DAY(o.placedAt) " +
              "ORDER BY DAY(o.placedAt)")
-     List<IReport> countOrderDailyGroupedByDay(@Param("year") String year, @Param("month") String month);
+     List<ReportDto<Integer>> countOrderDailyGroupedByDay(@Param("year") int year, @Param("month") String month);
 
 }

@@ -7,10 +7,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class MonthReportDto implements IReport {
-    private int month;
+@AllArgsConstructor
+public class ReportDto<T>{
+    private T field;
     private long count;
-
 }

@@ -1,8 +1,6 @@
 package com.watches.backend.service;
 
-import com.watches.backend.Dto.report.IReport;
-import com.watches.backend.Dto.report.DayReportDto;
-import com.watches.backend.Dto.report.MonthReportDto;
+import com.watches.backend.Dto.report.ReportDto;
 import com.watches.backend.Repositories.OrderRepository;
 import com.watches.backend.Repositories.ProductRepository;
 import com.watches.backend.helpers.exception.CException;
@@ -23,65 +21,75 @@ public class ReportService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
 
-    public List<IReport> getOrdersReport(String year){
-        return orderRepository.countOrderGroupedByYear();
-    }
-
-    public List<IReport> getOrderMonthlyReport(String year){
-        if(!Utils.isNullOrWhiteSpace(year)){
-            List<IReport> res = orderRepository.countOrderMonthGroupedByMonth(year);
-            validateMonthly(res);
-            return res;
-        }
-        throw CException.badRequest(Order.class, "Invalid year");
-    }
-
-    public List<IReport> getDailyOrdersReport(String year, String month){
-        if(!Utils.isNullOrWhiteSpace(year) || !Utils.isNullOrWhiteSpace(month)){
-            List<IReport> res = orderRepository.countOrderDailyGroupedByDay(year, month);
-            validateDaily(res, year, month);
-            return res;
-        }
-        throw CException.badRequest(Order.class, "Invalid year or month");
-    }
-
-    public List<IReport> getProductReport(String feature, String year){
+    public List<ReportDto<Integer>> getOrdersReport(String year){
         int finalYear = Utils.isNullOrWhiteSpace(year) ? LocalDateTime.now().getYear() : Integer.parseInt(year);
-        String finalFeature = Utils.isNullOrWhiteSpace(feature) ? "Brand" : Utils.normalizeString(feature);
-        return productRepository.countProductGroupedByYear(finalFeature, finalYear);
+        return orderRepository.countOrderGroupedByYear(finalYear);
     }
 
-    private void validateMonthly(List<IReport> reports){
+    public List<ReportDto<Integer>> getOrderMonthlyReport(String year){
+        int finalYear = Utils.isNullOrWhiteSpace(year) ? LocalDateTime.now().getYear() : Integer.parseInt(year);
+        List<ReportDto<Integer>> res = orderRepository.countOrderMonthGroupedByMonth(finalYear);
+        validateMonthly(res);
+        return res;
+
+    }
+
+    public List<ReportDto<Integer>> getDailyOrdersReport(String year, String month){
+        int finalYear = Utils.isNullOrWhiteSpace(year) ? LocalDateTime.now().getYear() : Integer.parseInt(year);
+        String finalMonth = Utils.isNullOrWhiteSpace(month) ? LocalDateTime.now().getMonth().toString() : month;
+        List<ReportDto<Integer>> res = orderRepository.countOrderDailyGroupedByDay(finalYear, finalMonth);
+        validateDaily(res, year, month);
+        return res;
+    }
+
+    public List<ReportDto<Integer>> getProductReport(String year){
+        int finalYear = Utils.isNullOrWhiteSpace(year) ? LocalDateTime.now().getYear() : Integer.parseInt(year);
+        return productRepository.countProductGroupedByYear(finalYear);
+    }
+
+    public List<ReportDto<Integer>> getMonthlyProductReport(String year){
+        int finalYear = Utils.isNullOrWhiteSpace(year) ? LocalDateTime.now().getYear() : Integer.parseInt(year);
+        List<ReportDto<Integer>> res = productRepository.countMonthlyProductGroupedByMonth(finalYear);
+        validateMonthly(res);
+        return res;
+    }
+
+    public List<ReportDto<Integer>> getDailyProductReport(String year, String month){
+        int finalYear = Utils.isNullOrWhiteSpace(year) ? LocalDateTime.now().getYear() : Integer.parseInt(year);
+        String finalMonth = Utils.isNullOrWhiteSpace(month) ? LocalDateTime.now().getMonth().toString() : month;
+        List<ReportDto<Integer>> res = productRepository.countDailyProductGroupedByDay(finalYear, finalMonth);
+        validateDaily(res, year, month);
+        return res;
+    }
+
+    private void validateMonthly(List<ReportDto<Integer>> reports){
         Map<Integer, Long> map = new HashMap<>();
         for(int i = 1;i <= 12;i++){
             map.put(i, 0L);
         }
-        for(IReport report : reports){
-            MonthReportDto monthReportDto = (MonthReportDto) report;
-            map.put(monthReportDto.getMonth(), monthReportDto.getCount());
-        }
-        reports.clear();
-        for(Map.Entry<Integer, Long> entry : map.entrySet()){
-            reports.add(new MonthReportDto(entry.getKey(), entry.getValue()));
-        }
+        finalReports(map, reports);
     }
 
-    private void validateDaily(List<IReport> reports, String year, String month){
+    private void validateDaily(List<ReportDto<Integer>> reports, String year, String month){
         Map<Integer, Long> map = new HashMap<>();
         for(int i = 1;i <= monthDays(year, month); i++){
             map.put(i, 0L);
         }
-        for(IReport report : reports){
-            DayReportDto dayReportDto = (DayReportDto) report;
-            map.put(dayReportDto.getDay(), dayReportDto.getCount());
+        finalReports(map, reports);
+    }
+
+    private void finalReports(Map<Integer, Long> map, List<ReportDto<Integer>> reports){
+        for(ReportDto<Integer> report : reports){
+            map.put(report.getField(), report.getCount());
         }
         reports.clear();
         for(Map.Entry<Integer, Long> entry : map.entrySet()){
-            reports.add(new DayReportDto(entry.getKey(), entry.getValue()));
+            reports.add(new ReportDto<>(entry.getKey(), entry.getValue()));
         }
     }
 
     private int monthDays(String year, String month){
+        if(month.length() == 1) month = "0" + month;
         switch (month){
             case "01":
             case "05":
@@ -102,31 +110,6 @@ public class ReportService {
                 return 28;
         }
         throw CException.badRequest(Order.class, "Invalid month");
-    }
-
-    private String validateMonth(String month){
-        if(month.length() > 2){
-            switch (month){
-                case "January"   -> month = "01";
-                case "February"  -> month = "02";
-                case "March"     -> month = "03";
-                case "April"     -> month = "04";
-                case "May"       -> month = "05";
-                case "June"      -> month = "06";
-                case "July"      -> month = "07";
-                case "August"    -> month = "08";
-                case "September" -> month = "09";
-                case "October"   -> month = "10";
-                case "November"  -> month = "11";
-                case "December"  -> month = "12";
-                default -> throw CException.badRequest(Order.class, month + " is not a valid month");
-            }
-        }else{
-            if(month.length() == 1){
-                month = "0" + month;
-            }
-        }
-        return month;
     }
 
 }

@@ -1,6 +1,6 @@
 package com.watches.backend.controller;
 
-import com.watches.backend.Dto.report.IReport;
+import com.watches.backend.Dto.report.ReportDto;
 import com.watches.backend.service.ReportService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,27 +17,39 @@ public class ReportController {
 
     @GetMapping("/order/years")
     @PreAuthorize("hasRole('OWNER') || hasRole('ADMIN')")
-    List<IReport> getOrdersReport(@RequestParam(value = "year", required = false) String year){
+    List<ReportDto<Integer>> getOrdersReport(@RequestParam(value = "year", required = false) String year){
         return service.getOrdersReport(year);
     }
 
     @GetMapping("/order/year")
     @PreAuthorize("hasRole('OWNER') || hasRole('ADMIN')")
-    List<IReport> getMonthlyOrdersReport(@RequestParam(value = "year") String year){
+    List<ReportDto<Integer>> getMonthlyOrdersReport(@RequestParam(value = "year") String year){
         return service.getOrderMonthlyReport(year);
     }
 
     @GetMapping("/order/month")
     @PreAuthorize("hasRole('OWNER') || hasRole('ADMIN')")
-    List<IReport> getDailyOrdersReport(@RequestParam(value = "year") String year,
+    List<ReportDto<Integer>> getDailyOrdersReport(@RequestParam(value = "year") String year,
                                        @RequestParam(value = "month") String month){
         return service.getDailyOrdersReport(year, month);
     }
 
-    @GetMapping("/product/{feature}/years")
+    @GetMapping("/product/years")
     @PreAuthorize("hasRole('OWNER') || hasRole('ADMIN')")
-    List<IReport> getProductReport(@PathVariable String feature, @RequestParam(value = "year", required = false) String year){
-        return service.getProductReport(feature, year);
+    List<ReportDto<Integer>> getProductReport(@RequestParam(value = "year", required = false) String year){
+        return service.getProductReport(year);
     }
 
+    @GetMapping("/product/year")
+    @PreAuthorize("hasRole('OWNER') || hasRole('ADMIN')")
+    List<ReportDto<Integer>> getMonthlyProductReport(@RequestParam(value = "year") String year){
+        return service.getMonthlyProductReport(year);
+    }
+
+    @GetMapping("/product/month")
+    @PreAuthorize("hasRole('OWNER') || hasRole('ADMIN')")
+    List<ReportDto<Integer>> getDailyProductReport(@RequestParam(value = "year") String year,
+                                                   @RequestParam(value = "month") String month){
+        return service.getDailyProductReport(year, month);
+    }
 }
