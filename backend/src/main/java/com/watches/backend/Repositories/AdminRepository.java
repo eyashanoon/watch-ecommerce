@@ -12,5 +12,5 @@ import java.util.Optional;
 @Repository
 public interface AdminRepository extends JpaSpecificationExecutor<Admin>, JpaRepository<Admin, Long> {
 
-    Optional<Admin> findByEmail(@Param("email") String email);
+    Admin findByEmail(String email);
 }

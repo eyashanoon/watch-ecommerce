@@ -62,7 +62,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('OWNER') || hasRole('DELETE_CUSTOMER')")
+    @PreAuthorize("hasRole('CUSTOMER')")
     void deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
     }

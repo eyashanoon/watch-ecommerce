@@ -10,8 +10,7 @@ public class SavedCardMapper {
 
     public static SavedCardDTO toDTO(SavedCard card) {
         if (card == null) return null;
-
-        return new SavedCardDTO(
+        SavedCardDTO dto =  new SavedCardDTO(
                 card.getId(),
                  card.getCardHolderName(),
                 card.getCardNumber(),
@@ -20,6 +19,9 @@ public class SavedCardMapper {
                 card.isDefaultCard(),
                 card.getCustomer() != null ? card.getCustomer().getId() : null
         );
+        dto.setExpiryDate(card.getExpirationDate());
+        return dto;
+
     }
 
     public static SavedCard fromCreateDTO(CreateSavedCardDTO dto, Customer customer) {

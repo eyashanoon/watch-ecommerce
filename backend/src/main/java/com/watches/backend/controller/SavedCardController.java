@@ -44,7 +44,8 @@ public class SavedCardController {
         String username = authentication.getName();
 
         SavedCard card = savedCardService.getByUsername(username).join();
-        return SavedCardMapper.toDTO(card);
+        SavedCardDTO dto = SavedCardMapper.toDTO(card);
+        return dto;
     }
 
     @PutMapping

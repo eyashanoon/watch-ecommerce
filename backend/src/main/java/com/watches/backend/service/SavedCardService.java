@@ -53,6 +53,7 @@ public class SavedCardService {
 
     public CompletableFuture<SavedCard> getByUsername(String username) {
         Customer customer = customerService.getCustomerByUsername(username).join();
+
         return CompletableFuture.completedFuture(savedCardRepository.findByCustomer(customer));
     }
 }

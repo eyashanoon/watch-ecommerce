@@ -70,6 +70,17 @@ public class OrderService {
         return CompletableFuture.completedFuture(order);
     }
 
+
+
+
+
+
+
+
+
+
+
+
     public CompletableFuture<Order> getOrderById(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> CException.notFound(Order.class, "id", id));
