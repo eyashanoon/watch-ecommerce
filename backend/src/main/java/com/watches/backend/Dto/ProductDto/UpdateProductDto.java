@@ -54,7 +54,7 @@ public class UpdateProductDto {
 
     @NotBlank(message = "Product Display type is required")
     @NotNull
-    private String DisplayType;
+    private String displayType;
 
     @NotBlank(message = "Product shape is required")
     @NotNull

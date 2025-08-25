@@ -14,5 +14,6 @@ public class ImageDto {
     private Long productId;
     private String imageFileName;
     private byte[] data;
+    private Long id;
 
 }

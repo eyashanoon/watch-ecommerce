@@ -9,7 +9,8 @@ public class FeaturesMapper {
         return new ImageDto(
                 image.getProduct().getId(),
                 image.getFilename(),
-                image.getData()
+                image.getData(),
+                image.getId()
         );
     }
 

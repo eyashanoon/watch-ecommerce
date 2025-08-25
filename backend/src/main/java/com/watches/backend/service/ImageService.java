@@ -84,6 +84,7 @@ public class ImageService {
 
     public void deleteById(Long id){
         repository.deleteById(id);
+
     }
 
     public void delete(Long productId) {

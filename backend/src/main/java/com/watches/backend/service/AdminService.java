@@ -31,7 +31,7 @@ public class AdminService {
     }
 
     public Admin createAdmin(CreateAdminDTO createAdminDTO) {
-        Admin admin = adminRepository.findByEmail(createAdminDTO.getEmail()).orElseThrow();
+        Admin admin = adminRepository.findByEmail(createAdminDTO.getEmail());
         if(admin != null){
             admin.setDeleted(false);
             admin.setPassword(createAdminDTO.getPassword());
@@ -70,8 +70,7 @@ public class AdminService {
     }
 
     public CompletableFuture<Admin> updateAdmin2(String username, UpdateCustomerDTO updateCustomerDTO) {
-        Admin admin = adminRepository.findByEmail(username)
-                .orElseThrow(() -> CException.notFound(Admin.class, "email", username));
+        Admin admin = adminRepository.findByEmail(username);
 
         admin.setUsername(updateCustomerDTO.getUsername());
         admin.setEmail(username);
