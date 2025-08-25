@@ -1,7 +1,7 @@
 package com.watches.backend.controller;
 
-import com.watches.backend.Dto.DiscountDto.CreateDiscountDto;
-import com.watches.backend.Dto.DiscountDto.DiscountDto;
+import com.watches.backend.Dto.discount.CreateDiscountDto;
+import com.watches.backend.Dto.discount.DiscountDto;
 import com.watches.backend.mappers.DiscountMapper;
 import com.watches.backend.model.Discount;
 import com.watches.backend.service.DiscountService;

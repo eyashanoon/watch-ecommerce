@@ -1,7 +1,7 @@
  
 package com.watches.backend.service;
 
-import com.watches.backend.Dto.PaymentDto.PaymentDTO;
+import com.watches.backend.Dto.payment.PaymentDTO;
 import com.watches.backend.enums.OrderStatus;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.mappers.OrderMapper;

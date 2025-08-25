@@ -9,8 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface AdminRepository extends JpaSpecificationExecutor<Admin>, JpaRepository<Admin, Long> {
-
-    // Correct method signature
-    Admin findByEmail(String email);
+ 
+     Admin findByEmail(String email);
 
 }

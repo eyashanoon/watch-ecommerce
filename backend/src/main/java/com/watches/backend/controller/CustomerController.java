@@ -1,18 +1,19 @@
 package com.watches.backend.controller;
 
-import com.watches.backend.Dto.CreateCustomerDTO;
-import com.watches.backend.Dto.UpdateCustomerDTO;
-import com.watches.backend.Dto.CustomerDTO;
+import com.watches.backend.Dto.authentication.AuthRequest;
+import com.watches.backend.Dto.authentication.AuthResponse;
+import com.watches.backend.Dto.customer.CreateCustomerDTO;
+import com.watches.backend.Dto.customer.UpdateCustomerDTO;
+import com.watches.backend.Dto.customer.CustomerDTO;
 import com.watches.backend.helpers.query.UserQueryObject;
 import com.watches.backend.mappers.CustomerMapper;
 import com.watches.backend.model.Customer;
+import com.watches.backend.service.AuthService;
 import com.watches.backend.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,11 +23,12 @@ public class CustomerController {
 
     private final CustomerService customerService;
     private final AuthController authController;
+    private final AuthService authService;
 
     @PostMapping
-    AuthController.AuthResponse createCustomer(@Valid @RequestBody CreateCustomerDTO createCustomerDTO) {
+    AuthResponse createCustomer(@Valid @RequestBody CreateCustomerDTO createCustomerDTO) {
         customerService.createCustomer(createCustomerDTO).join();
-        return authController.login(new AuthController.AuthRequest(createCustomerDTO.getEmail(), createCustomerDTO.getPassword()));
+        return authController.login(new AuthRequest(createCustomerDTO.getEmail(), createCustomerDTO.getPassword()));
     }
 
     @GetMapping("/{id}")
@@ -45,17 +47,14 @@ public class CustomerController {
 
     @GetMapping("/me")
     CustomerDTO getMyCustomer() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        String username = authService.getCurrentUserName();
         Customer customer = customerService.getCustomerByUsername(username).join();
         return CustomerMapper.toDTO(customer);
     }
 
     @PutMapping
     CustomerDTO updateCustomer(@RequestBody UpdateCustomerDTO updateCustomerDTO) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        String username = authService.getCurrentUserName();
 
         Customer customer = customerService.updateCustomer(username, updateCustomerDTO).join();
         return CustomerMapper.toDTO(customer);

@@ -1,16 +1,15 @@
 package com.watches.backend.controller;
 
-import com.watches.backend.Dto.SavedCardDto.CreateSavedCardDTO;
-import com.watches.backend.Dto.SavedCardDto.SavedCardDTO;
-import com.watches.backend.Dto.SavedCardDto.UpdateSavedCardDTO;
+import com.watches.backend.Dto.savedCard.CreateSavedCardDTO;
+import com.watches.backend.Dto.savedCard.SavedCardDTO;
+import com.watches.backend.Dto.savedCard.UpdateSavedCardDTO;
 import com.watches.backend.mappers.SavedCardMapper;
 import com.watches.backend.model.SavedCard;
+import com.watches.backend.service.AuthService;
 import com.watches.backend.service.SavedCardService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,13 +17,12 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class SavedCardController {
     private final SavedCardService savedCardService;
+    private final AuthService authService;
 
     @PostMapping
     @PreAuthorize("hasRole('CUSTOMER') || hasRole('OWNER') || hasRole('ADMIN')")
     SavedCardDTO createCard(@Valid @RequestBody CreateSavedCardDTO dto) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        String username = authService.getCurrentUserName();
 
         SavedCard card = savedCardService.createCard(username, dto).join();
         return SavedCardMapper.toDTO(card);
@@ -40,8 +38,7 @@ public class SavedCardController {
     @GetMapping("/me")
     @PreAuthorize("hasRole('CUSTOMER') || hasRole('OWNER') || hasRole('ADMIN')")
     SavedCardDTO getMyCard() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        String username = authService.getCurrentUserName();
 
         SavedCard card = savedCardService.getByUsername(username).join();
         return SavedCardMapper.toDTO(card);
@@ -50,8 +47,7 @@ public class SavedCardController {
     @PutMapping
     @PreAuthorize("hasRole('CUSTOMER') || hasRole('OWNER') || hasRole('ADMIN')")
     SavedCardDTO  updateCard(@RequestBody UpdateSavedCardDTO dto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        String username = authService.getCurrentUserName();
 
         SavedCard card = savedCardService.updateCard(username,dto).join();
         return SavedCardMapper.toDTO(card);
@@ -60,8 +56,7 @@ public class SavedCardController {
     @DeleteMapping
     @PreAuthorize("hasRole('CUSTOMER') || hasRole('OWNER') || hasRole('ADMIN')")
     void deleteCard(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        String username = authService.getCurrentUserName();
 
         savedCardService.deleteCard(username);
     }

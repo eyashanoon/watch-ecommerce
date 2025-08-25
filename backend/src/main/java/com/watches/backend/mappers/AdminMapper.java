@@ -1,27 +1,22 @@
 package com.watches.backend.mappers;
 
-import com.watches.backend.Dto.AdminDTO;
-import com.watches.backend.Dto.CreateAdminDTO;
-import com.watches.backend.Dto.UpdateAdminDTO;
-import com.watches.backend.Dto.UpdateAdminPasswordDTO;
+import com.watches.backend.Dto.admin.AdminDTO;
+import com.watches.backend.Dto.admin.CreateAdminDTO;
+import com.watches.backend.Dto.admin.UpdateAdminPasswordDTO;
 import com.watches.backend.model.Admin;
 
 public class AdminMapper {
-
-    // Convert Admin entity to AdminDTO
     public static AdminDTO toDTO(Admin admin) {
         if (admin == null) return null;
-
         return new AdminDTO(
                 admin.getId(),
                 admin.getUsername(),
                 admin.getEmail(),
                 admin.getPhone(),
-                admin.getRoles().stream().map(role -> role.name()).toList()
+                admin.getRoles().stream().map(Enum::name).toList()
 
         );
     }
-
     public static Admin fromCreateDTO(CreateAdminDTO dto) {
         if (dto == null) return null;
 
@@ -32,19 +27,9 @@ public class AdminMapper {
                 dto.getPhone()
         );
     }
-
-    // Update existing Admin entity using UpdateAdminDTO
-    public static void updateAdminFromDTO(UpdateAdminDTO dto, Admin admin) {
-        if (dto == null || admin == null) return;
-
-        admin.setUsername(dto.getUsername());
-        admin.setEmail(dto.getEmail());
-        admin.setPhone(dto.getPhone());
-     }
     public static void updatePassAdminFromDTO(UpdateAdminPasswordDTO dto, Admin admin) {
         if (dto == null || admin == null) return;
         admin.setPassword(dto.getPassword());
 
     }
-
 }

@@ -1,10 +1,8 @@
 package com.watches.backend.service.productFeatures;
 
 import com.watches.backend.Repositories.DynamicQueryRepository;
-import com.watches.backend.Repositories.ProductRepository;
 import com.watches.backend.helpers.Utils;
 import com.watches.backend.helpers.exception.CException;
-import com.watches.backend.model.Product;
 import com.watches.backend.model.productFeatures.Color;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -20,7 +18,6 @@ import java.util.stream.Collectors;
 public class ColorService {
 
     private final DynamicQueryRepository<Color> repository;
-    private final ProductRepository productRepository;
 
 
     @Transactional
@@ -30,15 +27,6 @@ public class ColorService {
         Color color = new Color(part, handsColor);
         color = repository.save(color);
         return CompletableFuture.completedFuture(color);
-    }
-
-    public void delete(Long productId){
-        Product product = productRepository.findById(productId).get();
-
-        for(int i = 0;i < 3;i++){
-            repository.delete(product.getColors().get(i));
-        }
-
     }
 
     public CompletableFuture<Map<String, String>> getByProductId(Long productId) {

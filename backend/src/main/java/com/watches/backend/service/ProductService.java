@@ -1,8 +1,8 @@
 package com.watches.backend.service;
 
-import com.watches.backend.Dto.ProductDto.CreateProductDto;
-import com.watches.backend.Dto.ProductDto.ProductDto;
-import com.watches.backend.Dto.ProductDto.UpdateProductDto;
+import com.watches.backend.Dto.product.CreateProductDto;
+import com.watches.backend.Dto.product.ProductDto;
+import com.watches.backend.Dto.product.UpdateProductDto;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.helpers.query.ProductQueryObject;
 import com.watches.backend.Repositories.ProductRepository;
@@ -157,14 +157,13 @@ public class ProductService {
 
     public CompletableFuture<Page<Product>> findAllAsync(ProductQueryObject queryObject) {
 
-       Specification<Product> spec = new SpecificationBuilder<Product>()
+       Specification<Product> spec = new SpecificationBuilder<>(Product.class)
                .withFilter(queryObject)
                .build();
 
        Page<Product> products = repository.findAll(spec,
                PageRequest.of(queryObject.getPage() - 1, queryObject.getPageSize())
        );
-       System.out.println(products.getTotalElements());
        return CompletableFuture.completedFuture(products);
     }
 

@@ -36,12 +36,4 @@ public class Payment {
         this.paymentDate = LocalDateTime.now();
         this.status = PaymentStatus.PENDING;
     }
-
-    public Payment(Double amount, PaymentMethod method) {
-        this.amount = amount;
-        this.method = method;
-         this.paymentDate = LocalDateTime.now();
-        this.status = PaymentStatus.PENDING;
-    }
-
 }

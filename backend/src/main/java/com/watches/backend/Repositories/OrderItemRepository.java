@@ -1,6 +1,5 @@
 package com.watches.backend.Repositories;
 
-import com.watches.backend.model.Order;
 import com.watches.backend.model.OrderItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
