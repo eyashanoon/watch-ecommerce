@@ -1,6 +1,9 @@
 package com.watches.backend.controller;
 
-import com.watches.backend.Dto.*;
+import com.watches.backend.Dto.admin.AdminDTO;
+import com.watches.backend.Dto.admin.CreateAdminDTO;
+import com.watches.backend.Dto.admin.UpdateAdminDTO;
+import com.watches.backend.Dto.admin.UpdateAdminPasswordDTO;
 import com.watches.backend.enums.Role;
 import com.watches.backend.helpers.query.UserQueryObject;
 import com.watches.backend.mappers.AdminMapper;
@@ -10,7 +13,6 @@ import com.watches.backend.model.Customer;
 import com.watches.backend.service.AdminService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,7 +30,7 @@ public class AdminController {
 
     @PostMapping
     @PreAuthorize("hasRole('OWNER') || hasRole('ADD_ADMIN')")
-    public AdminDTO CreateAdmin(@RequestBody CreateAdminDTO  createAdminDTO){
+    public AdminDTO CreateAdmin(@RequestBody CreateAdminDTO createAdminDTO){
         Admin admin = adminService.createAdmin(createAdminDTO);
         return AdminMapper.toDTO(admin);
     }
@@ -44,21 +46,8 @@ public class AdminController {
     @PreAuthorize("hasRole('OWNER') || hasRole('SEE_ADMIN') || hasRole('UPDATE_ADMIN') || hasRole('REMOVE_ADMIN')")
     public Page<AdminDTO> getAllAdmin(@ModelAttribute UserQueryObject queryObject) {
         Page<Admin> admins = adminService.getAllAdmins(queryObject);
-
-        // Convert Page<Admin> → List<AdminDTO> with filtering
-        List<AdminDTO> filteredList = admins.getContent().stream()
-                .filter(a -> !a.getDeleted()) // filter out deleted admins
-                .map(AdminMapper::toDTO)      // map to DTO
-                .toList();
-
-        // Return as Page<AdminDTO>, preserving pagination info
-        return new PageImpl<>(
-                filteredList,
-                admins.getPageable(),
-                admins.getTotalElements() // ⚠️ still includes deleted count
-        );
+        return admins.map(AdminMapper::toDTO);
     }
-
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -69,8 +58,7 @@ public class AdminController {
     @PutMapping("/changePassword/{id}")
     @PreAuthorize("hasRole('ADMIN') ")
     public AdminDTO updateAdminPassword(@PathVariable Long id, @RequestBody UpdateAdminPasswordDTO updateAdminPasswordDTO) {
-        AdminDTO admin = adminService.updateAdminPassword(id, updateAdminPasswordDTO);
-        return admin ;
+        return adminService.updateAdminPassword(id, updateAdminPasswordDTO);
     }
 
     @PutMapping("/gg")

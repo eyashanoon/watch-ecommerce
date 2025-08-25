@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 
  
 import java.util.ArrayList;
-import java.util.Base64;
  import java.util.List;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -84,6 +83,7 @@ public class ImageService {
 
     public void deleteById(Long id){
         repository.deleteById(id);
+
     }
 
     public void delete(Long productId) {

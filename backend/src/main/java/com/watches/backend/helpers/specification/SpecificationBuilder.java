@@ -3,6 +3,7 @@ package com.watches.backend.helpers.specification;
 import com.watches.backend.helpers.Utils;
 import com.watches.backend.helpers.query.Query;
 import com.watches.backend.model.Product;
+import com.watches.backend.model.SystemLog;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -12,7 +13,12 @@ import java.util.*;
 public class SpecificationBuilder<T> {
 
     private final List<Specification<T>> specifications = new ArrayList<>();
+    private final Class<T> type;
     private static final Map<String, JoinPath> JOIN_PATH_MAP = new HashMap<>();
+
+    public SpecificationBuilder(Class<T> type) {
+        this.type = type;
+    }
 
     static {
         JOIN_PATH_MAP.put("brand",           new JoinPath("brand", "name"));
@@ -27,7 +33,11 @@ public class SpecificationBuilder<T> {
         JOIN_PATH_MAP.put("minPrice",        new JoinPath("price", null));
         JOIN_PATH_MAP.put("minSize",         new JoinPath("size", null));
         JOIN_PATH_MAP.put("minWeight",       new JoinPath("weight", null));
-        JOIN_PATH_MAP.put("minQuantity",       new JoinPath("quantity", null));
+        JOIN_PATH_MAP.put("minQuantity",     new JoinPath("quantity", null));
+
+        JOIN_PATH_MAP.put("user",            new JoinPath("performedBy", "email"));
+        JOIN_PATH_MAP.put("requestMethod",   new JoinPath("request", null));
+        JOIN_PATH_MAP.put("responseStatus",  new JoinPath("response", null));
     }
 
     public SpecificationBuilder<T> withFilter(Query filter) {
@@ -82,11 +92,16 @@ public class SpecificationBuilder<T> {
     }
 
     private Function3<Root<T>, CriteriaQuery<?>, CriteriaBuilder, Expression<String>> getExpressionProvider(String fieldName) {
-        if(JOIN_PATH_MAP.containsKey(fieldName)){
+        if(Product.class.equals(type) && JOIN_PATH_MAP.containsKey(fieldName)){
             return joinAndGet(JOIN_PATH_MAP.get(fieldName).joinField(),JOIN_PATH_MAP.get(fieldName).getField());
-        }else{
-            return path(fieldName);
+        }else if(SystemLog.class.equals(type)){
+            JoinPath joinPath = JOIN_PATH_MAP.get(fieldName);
+            if(joinPath.getField() != null){
+                return joinAndGet(joinPath.joinField(), joinPath.getField());
+            }
+            return path(JOIN_PATH_MAP.get(fieldName).joinField());
         }
+        return path(fieldName);
     }
 
     private <J> Function3<Root<T>, CriteriaQuery<?>, CriteriaBuilder, Expression<J>> path(String fieldName) {
@@ -152,4 +167,5 @@ public class SpecificationBuilder<T> {
             return cb.and(predicates.toArray(new Predicate[0]));
         });
     }
+
 }

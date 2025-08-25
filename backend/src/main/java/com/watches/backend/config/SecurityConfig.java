@@ -34,12 +34,19 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> {}) // global CORS configuration will be applied
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints
+                         // Public endpoints
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/product/image/product/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/customers").permitAll()
-                        .requestMatchers("/api/recommend/unauthorized").permitAll()
+                         .requestMatchers(HttpMethod.POST,"/api/product/image").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"/api/product/image/**").authenticated()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products").permitAll()
+                        .requestMatchers("/api/product/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+
+                         .requestMatchers(HttpMethod.POST, "/api/customers").permitAll()
+                        .requestMatchers("/api/recommend").permitAll()
 
                         // Swagger/OpenAPI
                         .requestMatchers("/swagger-ui/**").permitAll()

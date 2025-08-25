@@ -1,6 +1,6 @@
 package com.watches.backend.mappers;
 
-import com.watches.backend.Dto.DiscountDto.DiscountDto;
+import com.watches.backend.Dto.discount.DiscountDto;
 import com.watches.backend.model.Discount;
 
 

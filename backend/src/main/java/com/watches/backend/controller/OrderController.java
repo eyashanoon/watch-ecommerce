@@ -1,15 +1,14 @@
 package com.watches.backend.controller;
 
-import com.watches.backend.Dto.OrderDto.*;
+import com.watches.backend.Dto.order.*;
 import com.watches.backend.enums.OrderStatus;
 import com.watches.backend.mappers.OrderMapper;
 import com.watches.backend.model.Order;
+import com.watches.backend.service.AuthService;
 import com.watches.backend.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,12 +20,12 @@ import java.util.Map;
 public class OrderController {
 
     private final OrderService orderService;
+    private final AuthService authService;
 
     @PostMapping
     OrderDTO createOrderFromCart(@RequestBody Map<Long, Integer> items) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        String username = authService.getCurrentUserName();
 
         Order createdOrder = orderService.createOrder(username, items).join();
         return OrderMapper.toDTO(createdOrder);
@@ -34,8 +33,7 @@ public class OrderController {
 
     @GetMapping("/me")
     List<OrderDTO> getMyOrders() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        String username = authService.getCurrentUserName();
 
         List<Order> orders = orderService.getAllByUsername(username).join();
         return orders.stream().map(OrderMapper::toDTO).toList();

@@ -1,6 +1,6 @@
 package com.watches.backend.controller.featuresController;
 
-import com.watches.backend.Dto.featuresDto.ImageDto;
+import com.watches.backend.Dto.features.ImageDto;
 import com.watches.backend.mappers.FeaturesMapper;
 import com.watches.backend.model.Image;
 import com.watches.backend.service.ImageService;

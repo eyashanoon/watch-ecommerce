@@ -1,6 +1,5 @@
 package com.watches.backend.Repositories;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -28,12 +27,12 @@ public class DynamicQueryRepository<T>{
         return em.createQuery(sql, entityClass).getResultList();
     }
 
-    public Set<String> getDistinctValues(Class<T> clazz, String column) {
+    public Set<String> getDistinctValues(Class<?> clazz, String column) {
         String sql = String.format(
                 "SELECT DISTINCT e.%s FROM %s e WHERE e.%s IS NOT NULL",
                 column, clazz.getSimpleName(), column
         );
-        return new HashSet<>(em.createQuery(sql).getResultList());
+        return new HashSet<String>(em.createQuery(sql).getResultList());
     }
 
     public String findByProductId(String field, String column, Long productId) {

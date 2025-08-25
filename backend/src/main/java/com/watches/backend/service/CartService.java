@@ -1,7 +1,7 @@
 package com.watches.backend.service;
 
 
-import com.watches.backend.Dto.productItemDto.CreateProductItemDto;
+import com.watches.backend.Dto.productItem.CreateProductItemDto;
 import com.watches.backend.Repositories.CartRepository;
 import com.watches.backend.Repositories.CustomerRepository;
 import com.watches.backend.helpers.exception.CException;

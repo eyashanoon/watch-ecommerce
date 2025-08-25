@@ -1,5 +1,6 @@
 package com.watches.backend.controller;
 import com.watches.backend.model.Product;
+import com.watches.backend.service.AuthService;
 import com.watches.backend.service.RecommendationService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -20,15 +21,14 @@ public class RecommendationController {
     @PostMapping
     List<Recommendation> getRecommendations() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        String username;
+        if(authentication == null || !authentication.isAuthenticated()){
+            username = "";
+        }else{
+            username = authentication.getName();
+        }
 
-        List<Product> products = service.getAuthorizedRecommendations(username);
-        return products.stream().map(Recommendation::to).toList();
-    }
-
-    @PostMapping("/unauthorized")
-    List<Recommendation> getUnAuthRecommendations(){
-        List<Product> products = service.getRecommendations();
+        List<Product> products = service.getRecommendations(username);
         return products.stream().map(Recommendation::to).toList();
     }
 

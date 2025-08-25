@@ -1,7 +1,7 @@
  
 package com.watches.backend.service;
 
-import com.watches.backend.Dto.PaymentDto.PaymentDTO;
+import com.watches.backend.Dto.payment.PaymentDTO;
 import com.watches.backend.enums.OrderStatus;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.mappers.OrderMapper;
@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -52,11 +53,8 @@ public class OrderService {
                 throw CException.badRequest(Order.class, "Product with id " + entry.getKey() + " does not have enough quantity");
             }
         }
-        customer.addOrder(order);
-        orderRepository.save(order);
-        orderItemRepository.saveAll(orderItems);
-        customerService.save(customer);
-        makePayment(new PaymentDTO(
+
+        String paymentres=makePayment(new PaymentDTO(
                 card.getCardNumber(),
                 order.getTotalPrice(),
                 card.getExpirationDate(),
@@ -66,7 +64,17 @@ public class OrderService {
                 card.getCardType(),
                 customer.getId(),
                 "La-Royal"
-        )).join();
+        )).join().getBody();
+
+        if(Objects.equals(paymentres, "Payment successful")){
+            customer.addOrder(order);
+            orderRepository.save(order);
+            orderItemRepository.saveAll(orderItems);
+            customerService.save(customer);
+        }
+        else throw CException.badRequest(Order.class, "Payment failed");
+
+
         return CompletableFuture.completedFuture(order);
     }
 

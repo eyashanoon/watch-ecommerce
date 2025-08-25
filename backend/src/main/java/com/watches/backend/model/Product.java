@@ -129,8 +129,5 @@ public class Product {
     public int hashCode() {
         return Objects.hash(id, name, description, image, waterProof, hasTickingSound, includesDate, hasFullNumerals, size, brand, colors, shape, band, discount, weight, price, quantity);
     }
-
-
-
  }
  

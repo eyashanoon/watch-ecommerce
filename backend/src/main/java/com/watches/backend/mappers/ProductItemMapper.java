@@ -1,6 +1,6 @@
 package com.watches.backend.mappers;
 
-import com.watches.backend.Dto.productItemDto.ProductItemDto;
+import com.watches.backend.Dto.productItem.ProductItemDto;
 import com.watches.backend.model.ProductItem;
 
 public class ProductItemMapper {

@@ -32,12 +32,6 @@ public class Wishlist {
 
     private boolean deleted = false;
 
-    public Wishlist(Customer customer, List<Product> products) {
-        this.customer = customer;
-        if (products != null) {
-            products.forEach(this::addItem);
-        }
-    }
 
     public void addItem(Product product) {
         boolean contains = false;
