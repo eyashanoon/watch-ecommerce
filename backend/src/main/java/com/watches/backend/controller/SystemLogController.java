@@ -1,6 +1,6 @@
 package com.watches.backend.controller;
 
-import com.watches.backend.Dto.SystemLogDto.SystemLogDto;
+import com.watches.backend.Dto.systemLog.SystemLogDto;
 import com.watches.backend.helpers.query.SystemlogQueryObject;
 import com.watches.backend.mappers.SystemLogMapper;
 import com.watches.backend.model.SystemLog;
@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
 
 @RestController

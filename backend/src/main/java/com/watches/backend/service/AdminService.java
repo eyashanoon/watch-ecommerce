@@ -1,9 +1,9 @@
 package com.watches.backend.service;
 
-import com.watches.backend.Dto.CreateAdminDTO;
-import com.watches.backend.Dto.UpdateAdminDTO;
-import com.watches.backend.Dto.AdminDTO;
-import com.watches.backend.Dto.UpdateAdminPasswordDTO;
+import com.watches.backend.Dto.admin.CreateAdminDTO;
+import com.watches.backend.Dto.admin.UpdateAdminDTO;
+import com.watches.backend.Dto.admin.AdminDTO;
+import com.watches.backend.Dto.admin.UpdateAdminPasswordDTO;
 import com.watches.backend.enums.Role;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.helpers.specification.SpecificationBuilder;
@@ -18,7 +18,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -86,23 +85,6 @@ public class AdminService {
         Admin admin = findById(id);
         admin.setDeleted(true);
         adminRepository.save(admin);
-    }
-    public AdminDTO addRoleToAdmin(Long id, Role role) {
-        Admin admin = adminRepository.findById(id)
-                .orElseThrow(() -> CException.notFound(Admin.class, "id", id));
-
-        // Ensure the roles collection is initialized
-        if (admin.getRoles() == null) {
-            admin.setRoles(new HashSet<>()); // or new ArrayList<> depending on your design
-        }
-
-        if (admin.getRoles().add(role)) {
-            // Only save if the role was actually added (Set.add returns true if added)
-            admin = adminRepository.save(admin);
-            System.out.println(admin.getRoles());
-        }
-
-        return AdminMapper.toDTO(admin);
     }
 
     private void setPassword(Admin admin){

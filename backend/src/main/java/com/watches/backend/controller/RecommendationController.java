@@ -1,5 +1,6 @@
 package com.watches.backend.controller;
 import com.watches.backend.model.Product;
+import com.watches.backend.service.AuthService;
 import com.watches.backend.service.RecommendationService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;

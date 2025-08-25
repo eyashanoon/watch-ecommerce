@@ -2,8 +2,7 @@ package com.watches.backend.Repositories;
 
 import com.watches.backend.Dto.report.ReportDto;
 import com.watches.backend.model.Product;
- import com.watches.backend.model.productFeatures.*;
- 
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -12,13 +11,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ProductRepository extends JpaSpecificationExecutor<Product>, JpaRepository<Product,Long> {
- 
-    List<Product> findByBrand(Brand brand);
-    List<Product> findByBand(Band band);
-    List<Product> findByaCase(Case aCase);
-    List<Product> findByDisplayType(DisplayType type);
-    List<Product> findByNumberingFormat(NumberingFormat format);
-    List<Product> findByShape(Shape brand);
 
     List<Product> findAllByName(String name);
 

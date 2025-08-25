@@ -2,7 +2,6 @@ package com.watches.backend.model.productFeatures;
 
 import com.watches.backend.model.Product;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

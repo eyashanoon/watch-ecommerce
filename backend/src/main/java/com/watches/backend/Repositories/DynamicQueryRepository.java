@@ -32,7 +32,7 @@ public class DynamicQueryRepository<T>{
                 "SELECT DISTINCT e.%s FROM %s e WHERE e.%s IS NOT NULL",
                 column, clazz.getSimpleName(), column
         );
-        return new HashSet<>(em.createQuery(sql).getResultList());
+        return new HashSet<String>(em.createQuery(sql).getResultList());
     }
 
     public String findByProductId(String field, String column, Long productId) {

@@ -1,13 +1,12 @@
 package com.watches.backend.controller;
 
+import com.watches.backend.Dto.authentication.AuthRequest;
+import com.watches.backend.Dto.authentication.AuthResponse;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.User;
 import com.watches.backend.security.CustomUserDetails;
 import com.watches.backend.security.JwtUtil;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,24 +18,15 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
+@AllArgsConstructor
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-    }
-
     @PostMapping("/login")
     public AuthResponse login(@RequestBody AuthRequest authRequest) {
- 
-
-        System.out.println("0000000000000000000000000000000000000000000000000000000000000000000");
-
-        System.out.println(authRequest.getUsername()+" "+authRequest.getPassword());
-         try {
+        try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
             );
@@ -59,26 +49,4 @@ public class AuthController {
             throw CException.badRequest(User.class, "Invalid username or password");
         }
     }
-
-
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    public static class AuthRequest {
-        private String username;
-        private String password;
-    }
-
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class AuthResponse {
-        private String token;
-        private List<String> roles;
-        private Long id;
- 
-    }
-
- 
 }

@@ -59,11 +59,6 @@ public class Order {
         item.setOrder(this);
     }
 
-    public void removeItem(OrderItem item) {
-        items.remove(item);
-        item.setOrder(null);
-    }
-
     public double getTotalPrice(){
         return items.stream().mapToDouble(item->item.getPriceAtPurchase() * item.getQuantity()).sum();
     }

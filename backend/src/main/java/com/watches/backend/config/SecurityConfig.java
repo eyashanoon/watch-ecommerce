@@ -35,17 +35,19 @@ public class SecurityConfig {
                 .cors(cors -> {})
 
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST,"/api/product/image").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"/api/product/image/**").authenticated()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/product/image/product/{ProductId}").permitAll()
+                        .requestMatchers("/api/product/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/api/customers").permitAll()
-                        .requestMatchers("/api/recommend/unauthorized").permitAll()
+                        .requestMatchers("/api/recommend").permitAll()
 
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/swagger-ui.html").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
-                        .requestMatchers("/api/recommend").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

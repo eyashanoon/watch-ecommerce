@@ -1,9 +1,9 @@
 package com.watches.backend.mappers;
 
-import com.watches.backend.Dto.ProductDto.CreateProductDto;
-import com.watches.backend.Dto.ProductDto.ProductDto;
+import com.watches.backend.Dto.product.CreateProductDto;
+import com.watches.backend.Dto.product.ProductDto;
+import com.watches.backend.model.Image;
 import com.watches.backend.model.Product;
-import com.watches.backend.model.productFeatures.*;
 
 public class ProductMapper {
 
@@ -13,7 +13,7 @@ public class ProductMapper {
                 product.getId(),
                 product.getName(),
                 product.getDescription(),
-                (product.getImage() == null ? null : product.getImage().stream().map(i->i.getId()).toList()),
+                (product.getImage() == null ? null : product.getImage().stream().map(Image::getId).toList()),
                 product.getBrand().getName(),
                 product.getColors()
                         .get(0)

@@ -1,6 +1,6 @@
 package com.watches.backend.mappers;
 
-import com.watches.backend.Dto.featuresDto.ImageDto;
+import com.watches.backend.Dto.features.ImageDto;
 import com.watches.backend.model.Image;
 
 public class FeaturesMapper {

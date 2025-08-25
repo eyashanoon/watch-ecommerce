@@ -1,8 +1,8 @@
 package com.watches.backend.controller;
 
-import com.watches.backend.Dto.ProductDto.CreateProductDto;
-import com.watches.backend.Dto.ProductDto.ProductDto;
-import com.watches.backend.Dto.ProductDto.UpdateProductDto;
+import com.watches.backend.Dto.product.CreateProductDto;
+import com.watches.backend.Dto.product.ProductDto;
+import com.watches.backend.Dto.product.UpdateProductDto;
 import com.watches.backend.helpers.query.ProductQueryObject;
 import com.watches.backend.mappers.ProductMapper;
 import com.watches.backend.model.Product;
@@ -34,7 +34,6 @@ public class ProductController {
                 .join();
     }
 
-    @PreAuthorize("hasRole('CUSTOMER') || hasRole('OWNER') || hasRole('SEE_PRODUCT')")
     @GetMapping("/products/name/{name}")
     public  List<ProductDto> getAllWithProductName(@PathVariable String name) {
         return service.findAllByNameAsync(name).join();
@@ -42,7 +41,6 @@ public class ProductController {
 
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('CUSTOMER') || hasRole('OWNER') || hasRole('SEE_PRODEUCT')")
     ProductDto getById(@PathVariable Long id){
         CompletableFuture<Product> product = service.findByIdAsync(id);
         return ProductMapper.toDto(product.join());

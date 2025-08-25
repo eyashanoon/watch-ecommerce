@@ -1,8 +1,7 @@
 package com.watches.backend.mappers;
 
-import com.watches.backend.Dto.CreateCustomerDTO;
-import com.watches.backend.Dto.CustomerDTO;
-import com.watches.backend.Dto.UpdateCustomerDTO;
+import com.watches.backend.Dto.customer.CreateCustomerDTO;
+import com.watches.backend.Dto.customer.CustomerDTO;
 import com.watches.backend.enums.Role;
 import com.watches.backend.model.Customer;
 import com.watches.backend.model.Order;
@@ -45,35 +44,5 @@ public class CustomerMapper {
         customer.setRoles(Set.of(Role.CUSTOMER));
 
         return customer;
-    }
-
-    // For updating existing customer object
-    public static void updateCustomerFromDTO(UpdateCustomerDTO dto, Customer customer) {
-        if (dto == null || customer == null) return;
-
-        customer.setUsername(dto.getUsername());
-        customer.setEmail(dto.getEmail());
-        customer.setPhone(dto.getPhone());
-    }
-
-    // Optional: Only needed if your frontend sends empty forms pre-filled
-//    public static UpdateCustomerDTO toUpdateDTO(Customer customer) {
-//        if (customer == null) return null;
-//        return new UpdateCustomerDTO(
-//                customer.getUsername(),
-//                customer.getEmail(),
-//                customer.getPhone()
-//        );
-//    }
-
-    // Optional: Not needed unless you need to send a prefilled "create" form
-    public static CreateCustomerDTO toCreateDTO(Customer customer) {
-        if (customer == null) return null;
-        return new CreateCustomerDTO(
-                customer.getUsername(),
-                customer.getEmail(),
-                customer.getPassword(),
-                customer.getPhone()
-        );
     }
 }

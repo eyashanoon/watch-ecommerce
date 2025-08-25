@@ -1,6 +1,6 @@
 package com.watches.backend.service;
 
-import com.watches.backend.Dto.DiscountDto.CreateDiscountDto;
+import com.watches.backend.Dto.discount.CreateDiscountDto;
 import com.watches.backend.Repositories.DiscountRepository;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.model.Discount;

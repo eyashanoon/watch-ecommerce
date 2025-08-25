@@ -1,7 +1,7 @@
 package com.watches.backend.service;
 
-import com.watches.backend.Dto.CreateCustomerDTO;
-import com.watches.backend.Dto.UpdateCustomerDTO;
+import com.watches.backend.Dto.customer.CreateCustomerDTO;
+import com.watches.backend.Dto.customer.UpdateCustomerDTO;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.helpers.specification.SpecificationBuilder;
 import com.watches.backend.helpers.query.UserQueryObject;

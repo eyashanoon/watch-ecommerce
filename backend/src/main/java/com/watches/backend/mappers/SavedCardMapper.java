@@ -1,8 +1,8 @@
 package com.watches.backend.mappers;
 
-import com.watches.backend.Dto.SavedCardDto.CreateSavedCardDTO;
-import com.watches.backend.Dto.SavedCardDto.SavedCardDTO;
-import com.watches.backend.Dto.SavedCardDto.UpdateSavedCardDTO;
+import com.watches.backend.Dto.savedCard.CreateSavedCardDTO;
+import com.watches.backend.Dto.savedCard.SavedCardDTO;
+import com.watches.backend.Dto.savedCard.UpdateSavedCardDTO;
 import com.watches.backend.model.Customer;
 import com.watches.backend.model.SavedCard;
 
@@ -13,10 +13,11 @@ public class SavedCardMapper {
 
         return new SavedCardDTO(
                 card.getId(),
-                 card.getCardHolderName(),
+                card.getCardHolderName(),
                 card.getCardNumber(),
-                card.getCardType(),
+                card.getExpirationDate(),
                 card.getCvv(),
+                card.getCardType(),
                 card.isDefaultCard(),
                 card.getCustomer() != null ? card.getCustomer().getId() : null
         );

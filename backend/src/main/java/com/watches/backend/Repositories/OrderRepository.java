@@ -1,17 +1,14 @@
 package com.watches.backend.Repositories;
 
 import com.watches.backend.Dto.report.ReportDto;
-import com.watches.backend.model.Customer;
 import com.watches.backend.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order,Long> {
-     Optional<Order> findByCustomer(Customer customer);
 
      @Query("SELECT new com.watches.backend.Dto.report.ReportDto(YEAR(o.placedAt), COUNT(o)) " +
              "FROM Order o " +

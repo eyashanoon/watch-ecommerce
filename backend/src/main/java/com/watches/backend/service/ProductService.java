@@ -1,8 +1,8 @@
 package com.watches.backend.service;
 
-import com.watches.backend.Dto.ProductDto.CreateProductDto;
-import com.watches.backend.Dto.ProductDto.ProductDto;
-import com.watches.backend.Dto.ProductDto.UpdateProductDto;
+import com.watches.backend.Dto.product.CreateProductDto;
+import com.watches.backend.Dto.product.ProductDto;
+import com.watches.backend.Dto.product.UpdateProductDto;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.helpers.query.ProductQueryObject;
 import com.watches.backend.Repositories.ProductRepository;
