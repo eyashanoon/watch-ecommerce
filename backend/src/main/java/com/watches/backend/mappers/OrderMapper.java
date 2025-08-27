@@ -15,6 +15,8 @@ public class OrderMapper {
         return new OrderDTO(
                 order.getId(),
                 order.getCustomer().getId(),
+                order.getCustomer().getEmail(),
+                order.getCustomer().getPhone(),
                 order.getCustomer().getUsername(),
                 toItemDTOList(order.getItems()),
                 order.getTotalPrice(),

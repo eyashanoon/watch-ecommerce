@@ -1,8 +1,11 @@
 package com.watches.backend.service;
 
- import com.watches.backend.Dto.*;
- 
-import com.watches.backend.enums.Role;
+  import com.watches.backend.Dto.admin.AdminDTO;
+ import com.watches.backend.Dto.admin.CreateAdminDTO;
+ import com.watches.backend.Dto.admin.UpdateAdminDTO;
+ import com.watches.backend.Dto.admin.UpdateAdminPasswordDTO;
+ import com.watches.backend.Dto.customer.UpdateCustomerDTO;
+ import com.watches.backend.enums.Role;
 import com.watches.backend.helpers.exception.CException;
 import com.watches.backend.helpers.specification.SpecificationBuilder;
 import com.watches.backend.helpers.query.UserQueryObject;

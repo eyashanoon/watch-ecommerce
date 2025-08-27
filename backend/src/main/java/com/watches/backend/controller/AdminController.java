@@ -4,6 +4,7 @@ import com.watches.backend.Dto.admin.AdminDTO;
 import com.watches.backend.Dto.admin.CreateAdminDTO;
 import com.watches.backend.Dto.admin.UpdateAdminDTO;
 import com.watches.backend.Dto.admin.UpdateAdminPasswordDTO;
+import com.watches.backend.Dto.customer.UpdateCustomerDTO;
 import com.watches.backend.enums.Role;
 import com.watches.backend.helpers.query.UserQueryObject;
 import com.watches.backend.mappers.AdminMapper;

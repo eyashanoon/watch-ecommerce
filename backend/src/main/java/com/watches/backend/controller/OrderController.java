@@ -63,8 +63,9 @@ public class OrderController {
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('OWNER') || hasRole('UPDATE_ORDER')")
     OrderDTO updateOrderStatus(@PathVariable Long id,
-                                                      @Valid @RequestBody OrderStatus status) {
-        Order order = orderService.updateOrderStatus(id, status).join();
+                                                      @Valid @RequestBody UpdateOrderStatusDTO status) {
+        OrderStatus orderStatus = OrderStatus.valueOf(status.getStatus());
+        Order order = orderService.updateOrderStatus(id, orderStatus).join();
         return OrderMapper.toDTO(order);
     }
 

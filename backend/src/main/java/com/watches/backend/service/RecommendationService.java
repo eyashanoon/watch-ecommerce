@@ -74,7 +74,7 @@ public class RecommendationService {
                     Double cos2 = cosineSimilarity(baseVector, getVector(p2, indices, mergedWeight));
                     return cos2.compareTo(cos1);
                 })
-                .limit(5)
+                .limit(20)
                 .toList();
     }
 
