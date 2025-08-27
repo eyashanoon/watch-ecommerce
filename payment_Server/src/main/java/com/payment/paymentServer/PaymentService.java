@@ -14,7 +14,7 @@ public class PaymentService {
 
     public boolean makePayment(PaymentDTO paymentDTO){
         PaymentInfo paymentInfo = this.paymentRepository.findByCardNumber(paymentDTO.getCardNumber())
-                .orElseThrow(() -> new paymentExp("error"));
+                .orElseThrow(() -> new paymentExp(paymentDTO.getCardNumber()));
 
         List<UsedIn> usedIn= paymentInfo.getUsedIn()
                 .stream()

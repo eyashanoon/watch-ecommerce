@@ -8,7 +8,6 @@ import com.watches.backend.helpers.query.ProductQueryObject;
 import com.watches.backend.Repositories.ProductRepository;
 import com.watches.backend.helpers.specification.SpecificationBuilder;
 import com.watches.backend.mappers.ProductMapper;
-import com.watches.backend.model.Image;
 import com.watches.backend.model.Product;
 import com.watches.backend.model.productFeatures.*;
 import com.watches.backend.service.productFeatures.*;
@@ -20,7 +19,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -99,12 +97,13 @@ public class ProductService {
         Product product = ProductMapper.createToProduct(productDto);
         setFeatures(product, productDto);
 
-        repository.save(product);
-
         for(Color color : product.getColors()){
             color.setProduct(product);
-            colorService.update(color);
         }
+
+        repository.save(product);
+
+
 
         return CompletableFuture.completedFuture(product);
     }
@@ -165,16 +164,6 @@ public class ProductService {
                PageRequest.of(queryObject.getPage() - 1, queryObject.getPageSize())
        );
        return CompletableFuture.completedFuture(products);
-    }
-
-
-
-    public void setImage(Product product, Image image){
-        if(product.getImage()==null)product.setImage(new ArrayList<>());
-        List<Image> images=product.getImage();
-        images.add(image);
-        product.setImage(images);
-        repository.save(product);
     }
 
     public void saveAfterDiscount(Product product){

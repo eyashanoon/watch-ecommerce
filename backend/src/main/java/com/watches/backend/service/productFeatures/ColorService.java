@@ -25,7 +25,6 @@ public class ColorService {
         handsColor = Utils.normalizeString(handsColor);
         part = Utils.normalizeString(part);
         Color color = new Color(part, handsColor);
-        color = repository.save(color);
         return CompletableFuture.completedFuture(color);
     }
 

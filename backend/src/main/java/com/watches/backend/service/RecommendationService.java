@@ -14,7 +14,7 @@ import java.util.*;
 
 @Service
 @AllArgsConstructor
-public class RecommendationService {
+public class    RecommendationService {
 
     private final CustomerRepository customerRepository;
     private final OrderService orderService;

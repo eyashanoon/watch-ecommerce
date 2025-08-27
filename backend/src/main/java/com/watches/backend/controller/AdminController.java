@@ -26,7 +26,7 @@ public class AdminController {
 
     @PostMapping
     @PreAuthorize("hasRole('OWNER') || hasRole('ADD_ADMIN')")
-    public AdminDTO CreateAdmin(@RequestBody CreateAdminDTO createAdminDTO){
+    public AdminDTO createAdmin(@RequestBody CreateAdminDTO createAdminDTO){
         Admin admin = adminService.createAdmin(createAdminDTO);
         return AdminMapper.toDTO(admin);
     }

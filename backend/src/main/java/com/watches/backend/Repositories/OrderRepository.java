@@ -10,11 +10,12 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order,Long> {
 
-     @Query("SELECT new com.watches.backend.Dto.report.ReportDto(YEAR(o.placedAt), COUNT(o)) " +
+     @Query("SELECT new com.watches.backend.Dto.report.ReportDto(YEAR(o.placedAt), COUNT(o))" +
              "FROM Order o " +
-             "WHERE YEAR(o.placedAt) <= :year AND YEAR(o.placedAt) >= :year - 5 " +
-             "GROUP BY YEAR(o.placedAt)" +
-             "ORDER BY YEAR(o.placedAt)")
+             "WHERE YEAR(o.placedAt) BETWEEN :year - 5 AND :year " +
+             "GROUP BY YEAR(o.placedAt) " +
+             "ORDER BY YEAR(o.placedAt)"
+     )
      List<ReportDto<Integer>> countOrderGroupedByYear(@Param("year") int year);
 
      @Query("SELECT new com.watches.backend.Dto.report.ReportDto(MONTH(o.placedAt), COUNT(o)) " +

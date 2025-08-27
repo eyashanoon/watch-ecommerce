@@ -18,7 +18,7 @@ public interface ProductRepository extends JpaSpecificationExecutor<Product>, Jp
             "FROM Order o " +
             "LEFT JOIN OrderItem oi ON o.id = oi.order.id " +
             "LEFT JOIN Product p ON p.id = oi.product.id " +
-            "WHERE YEAR(o.placedAt) <= :year AND YEAR(o.placedAt) >= (:year - 5)" +
+            "WHERE YEAR(o.placedAt) BETWEEN :year - 5 AND :year " +
             "GROUP BY YEAR(o.placedAt) " +
             "ORDER BY YEAR(o.placedAt) ")
     List<ReportDto<Integer>> countProductGroupedByYear(@Param("year") int year);

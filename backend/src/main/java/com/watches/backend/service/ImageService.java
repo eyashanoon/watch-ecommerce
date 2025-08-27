@@ -54,7 +54,6 @@ public class ImageService {
             }
             product.getImage().add(newImage);
             repository.save(newImage);
-            service.setImage(product, newImage);
             return CompletableFuture.completedFuture(newImage);
         }catch (Exception e){
             return CompletableFuture.completedFuture(null);

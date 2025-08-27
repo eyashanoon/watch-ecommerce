@@ -23,7 +23,7 @@ public class Image {
     private Product product;
 
     @Lob
-     private byte[] data;
+    private byte[] data;
 
     private boolean deleted = false;
 }
